@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { toast } from "sonner";
-import { loadDataState } from "./real/catalog";
+import { type DataView, loadDataState } from "./real/catalog";
 import { getPendingOrderIds, retryPendingOrderSaves } from "./order-sync";
 import { getPendingShopIds, retryPendingShopSaves } from "./shop-sync";
 import { STORAGE_KEY, useStore } from "./store";
@@ -16,25 +16,49 @@ function mergeRemote<T extends { id: string }>(remote: T[], before: T[], current
   return [...remote.filter((record) => !newerIds.has(record.id)), ...newer];
 }
 
-/** Load server records on every device; local storage only keeps visitor preferences. */
-export function StoreHydrator() {
+/**
+ * Load server records on every device; local storage only keeps visitor preferences.
+ * `view` is "seller" only on seller screens, so buyer screens never receive a private minimum.
+ */
+export function StoreHydrator({ view }: { view: DataView }) {
+  const viewRef = useRef(view);
+  const refreshRef = useRef<() => Promise<void>>(undefined);
+
+  // Moving between buyer and seller screens reloads the catalog in the matching view.
+  useEffect(() => {
+    if (viewRef.current === view) return;
+    viewRef.current = view;
+    void refreshRef.current?.();
+  }, [view]);
+
   useEffect(() => {
     let active = true;
     let loading = false;
+    let again = false;
     let lastError = "";
 
     const refresh = async () => {
-      if (loading || !active) return;
+      if (!active) return;
+      if (loading) {
+        again = true;
+        return;
+      }
       loading = true;
       const before = useStore.getState();
+      const requested = viewRef.current;
       try {
         const [data, dealsResponse] = await Promise.all([
-          loadDataState(),
+          loadDataState(requested),
           fetch("/api/deals/negotiations", { cache: "no-store" }),
         ]);
         if (!dealsResponse.ok) throw new Error("Could not load negotiations");
         const { negotiations } = await dealsResponse.json() as { negotiations: Negotiation[] };
         if (!active) return;
+        // The screen switched views mid-request: drop this response and load the right one.
+        if (requested !== viewRef.current) {
+          again = true;
+          return;
+        }
         useStore.setState((current) => ({
           shops: mergeRemote(data.shops, before.shops, current.shops, new Set(getPendingShopIds())),
           items: mergeRemote(data.items, before.items, current.items),
@@ -54,8 +78,13 @@ export function StoreHydrator() {
         lastError = message;
       } finally {
         loading = false;
+        if (again && active) {
+          again = false;
+          void refresh();
+        }
       }
     };
+    refreshRef.current = refresh;
 
     void Promise.resolve(useStore.persist.rehydrate()).then(refresh);
 
@@ -76,6 +105,7 @@ export function StoreHydrator() {
     window.addEventListener("online", onOnline);
     return () => {
       active = false;
+      refreshRef.current = undefined;
       window.clearInterval(interval);
       window.removeEventListener("storage", onStorage);
       window.removeEventListener("focus", onFocus);

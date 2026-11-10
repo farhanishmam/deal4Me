@@ -60,7 +60,12 @@ export function EditableItemCard({ item }: { item: Item }) {
     try {
       await save((current) =>
         current.kind === "rental" && current.rental
-          ? { ...current, name: nextName, rental: { ...current.rental, dailyFeeCents: cents, minDailyFeeCents: Math.min(current.rental.minDailyFeeCents, cents) } }
+          ? {
+              ...current,
+              name: nextName,
+              // Left out when this screen has not loaded the private minimum: the server keeps the saved one, capped at the new fee.
+              rental: { ...current.rental, dailyFeeCents: cents, minDailyFeeCents: current.rental.minDailyFeeCents === undefined ? undefined : Math.min(current.rental.minDailyFeeCents, cents) },
+            }
           : { ...current, name: nextName, priceCents: cents },
       );
       setSaved(true);

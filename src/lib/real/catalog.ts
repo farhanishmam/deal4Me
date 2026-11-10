@@ -25,8 +25,15 @@ export async function publishShop(shopId: string, onboardingSeconds?: number): P
   return saved;
 }
 
-export async function loadDataState(): Promise<DataState> {
-  const response = await fetch("/api/data/state", { cache: "no-store" });
+/** Only seller screens load the seller view, which adds each rental's private minimum. */
+export type DataView = "public" | "seller";
+
+export function dataViewFor(pathname: string): DataView {
+  return /^\/sell(er)?(\/|$)/.test(pathname) ? "seller" : "public";
+}
+
+export async function loadDataState(view: DataView = "public"): Promise<DataState> {
+  const response = await fetch(view === "seller" ? "/api/data/state?view=seller" : "/api/data/state", { cache: "no-store" });
   if (!response.ok) {
     const body = await response.json().catch(() => null);
     throw new ApiError(body?.error ?? "Could not load workspace data", response.status);

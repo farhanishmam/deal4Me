@@ -51,7 +51,8 @@ export function finalItem(slot: Slot, kind: SellerKind): Item | undefined {
   if (!base.rental) return base;
   const dailyFeeCents = toCents(slot.rent, base.rental.dailyFeeCents);
   if (base.kind === "rental" && dailyFeeCents === base.rental.dailyFeeCents) return base;
-  const ratio = base.rental.dailyFeeCents > 0 ? base.rental.minDailyFeeCents / base.rental.dailyFeeCents : 0.62;
+  const minimum = base.rental.minDailyFeeCents;
+  const ratio = base.rental.dailyFeeCents > 0 && minimum !== undefined ? minimum / base.rental.dailyFeeCents : 0.62;
   const minDailyFeeCents = Math.max(100, Math.round((dailyFeeCents * ratio) / 100) * 100);
   return {
     ...base,

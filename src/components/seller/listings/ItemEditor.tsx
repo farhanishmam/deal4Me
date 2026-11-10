@@ -47,7 +47,7 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
   );
 }
 
-function Dollars({ value, onChange, label }: { value: string; onChange: (v: string) => void; label: string }) {
+function Dollars({ value, onChange, label, placeholder }: { value: string; onChange: (v: string) => void; label: string; placeholder?: string }) {
   return (
     <div className="relative">
       <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-[15px] text-muted-foreground">$</span>
@@ -55,6 +55,7 @@ function Dollars({ value, onChange, label }: { value: string; onChange: (v: stri
         inputMode="decimal"
         aria-label={label}
         value={value}
+        placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
         className="h-11 rounded-xl border-transparent bg-muted/60 pl-7 text-[15px]"
       />
@@ -208,11 +209,12 @@ export function ItemEditor({ item, onClose }: { item: Item; onClose: () => void 
     if (isRental) {
       const dailyFeeCents = toCents(daily);
       const depositCents = toCents(deposit);
-      const minDailyFeeCents = toCents(minimum);
+      // Blank before the private minimum has loaded: leave it out and the server keeps the saved one.
+      const minDailyFeeCents = !minimum.trim() && rental?.minDailyFeeCents === undefined ? undefined : toCents(minimum);
       const days = Number.parseInt(maxDays, 10);
       if (dailyFeeCents === null || depositCents === null || minDailyFeeCents === null) return setError("Enter every amount.");
       if (!Number.isFinite(days) || days < 1) return setError("Max days must be at least 1.");
-      if (minDailyFeeCents > dailyFeeCents) return setError("The private minimum can't be above the daily fee.");
+      if (minDailyFeeCents !== undefined && minDailyFeeCents > dailyFeeCents) return setError("The private minimum can't be above the daily fee.");
       next = {
         ...next,
         rental: {
@@ -318,7 +320,12 @@ export function ItemEditor({ item, onClose }: { item: Item; onClose: () => void 
             </div>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Private minimum" hint="Never shown to buyers">
-                <Dollars value={minimum} onChange={setMinimum} label="Private minimum" />
+                <Dollars
+                  value={minimum}
+                  onChange={setMinimum}
+                  label="Private minimum"
+                  placeholder={rental?.minDailyFeeCents === undefined ? "Unchanged" : undefined}
+                />
               </Field>
               <Field label="Max days">
                 <Input

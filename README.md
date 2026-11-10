@@ -113,7 +113,7 @@ Each backend session starts clean: no settings, MCP servers, skills, `CLAUDE.md`
 
 | | Owner agent | Buyer agent |
 |---|---|---|
-| Knows privately | the item's **private minimum** (the floor). The seller sets it for a rental. For a sale item it is derived from the price (70–90%). No buyer screen shows it | **its client's price**, which it offers every turn and cannot change. The owner sees the number but not that it is final |
+| Knows privately | the item's **private minimum** (the floor). The seller sets it for a rental, and only seller screens load it. For a sale item it is derived from the price (70–90%). No buyer screen shows it | **its client's price**, which it offers every turn and cannot change. The owner sees the number but not that it is final |
 | Sees | the public item card, the last 12 chat lines and the buyer's current offer | the public item card, the last 12 chat lines and the owner's current ask, never the floor |
 | Can do | `accept` · `counter` · `hold` · `walk`, but only the moves `rules.ts` allows that turn | `offer` exactly its price, or `accept` once the ask has come down to it |
 | Says | told to use ≤16 words (code caps a line at 120 characters), stay warm and playful and move toward the buyer in shrinking steps, because *"a deal beats no deal"* | told to use ≤16 words (same 120-character cap) and give a **new** reason each turn |
@@ -200,7 +200,7 @@ The buyer app ships in English and 日本語. Queries, search summaries and the 
 | `negotiations.json` | every negotiation, with its private state (the floor) kept server-side |
 | `ai-cache/<namespace>/<sha256>.json` | saved AI results: `descriptions-v1`, `websites`, `photo-appraisals`, `search-filters-v2` |
 
-Each write reads, changes, re-validates the whole state with zod, writes a temp file (mode `0600`) and renames it over the old one, so a crash never leaves half a file. The client hydrates from `GET /api/data/state` and refreshes on focus, on reconnect and every 15 s. Messages poll every 3 s. Shop edits and order status changes go through per-record queues, and a failure shows a toast with **Retry**. Browser storage holds per-device state: the visitor profile, timers, carts, the selected store, saved chats and a copy of messages. Catalog records and transactions always come from the server. **No mock records are seeded**: a new workspace starts empty, and an AI or data failure shows its error. Sample photos replay captured appraisals, labelled as such. `src/lib/mock-api.ts` and most of `src/lib/mock-data.ts` are unused leftovers from the prototype.
+Each write reads, changes, re-validates the whole state with zod, writes a temp file (mode `0600`) and renames it over the old one, so a crash never leaves half a file. The client hydrates from `GET /api/data/state` and refreshes on focus, on reconnect and every 15 s. Buyer screens get the public catalog, without any rental's private minimum. Seller screens (`/sell`, `/seller`) ask for `?view=seller`, the only response that includes it, and switch views when you move between the two. Messages poll every 3 s. Shop edits and order status changes go through per-record queues, and a failure shows a toast with **Retry**. Browser storage holds per-device state: the visitor profile, timers, carts, the selected store, saved chats and a copy of messages. Catalog records and transactions always come from the server. **No mock records are seeded**: a new workspace starts empty, and an AI or data failure shows its error. Sample photos replay captured appraisals, labelled as such. `src/lib/mock-api.ts` and most of `src/lib/mock-data.ts` are unused leftovers from the prototype.
 
 ## 💳 Rentals and money
 
@@ -221,7 +221,7 @@ Every transition returns **409** if it is out of order. Payments run on a **simu
 
 These are code and tests, not prompts:
 
-- **The floor stays out of search, the agents' lines and the negotiation list.** Search strips `minDailyFeeCents`, the negotiation list blanks private fields, the owner agent's lines can't contain numbers or limit words, and in manual mode the owner never walks early, because a forced walk would reveal the floor. There are no accounts yet, so `GET /api/data/state` still sends every item's private minimum to the browser (see [Limits](#-limits)).
+- **The floor stays out of buyer screens, search, the agents' lines and the negotiation list.** `GET /api/data/state` and search strip `minDailyFeeCents`. Only seller screens ask for `?view=seller`, which includes it, and a seller save that leaves it out keeps the stored one (capped at a lower new daily fee). The negotiation list blanks private fields, the owner agent's lines can't contain numbers or limit words, and in manual mode the owner never walks early, because a forced walk would reveal the floor. There are no accounts yet, so any client can still ask for the seller view (see [Limits](#-limits)).
 - **The model never picks a number outside the rules.** Prices are integers in a structured field and are clamped to the legal range. A disallowed action is refused. The buyer agent can only offer its exact price.
 - **Every price comes from saved data.** Negotiation, hold, request and food order routes read list price, floor and agreed price from the catalog or the stored deal, and zod drops anything else the client sends.
 - **Untrusted text stays data.** Transcripts, hints, website text, item cards and chat history go inside delimited blocks marked untrusted, never into system prompts. Model output can only point at items and photos that already exist: search keeps catalog ids only, and an imported item keeps a photo only if it came from that page.
@@ -346,7 +346,7 @@ src/
 ├─ server/
 │  ├─ ai/                 claude.ts (askClaude), pricing, rent-floor, search, restyle, website-source, cache
 │  ├─ deals/              agents.ts, rules.ts (+ tests), catalog, store, parse-offer
-│  └─ data/               store.ts, schema.ts (zod), conversations, rentals (simulated ledger)
+│  └─ data/               store.ts, schema.ts (zod), private-terms (public projection), conversations, rentals (simulated ledger)
 ├─ components/            onboarding, storefront, visitor, deals, seller, dashboard, messages, shared, ui (shadcn on Base UI)
 └─ lib/                   Zustand store, sync queues, real API client, voice input, brand
 scripts/                  prepare-onboarding-demo.mjs, backfill-gear-photos.mjs
@@ -361,7 +361,7 @@ public/                   demo photos, ski listing photos (credits in public/lis
 ## 🚧 Limits
 
 - **One local workspace.** There are no accounts: the sign-in screen opens the seller dashboard, and the seller app answers every deal's thread. JSON files suit one Node process, not a multi-instance deployment.
-- **The private minimum reaches the browser.** Buyer screens never show it, and search, the agents and the negotiation list keep it out. But `GET /api/data/state` returns the whole catalog, including each item's `minDailyFeeCents`, to every client, because the seller screens read the same state. Hiding it properly needs seller accounts or a separate seller endpoint.
+- **The private minimum is hidden, not protected.** Buyer screens load `GET /api/data/state`, which strips each rental's `minDailyFeeCents`, and only seller screens ask for `?view=seller`. With no accounts, nothing stops another client from asking for the seller view too, so this keeps the minimum out of buyer browsers but is not a security boundary. A sale item's floor is derived on the server from the low end of its stored price suggestion, and the public catalog still carries that suggestion, so a client could work the sale floor out.
 - **Payments are simulated.** Holds, captures and releases are recorded but not charged. A hold doesn't block other renters, and the server doesn't verify the pickup code.
 - **Requests are inquiries.** A date/size request waits for the seller to confirm. It doesn't reserve stock or take payment.
 - **Language coverage varies.** The buyer UI is English and Japanese, and storefront labels are English, Japanese and Spanish. Search and negotiation lines cover 7 languages. Item names aren't translated.

@@ -1,12 +1,11 @@
 import { mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import type { DataState } from "@/lib/data-state";
-import { DataStateSchema } from "./schema";
+import { DataStateSchema, type StoredDataState } from "./schema";
 
 export const DATA_DIR = process.env.RIDGE_DATA_DIR ?? join(process.cwd(), ".data");
 const DATA_FILE = join(DATA_DIR, "catalog.json");
 
-export function readDataState(): DataState {
+export function readDataState(): StoredDataState {
   try {
     return DataStateSchema.parse(JSON.parse(readFileSync(DATA_FILE, "utf8")));
   } catch (error) {
@@ -16,7 +15,7 @@ export function readDataState(): DataState {
 }
 
 /** Synchronous read/update/atomic rename keeps writes serialized in the local Node server. */
-export function updateDataState<T>(update: (state: DataState) => T): T {
+export function updateDataState<T>(update: (state: StoredDataState) => T): T {
   const state = readDataState();
   const result = update(state);
   const checked = DataStateSchema.parse(state);

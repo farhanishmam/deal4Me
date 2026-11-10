@@ -38,7 +38,7 @@ function Field({ label, hint, children }: { label: string; hint?: React.ReactNod
   );
 }
 
-function Money({ value, onChange, label }: { value: string; onChange: (v: string) => void; label: string }) {
+function Money({ value, onChange, label, placeholder }: { value: string; onChange: (v: string) => void; label: string; placeholder?: string }) {
   return (
     <div className="relative">
       <span aria-hidden className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm text-muted-foreground">
@@ -48,6 +48,7 @@ function Money({ value, onChange, label }: { value: string; onChange: (v: string
         inputMode="decimal"
         aria-label={label}
         value={value}
+        placeholder={placeholder}
         onChange={(e) => onChange(e.target.value.replace(/[^0-9.]/g, ""))}
         className="pl-6 tabular-nums"
       />
@@ -118,11 +119,12 @@ export function ItemSheet({
     if (rental) {
       const dailyFeeCents = toCents(daily);
       const depositCents = toCents(deposit);
-      const minDailyFeeCents = toCents(minimum);
+      // Blank before the private minimum has loaded: leave it out and the server keeps the saved one.
+      const minDailyFeeCents = !minimum.trim() && item.rental?.minDailyFeeCents === undefined ? undefined : toCents(minimum);
       const days = Number.parseInt(maxDays, 10);
       if (dailyFeeCents === null || depositCents === null || minDailyFeeCents === null) return setError("Enter every amount.");
       if (!Number.isFinite(days) || days < 1) return setError("Max days must be at least 1.");
-      if (minDailyFeeCents > dailyFeeCents) return setError("The minimum can't be above the daily fee.");
+      if (minDailyFeeCents !== undefined && minDailyFeeCents > dailyFeeCents) return setError("The minimum can't be above the daily fee.");
       next = {
         ...next,
         suggestion,
@@ -221,7 +223,12 @@ export function ItemSheet({
                       </span>
                     }
                   >
-                    <Money label="Private minimum daily fee" value={minimum} onChange={setMinimum} />
+                    <Money
+                      label="Private minimum daily fee"
+                      value={minimum}
+                      onChange={setMinimum}
+                      placeholder={item.rental?.minDailyFeeCents === undefined ? "Unchanged" : undefined}
+                    />
                   </Field>
                   <Field label="Max days">
                     <Input

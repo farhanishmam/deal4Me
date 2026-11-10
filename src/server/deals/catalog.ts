@@ -45,7 +45,8 @@ export function itemForDeal(itemId: string, days: number): DealItem {
   if (price <= 0) throw new DealInputError("Set a positive price before negotiating.");
   // A derived default, because sellers cannot set a minimum on a sale item yet: the low end of the suggested
   // sale range, kept between 70% and 90% of the asking price. Without a suggestion it is 80%.
-  const low = stored.suggestion?.estimates?.sale.rangeCents[0] ?? stored.suggestion?.rangeCents[0];
+  // (The stored schema keeps no per-kind `estimates`, so the item's own suggestion is the one to read.)
+  const low = stored.suggestion?.rangeCents[0];
   const floorCents = Math.round(low === undefined ? 0.8 * price : Math.min(Math.max(low, 0.7 * price), 0.9 * price));
   return { kind: "sale", name: stored.name, listCents: price, floorCents, days: 1 };
 }

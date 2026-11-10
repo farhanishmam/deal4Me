@@ -846,7 +846,7 @@ async function startNegotiation(
   const item = need(state().items.find((i) => i.id === input.itemId), "Item");
   const terms = need(item.rental, "Rental terms");
   const lang = visitorLang();
-  const minimumDollars = Math.ceil(terms.minDailyFeeCents / 100);
+  const minimumDollars = Math.ceil((terms.minDailyFeeCents ?? terms.dailyFeeCents) / 100);
   const id = `neg-${uid()}`;
 
   let negotiation: Negotiation = {
@@ -882,7 +882,7 @@ async function startNegotiation(
 
   const plan = planNegotiation({
     askingCents: terms.dailyFeeCents,
-    minCents: terms.minDailyFeeCents,
+    minCents: terms.minDailyFeeCents ?? terms.dailyFeeCents,
     maxCents: input.visitorMaxCents,
     maxRounds: MAX_ROUNDS,
   });
@@ -930,7 +930,7 @@ async function submitManualOffer(negotiationId: string, offerCents: Cents, messa
   const item = need(state().items.find((i) => i.id === current.itemId), "Item");
   const terms = need(item.rental, "Rental terms");
   const lang = visitorLang();
-  const minimumDollars = Math.ceil(terms.minDailyFeeCents / 100);
+  const minimumDollars = Math.ceil((terms.minDailyFeeCents ?? terms.dailyFeeCents) / 100);
 
   const lastOwner = [...current.rounds].reverse().find((r) => r.by === "owner");
   const n = lastOwner?.n ?? 1;

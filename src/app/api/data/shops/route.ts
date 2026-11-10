@@ -1,9 +1,10 @@
 import { z } from "zod";
-import { ItemSchema, ShopSchema } from "@/server/data/schema";
+import { keepPrivateTerms } from "@/server/data/private-terms";
+import { ItemInputSchema, ShopSchema } from "@/server/data/schema";
 import { DataError, dataError, updateDataState } from "@/server/data/store";
 
 export const runtime = "nodejs";
-const BodySchema = z.object({ shop: ShopSchema, items: z.array(ItemSchema).max(100).optional() });
+const BodySchema = z.object({ shop: ShopSchema, items: z.array(ItemInputSchema).max(100).optional() });
 
 export async function POST(request: Request) {
   const parsed = BodySchema.safeParse(await request.json().catch(() => null));
@@ -20,7 +21,10 @@ export async function POST(request: Request) {
       // Publication is a separate server action, never a client supplied timestamp.
       const next = { ...shop, liveAt: existing?.liveAt, onboardingSeconds: existing?.onboardingSeconds };
       state.shops = [...state.shops.filter((s) => s.id !== shop.id), next];
-      if (items) state.items = [...state.items.filter((i) => i.shopId !== shop.id), ...items];
+      if (items) {
+        const stored = new Map(state.items.map((i) => [i.id, i]));
+        state.items = [...state.items.filter((i) => i.shopId !== shop.id), ...items.map((i) => keepPrivateTerms(i, stored.get(i.id)))];
+      }
       return next;
     });
     return Response.json(saved);

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { withGearPhoto } from "@/lib/gear-photos";
+import type { Item } from "@/lib/types";
 
 const cents = z.number().int().nonnegative().max(100_000_000);
 const id = z.string().trim().min(1).max(180);
@@ -7,16 +8,19 @@ const text = z.string().max(12000);
 const photo = z.string().max(12_000_000);
 const lang = z.enum(["en", "ja", "es", "fr", "de", "ko", "zh"]);
 
-export const ItemSchema = z.object({
+const rentalFields = {
+  dailyFeeCents: cents, depositCents: cents,
+  maxDays: z.number().int().min(1).max(365), bindingCheckRequired: z.boolean(),
+};
+const minimumFits = (r: { dailyFeeCents: number; minDailyFeeCents?: number }) => r.minDailyFeeCents === undefined || r.minDailyFeeCents <= r.dailyFeeCents;
+const MINIMUM_TOO_HIGH = "Minimum cannot exceed asking price";
+
+const ItemFields = z.object({
   id, shopId: id, kind: z.enum(["food", "rental", "sale"]),
   name: z.string().trim().min(1).max(300), description: text, category: z.string().max(300),
   photoUrl: photo, photoUrls: z.array(photo).max(12).optional(),
   condition: z.enum(["new", "like_new", "good", "used"]).optional(),
   priceCents: cents.optional(),
-  rental: z.object({
-    dailyFeeCents: cents, minDailyFeeCents: cents, depositCents: cents,
-    maxDays: z.number().int().min(1).max(365), bindingCheckRequired: z.boolean(),
-  }).refine((r) => r.minDailyFeeCents <= r.dailyFeeCents, "Minimum cannot exceed asking price").optional(),
   suggestion: z.object({
     amountCents: cents, rangeCents: z.tuple([cents, cents]), depositCents: cents.optional(), reasoning: text,
   }).optional(),
@@ -24,10 +28,30 @@ export const ItemSchema = z.object({
   availableFrom: z.string().datetime({ offset: true }).optional(),
   availableUntil: z.string().datetime({ offset: true }).optional(),
   sizes: z.array(z.string().trim().min(1).max(80)).max(50).optional(),
-}).refine((i) => i.kind !== "rental" || !!i.rental, "Rental terms are required")
-  .refine((i) => i.kind === "rental" || i.priceCents !== undefined, "A price is required")
-  .refine((i) => !i.availableFrom || !i.availableUntil || Date.parse(i.availableUntil) > Date.parse(i.availableFrom), "Availability must end after it starts")
-  .transform(withGearPhoto);
+});
+
+type ItemRuleInput = Pick<Item, "id" | "kind" | "name" | "category" | "photoUrl"> & Partial<Pick<Item, "photoUrls" | "tags" | "priceCents" | "availableFrom" | "availableUntil">> & { rental?: object };
+
+function itemRules<T extends ItemRuleInput>(schema: z.ZodType<T>) {
+  return schema
+    .refine((i) => i.kind !== "rental" || !!i.rental, "Rental terms are required")
+    .refine((i) => i.kind === "rental" || i.priceCents !== undefined, "A price is required")
+    .refine((i) => !i.availableFrom || !i.availableUntil || Date.parse(i.availableUntil) > Date.parse(i.availableFrom), "Availability must end after it starts")
+    .transform(withGearPhoto);
+}
+
+/** An item as stored. Every rental carries its private minimum. */
+export const ItemSchema = itemRules(ItemFields.extend({
+  rental: z.object({ ...rentalFields, minDailyFeeCents: cents }).refine(minimumFits, MINIMUM_TOO_HIGH).optional(),
+}));
+
+/**
+ * An item as a seller screen sends it. The private minimum may be missing, because only seller views
+ * load it; `keepPrivateTerms` then restores the stored one before the write.
+ */
+export const ItemInputSchema = itemRules(ItemFields.extend({
+  rental: z.object({ ...rentalFields, minDailyFeeCents: cents.optional() }).refine(minimumFits, MINIMUM_TOO_HIGH).optional(),
+}));
 
 export const ShopSchema = z.object({
   id, slug: id, sellerKind: z.enum(["business", "local"]), name: z.string().trim().min(1).max(300),
@@ -78,3 +102,7 @@ export const DataStateSchema = z.object({
   shops: z.array(ShopSchema), items: z.array(ItemSchema), orders: z.array(OrderSchema), rentals: z.array(RentalSchema),
   itemRequests: z.array(ItemRequestSchema).default([]),
 });
+
+export type StoredItem = z.output<typeof ItemSchema>;
+export type ItemInput = z.output<typeof ItemInputSchema>;
+export type StoredDataState = z.output<typeof DataStateSchema>;
