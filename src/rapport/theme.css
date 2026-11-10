@@ -1,0 +1,217 @@
+/*
+ * Rapport design tokens, ported 1:1 from the design canvas ("Agent Networking App").
+ * Dark is the default. Light overrides the same names.
+ *
+ * Where tokens apply:
+ *   - Inside the phone app, <html data-rp="dark|light"> (set by RapportRoot).
+ *   - Anywhere else (the /demo stage), a wrapper with class "rp" or "rp rp-light".
+ *
+ * Tailwind classes (registered in the @theme block below):
+ *   bg-rp-bg  bg-rp-surface  bg-rp-raised  bg-rp-nav  border-rp-line  border-rp-line2
+ *   text-rp-text  text-rp-text2  text-rp-text3
+ *   text-rp-gold  bg-rp-gold-bg  border-rp-gold-line  border-rp-gold-mid
+ *   bg-rp-fill  text-rp-on-fill  text-rp-on-fill2   (primary filled surfaces)
+ *   text-rp-ember (live/recording)  bg-rp-off (switch track off)  bg-rp-knob
+ *   steel / sage / lilac + -bg / -line   (person tones)
+ *   shadow-rp   font-rp-serif   font-rp-sans
+ */
+
+[data-rp],
+.rp {
+  --rp-bg: #0b0d11;
+  --rp-surface: #13161c;
+  --rp-raised: #1b1f27;
+  --rp-nav: #171a21;
+  --rp-line: #272c36;
+  --rp-line2: #1e222a;
+  --rp-text: #f4f0e8;
+  --rp-text2: #aeb3bd;
+  --rp-text3: #8d93a1;
+  --rp-gold: #e6c992;
+  --rp-gold-bg: #211c12;
+  --rp-gold-line: #4d4129;
+  --rp-gold-mid: #cdaa6a;
+  --rp-fill: #e6c992;
+  --rp-on-fill: #17130a;
+  --rp-on-fill2: #4a3f28;
+  --rp-ember: #ff9076;
+  --rp-steel: #b9c6dc;
+  --rp-steel-bg: #1a2130;
+  --rp-steel-line: #33415c;
+  --rp-sage: #b7d3c2;
+  --rp-sage-bg: #18241e;
+  --rp-sage-line: #2f4a3c;
+  --rp-lilac: #cdbfe6;
+  --rp-lilac-bg: #211c2b;
+  --rp-lilac-line: #43385c;
+  --rp-off: #2e3440;
+  --rp-knob: #aeb3bd;
+  --rp-scrim: rgba(6, 7, 9, 0.6);
+  --rp-shadow: 0 0 #0000;
+  --rp-status: #f4f0e8;
+  color-scheme: dark;
+}
+
+[data-rp="light"],
+.rp.rp-light {
+  --rp-bg: #f4f3ef;
+  --rp-surface: #ffffff;
+  --rp-raised: #edebe6;
+  --rp-nav: #ffffff;
+  --rp-line: #dfdcd5;
+  --rp-line2: #e8e5df;
+  --rp-text: #14161b;
+  --rp-text2: #555b69;
+  --rp-text3: #626876;
+  --rp-gold: #7d5a1b;
+  --rp-gold-bg: #f6eedc;
+  --rp-gold-line: #dcc79a;
+  --rp-gold-mid: #b8923f;
+  --rp-fill: #14161b;
+  --rp-on-fill: #f4f0e8;
+  --rp-on-fill2: #b9bdc7;
+  --rp-ember: #b93f28;
+  --rp-steel: #3d5278;
+  --rp-steel-bg: #e8edf6;
+  --rp-steel-line: #c5d0e4;
+  --rp-sage: #2f5e46;
+  --rp-sage-bg: #e6f1ea;
+  --rp-sage-line: #c2dacb;
+  --rp-lilac: #5b4690;
+  --rp-lilac-bg: #eee9f8;
+  --rp-lilac-line: #d5cbeb;
+  --rp-off: #c9ccd3;
+  --rp-knob: #ffffff;
+  --rp-scrim: rgba(20, 22, 27, 0.38);
+  --rp-shadow: 0 1px 2px rgba(20, 22, 27, 0.05), 0 10px 28px rgba(20, 22, 27, 0.07);
+  --rp-status: #14161b;
+  color-scheme: light;
+}
+
+/* Safe areas. Inside the /demo iPhone frame the stage draws the status bar,
+   so the app reserves the same 47px an iPhone 14 does. */
+[data-rp] {
+  --rp-safe-top: env(safe-area-inset-top, 0px);
+  --rp-safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+[data-rp][data-framed] {
+  --rp-safe-top: 47px;
+  --rp-safe-bottom: 0px;
+}
+
+/* Base rules live in layers so Tailwind utilities on an element always win. */
+@layer base {
+  [data-rp],
+  [data-rp] body {
+    background: var(--rp-bg);
+    color: var(--rp-text);
+    overscroll-behavior: none;
+  }
+  [data-rp] body {
+    font-family: var(--rp-font-sans), Inter, system-ui, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+  [data-rp] a,
+  .rp a {
+    color: var(--rp-gold);
+    text-decoration: none;
+  }
+  [data-rp] input::placeholder {
+    color: var(--rp-text3);
+  }
+  [data-rp] a:focus-visible,
+  [data-rp] button:focus-visible,
+  [data-rp] input:focus-visible {
+    outline: 2px solid var(--rp-gold);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* Scroll areas inside the phone never show a scrollbar. */
+  .rp-scroll {
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+  }
+  .rp-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  .rp-pulse {
+    animation: rp-pulse 1.4s ease-in-out infinite;
+  }
+  .rp-rise {
+    animation: rp-rise 0.32s ease-out both;
+  }
+  .rp-drop {
+    animation: rp-drop 0.36s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+  }
+  .rp-sheet {
+    animation: rp-sheet 0.34s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .rp-caret {
+    animation: rp-caret 1s step-end infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .rp-pulse, .rp-rise, .rp-drop, .rp-sheet, .rp-caret {
+      animation: none;
+    }
+  }
+}
+
+@keyframes rp-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+@keyframes rp-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes rp-drop {
+  from { opacity: 0; transform: translateY(-110%); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes rp-sheet {
+  from { transform: translateY(100%); }
+  to { transform: none; }
+}
+@keyframes rp-caret {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@theme inline {
+  --color-rp-bg: var(--rp-bg);
+  --color-rp-surface: var(--rp-surface);
+  --color-rp-raised: var(--rp-raised);
+  --color-rp-nav: var(--rp-nav);
+  --color-rp-line: var(--rp-line);
+  --color-rp-line2: var(--rp-line2);
+  --color-rp-text: var(--rp-text);
+  --color-rp-text2: var(--rp-text2);
+  --color-rp-text3: var(--rp-text3);
+  --color-rp-gold: var(--rp-gold);
+  --color-rp-gold-bg: var(--rp-gold-bg);
+  --color-rp-gold-line: var(--rp-gold-line);
+  --color-rp-gold-mid: var(--rp-gold-mid);
+  --color-rp-fill: var(--rp-fill);
+  --color-rp-on-fill: var(--rp-on-fill);
+  --color-rp-on-fill2: var(--rp-on-fill2);
+  --color-rp-ember: var(--rp-ember);
+  --color-rp-steel: var(--rp-steel);
+  --color-rp-steel-bg: var(--rp-steel-bg);
+  --color-rp-steel-line: var(--rp-steel-line);
+  --color-rp-sage: var(--rp-sage);
+  --color-rp-sage-bg: var(--rp-sage-bg);
+  --color-rp-sage-line: var(--rp-sage-line);
+  --color-rp-lilac: var(--rp-lilac);
+  --color-rp-lilac-bg: var(--rp-lilac-bg);
+  --color-rp-lilac-line: var(--rp-lilac-line);
+  --color-rp-off: var(--rp-off);
+  --color-rp-knob: var(--rp-knob);
+  --color-rp-scrim: var(--rp-scrim);
+  --shadow-rp: var(--rp-shadow);
+  --font-rp-serif: var(--rp-font-serif), "Instrument Serif", Georgia, serif;
+  --font-rp-sans: var(--rp-font-sans), Inter, system-ui, sans-serif;
+}

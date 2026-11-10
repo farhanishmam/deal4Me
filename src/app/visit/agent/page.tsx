@@ -1,5 +1,10 @@
-import { RoutePlaceholder } from "@/components/shared/RoutePlaceholder";
+import { Suspense } from "react";
+import { AgentChat } from "@/components/visitor/agent/AgentChat";
 
 export default function Page() {
-  return <RoutePlaceholder id="V3" name="Agent chat" owner="WP3" />;
+  return (
+    <Suspense fallback={null}>
+      <AgentChat />
+    </Suspense>
+  );
 }

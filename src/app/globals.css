@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "../rapport/theme.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -103,6 +104,7 @@
   --ease-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
   --animate-rise: rise 0.5s var(--ease-soft) both;
   --animate-pop: pop 0.28s var(--ease-soft) both;
+  --animate-typing-dot: typing-dot 1.1s ease-in-out infinite;
 
   @keyframes rise {
     from {
@@ -112,6 +114,19 @@
     to {
       opacity: 1;
       transform: none;
+    }
+  }
+
+  @keyframes typing-dot {
+    0%,
+    60%,
+    100% {
+      opacity: 0.45;
+      transform: none;
+    }
+    30% {
+      opacity: 1;
+      transform: translateY(-2px);
     }
   }
 
@@ -175,6 +190,36 @@
   --sidebar-accent-foreground: #b4232a;
   --sidebar-border: #e5e7eb;
   --sidebar-ring: #b4232a;
+}
+
+/* The landing page's ink look, for whole flows. Inside this class the regular tokens
+   turn dark, so bg-card, border-border, Input and Button all follow. Crimson stays the
+   main action, but text-primary is too dark to read here: use text-foreground for links. */
+.theme-ink {
+  --background: #14171d;
+  --foreground: #f7f7f5;
+  --card: #1e222a;
+  --card-foreground: #f7f7f5;
+  --popover: #1e222a;
+  --popover-foreground: #f7f7f5;
+  --muted: #272c35;
+  --muted-foreground: rgb(247 247 245 / 0.64);
+  --accent: #272c35;
+  --accent-foreground: #f7f7f5;
+  --border: rgb(247 247 245 / 0.14);
+  --input: rgb(247 247 245 / 0.22);
+  --primary-soft: rgb(180 35 42 / 0.22);
+  --success: #5fd18a;
+  --success-soft: rgb(95 209 138 / 0.14);
+  --warning: #f0b35e;
+  --warning-text: #f0b35e;
+  --warning-soft: rgb(240 179 94 / 0.14);
+  --info: #7cc7dd;
+  --info-soft: rgb(124 199 221 / 0.14);
+  --destructive: #f2857f;
+  --destructive-soft: rgb(242 133 127 / 0.14);
+  color-scheme: dark;
+  color: var(--foreground);
 }
 
 @layer base {

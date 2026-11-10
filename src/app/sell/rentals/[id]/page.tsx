@@ -1,5 +1,6 @@
-import { RoutePlaceholder } from "@/components/shared/RoutePlaceholder";
+import { ReturnCheckView } from "@/components/deals/money/ReturnCheckView";
 
-export default function Page() {
-  return <RoutePlaceholder id="S9" name="Return check" owner="WP4" />;
+export default async function Page({ params }: PageProps<"/sell/rentals/[id]">) {
+  const { id } = await params;
+  return <ReturnCheckView id={id} />;
 }

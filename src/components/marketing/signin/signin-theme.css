@@ -1,0 +1,268 @@
+/* Sign-in themes. Each theme overrides the app's own semantic variables inside
+   .signin-root only, so the shadcn Button, Input and focus rings recolor by themselves
+   and nothing outside the sign-in screen changes. */
+
+.signin-root {
+  position: relative;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-public-sans), ui-sans-serif, system-ui, sans-serif;
+  /* Stay transparent until the stored theme is known, then fade in. */
+  opacity: 0;
+}
+
+.signin-root[data-ready="true"] {
+  opacity: 1;
+  transition: opacity 0.28s ease-out;
+}
+
+/* Color changes between themes are quick and only run once the screen is ready,
+   so the first paint never animates from the default. */
+.signin-root[data-ready="true"] * {
+  transition:
+    background-color 0.28s ease,
+    border-color 0.28s ease,
+    color 0.28s ease,
+    fill 0.28s ease,
+    stroke 0.28s ease,
+    opacity 0.28s ease;
+}
+
+/* 1. Park & Pine: cream #FBF7EF, sage #9BBD8C, mid green #4F8A55, deep forest #0F4A2B */
+.signin-root[data-theme="pine"] {
+  --background: #fbf7ef;
+  --foreground: #12301f;
+  --card: #fffefb;
+  --card-foreground: #12301f;
+  --popover: #fffefb;
+  --popover-foreground: #12301f;
+  --primary: #0f4a2b;
+  --primary-foreground: #ffffff;
+  --primary-hover: #0a3720;
+  --primary-soft: #e4eedd;
+  --secondary: #4f8a55;
+  --secondary-foreground: #ffffff;
+  --muted: #efeadd;
+  --muted-foreground: #5b6a5d;
+  --accent: #efeadd;
+  --accent-foreground: #12301f;
+  --border: #e5dfd0;
+  --input: #cfc9b6;
+  --ring: #0f4a2b;
+  --ink: #0f4a2b;
+  --ink-raised: #165a35;
+  --ink-foreground: #fbf7ef;
+  --ink-muted: rgb(251 247 239 / 0.74);
+  --ink-border: rgb(251 247 239 / 0.2);
+  /* sign-in own */
+  --link: #0f4a2b;
+  --headline: #0f4a2b;
+  --brand-a: #0f4a2b;
+  --brand-b: #4f8a55;
+  --brand-c: #0f4a2b;
+}
+
+/* 2. Sky & City: pale blue #EEF4FB, sky #86BBEB, mid blue #2F7BC4, navy #0A3D78 */
+.signin-root[data-theme="sky"] {
+  --background: #eef4fb;
+  --foreground: #0b2540;
+  --card: #ffffff;
+  --card-foreground: #0b2540;
+  --popover: #ffffff;
+  --popover-foreground: #0b2540;
+  --primary: #0a3d78;
+  --primary-foreground: #ffffff;
+  --primary-hover: #082f5c;
+  --primary-soft: #dceaf8;
+  --secondary: #2f7bc4;
+  --secondary-foreground: #ffffff;
+  --muted: #e1ebf6;
+  --muted-foreground: #4a6178;
+  --accent: #e1ebf6;
+  --accent-foreground: #0b2540;
+  --border: #d5e2f0;
+  --input: #bccfe4;
+  --ring: #0a3d78;
+  --ink: #0a3d78;
+  --ink-raised: #0f4c8c;
+  --ink-foreground: #eef4fb;
+  --ink-muted: #b9d6f3;
+  --ink-border: rgb(134 187 235 / 0.34);
+  --link: #0a3d78;
+  --headline: #0a3d78;
+  --brand-a: #0a3d78;
+  --brand-b: #2f7bc4;
+  --brand-c: #0a3d78;
+}
+
+/* 3. Golden Local: cream #FBF1E3, amber #E3A958, burnt orange #BF5423, dark brown #5A2D16.
+   Burnt orange is the main color; its 4.66:1 against white passes for button text.
+   Small links use --link, a step darker, to clear 4.5:1 on the cream. */
+.signin-root[data-theme="golden"] {
+  --background: #fbf1e3;
+  --foreground: #5a2d16;
+  --card: #fffbf4;
+  --card-foreground: #5a2d16;
+  --popover: #fffbf4;
+  --popover-foreground: #5a2d16;
+  --primary: #bf5423;
+  --primary-foreground: #ffffff;
+  --primary-hover: #a8461c;
+  --primary-soft: #f7ddc3;
+  --secondary: #e3a958;
+  --secondary-foreground: #5a2d16;
+  --muted: #f3e4cf;
+  --muted-foreground: #7a5a44;
+  --accent: #f3e4cf;
+  --accent-foreground: #5a2d16;
+  --border: #e8d5ba;
+  --input: #d9c09c;
+  --ring: #bf5423;
+  --ink: #f3dfc1;
+  --ink-raised: #f7e8d0;
+  --ink-foreground: #5a2d16;
+  --ink-muted: rgb(90 45 22 / 0.76);
+  --ink-border: rgb(90 45 22 / 0.22);
+  --link: #a8461c;
+  --headline: #5a2d16;
+  --brand-a: #bf5423;
+  --brand-b: #e3a958;
+  --brand-c: #5a2d16;
+}
+
+/* Brand panel. On phones it is just the top of the page; on desktop it is the ink panel. */
+.signin-panel {
+  --on: var(--headline);
+  --on-muted: var(--muted-foreground);
+  color: var(--on);
+}
+
+.signin-on-muted {
+  color: var(--on-muted);
+}
+
+.signin-headline {
+  color: var(--on);
+}
+
+.signin-root[data-theme="golden"] .signin-headline {
+  font-family: var(--font-signin-serif), ui-serif, Georgia, "Times New Roman", serif;
+  font-weight: 600;
+  font-optical-sizing: auto;
+  letter-spacing: -0.028em;
+  line-height: 1.02;
+}
+
+.signin-root[data-theme="pine"] .signin-headline {
+  font-family: var(--font-signin-display), var(--font-public-sans), sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+}
+
+.signin-root[data-theme="sky"] .signin-headline {
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+}
+
+.signin-root[data-theme="golden"] .signin-wordmark,
+.signin-root[data-theme="golden"] .signin-title {
+  font-family: var(--font-signin-serif), ui-serif, Georgia, serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.signin-rule {
+  height: 1px;
+  flex: 1;
+  background: currentColor;
+  opacity: 0.32;
+}
+
+/* Scene: a band on phones, the full-bleed lower part of the panel on desktop.
+   All three scenes are stacked and cross-fade. */
+.signin-scene {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 132px;
+  margin-top: 14px;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.signin-scene-layer {
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  background-size: cover;
+  opacity: 0;
+}
+
+.signin-scene-layer[data-active="true"] {
+  opacity: 1;
+}
+
+/* Each photo is framed on its mountains, on the phone's wide band. */
+.signin-scene-layer[data-scene="pine"] {
+  background-position: center 30%;
+}
+
+.signin-scene-layer[data-scene="sky"] {
+  background-position: center 78%;
+}
+
+.signin-scene-layer[data-scene="golden"] {
+  background-position: center 12%;
+}
+
+@media (max-width: 1023.98px) {
+  .signin-root[data-theme="golden"] .signin-scene {
+    margin-inline: -16px;
+    border-radius: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .signin-panel {
+    --on: var(--ink-foreground);
+    --on-muted: var(--ink-muted);
+    background: var(--ink);
+  }
+
+  .signin-root[data-theme="pine"] .signin-panel {
+    --brand-a: #fbf7ef;
+    --brand-b: #9bbd8c;
+  }
+
+  .signin-root[data-theme="sky"] .signin-panel {
+    --brand-a: #eef4fb;
+    --brand-b: #86bbeb;
+  }
+
+  .signin-root[data-theme="golden"] .signin-panel {
+    --brand-a: #bf5423;
+    --brand-b: #e3a958;
+    --brand-c: #5a2d16;
+  }
+
+  .signin-scene {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 62%;
+    min-height: 0;
+    margin: 0;
+    border-radius: 0;
+    mask-image: linear-gradient(to bottom, transparent, #000 24%);
+  }
+
+  .signin-scene-layer[data-scene="pine"] {
+    background-position: 30% center;
+  }
+
+  .signin-scene-layer[data-scene="sky"] {
+    background-position: center 90%;
+  }
+
+  .signin-scene-layer[data-scene="golden"] {
+    background-position: center top;
+  }
+}

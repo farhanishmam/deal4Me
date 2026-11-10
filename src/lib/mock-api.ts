@@ -709,10 +709,15 @@ export function ownerNext(previous: number, minimum: number): number {
   return Math.max(minimum, Math.min(previous - 1, target));
 }
 
-/** The visitor moves about a third of the way toward its max, never above it. */
-export function visitorNext(previous: number, maximum: number): number {
+/** In agent mode the owner comes down a third of the full gap each round: $60, $53, $46, $38. */
+function ownerOffer(asking: number, minimum: number, round: number): number {
+  return Math.max(minimum, Math.ceil(asking - (Math.max(0, asking - minimum) * (round - 1)) / 3));
+}
+
+/** The visitor covers 40% of the way to its max on its first move, then 55% of what is left, never above it. */
+export function visitorNext(previous: number, maximum: number, round: number): number {
   if (previous >= maximum) return maximum;
-  const target = Math.round(previous + (maximum - previous) / 3);
+  const target = Math.round(previous + (maximum - previous) * (round <= 2 ? 0.4 : 0.55));
   return Math.min(maximum, Math.max(previous + 1, target));
 }
 
@@ -721,7 +726,7 @@ export interface PlannedRound {
   by: "owner" | "visitor";
   /** Whole dollars. */
   offer: number;
-  /** True when this entry closes the deal (the visitor accepts the owner's offer). */
+  /** True when this entry closes the deal. */
   accepts?: boolean;
 }
 
@@ -734,8 +739,10 @@ export interface NegotiationPlan {
 
 /**
  * Both sides make one offer per round, owner first. All offers are whole
- * dollars. A deal happens when the visitor's offer reaches the owner's offer;
- * the price is the owner's offer.
+ * dollars. A deal happens when the visitor's offer reaches the owner's offer,
+ * or when the owner's next move would already be at or below the visitor's
+ * offer, in which case the owner agrees to it. Limits: asking $60, minimum $38
+ * and max $45 play out as 60, 30, 53, 36, 46, 41, then the owner agrees at 41.
  */
 export function planNegotiation(input: {
   askingCents: Cents;
@@ -749,102 +756,85 @@ export function planNegotiation(input: {
   const maxRounds = input.maxRounds ?? MAX_ROUNDS;
 
   const rounds: PlannedRound[] = [];
-  let owner = Math.max(asking, minimum);
   let visitor = 0;
 
   for (let n = 1; n <= maxRounds; n++) {
-    if (n > 1) owner = ownerNext(owner, minimum);
+    const owner = ownerOffer(asking, minimum, n);
     rounds.push({ n, by: "owner", offer: owner });
 
-    const next = n === 1 ? Math.min(maximum, Math.max(1, Math.round(asking / 2))) : visitorNext(visitor, maximum);
+    const next = n === 1 ? Math.min(maximum, Math.max(1, Math.round(asking / 2))) : visitorNext(visitor, maximum, n);
     if (next >= owner) {
       rounds.push({ n, by: "visitor", offer: owner, accepts: true });
       return { rounds, status: "deal", agreedDaily: owner };
     }
     visitor = next;
     rounds.push({ n, by: "visitor", offer: visitor });
+
+    if (n < maxRounds && ownerOffer(asking, minimum, n + 1) <= visitor) {
+      rounds.push({ n: n + 1, by: "owner", offer: visitor, accepts: true });
+      return { rounds, status: "deal", agreedDaily: visitor };
+    }
   }
   return { rounds, status: "no_deal" };
 }
 
 type MessageKind = "open" | "counter" | "best" | "deal";
 
-const OWNER_TEXT: Record<"en" | "ja", { open: (p: number) => string; counters: ((p: number) => string)[]; best: (p: number) => string; deal: (p: number) => string }> = {
+// The screen shows each offer as the big price, so messages never repeat it.
+const DAY_WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven"];
+
+const OWNER_TEXT: Record<"en" | "ja", { open: string; counter: (days: number) => string; best: string; deal: string }> = {
   en: {
-    open: (p) => `Happy to rent these. $${p} a day.`,
-    counters: [
-      (p) => `I can do $${p} a day.`,
-      (p) => `Meeting you partway: $${p} a day.`,
-      (p) => `I can do $${p} a day.`,
-      (p) => `Closer: $${p} a day.`,
-      (p) => `Almost there: $${p} a day.`,
-    ],
-    best: (p) => `$${p} a day is my best price.`,
-    deal: (p) => `Deal. $${p} a day.`,
+    open: "Asking price.",
+    counter: (days) => `For a ${DAY_WORDS[days] ?? days}-day rental.`,
+    best: "My best price.",
+    deal: "Agreed.",
   },
   ja: {
-    open: (p) => `1日$${p}でお貸しします。`,
-    counters: [
-      (p) => `1日$${p}でどうでしょう。`,
-      (p) => `歩み寄って、1日$${p}にします。`,
-      (p) => `1日$${p}なら大丈夫です。`,
-      (p) => `もう少し下げて、1日$${p}です。`,
-      (p) => `ここまでで、1日$${p}です。`,
-    ],
-    best: (p) => `1日$${p}が最安値です。`,
-    deal: (p) => `成立です。1日$${p}。`,
+    open: "希望価格です。",
+    counter: (days) => `${days}日間のレンタルで。`,
+    best: "これが最安値です。",
+    deal: "承知しました。",
   },
 };
 
-const VISITOR_TEXT: Record<"en" | "ja", { open: (p: number) => string; counters: ((p: number) => string)[]; deal: (p: number) => string }> = {
+const VISITOR_TEXT: Record<"en" | "ja", { open: string; counters: string[]; deal: string }> = {
   en: {
-    open: (p) => `Could you do $${p} a day?`,
-    counters: [
-      (p) => `How about $${p} a day?`,
-      (p) => `I can stretch to $${p} a day.`,
-      (p) => `I can go to $${p} a day.`,
-      (p) => `Closer: $${p} a day.`,
-      (p) => `Final push: $${p} a day.`,
-    ],
-    deal: (p) => `Deal. $${p} a day.`,
+    open: "Could you start here?",
+    counters: ["Could you come closer?", "Could we agree on this?"],
+    deal: "Agreed.",
   },
   ja: {
-    open: (p) => `1日$${p}でお願いできますか。`,
-    counters: [
-      (p) => `1日$${p}ではどうでしょう。`,
-      (p) => `1日$${p}まで出せます。`,
-      (p) => `1日$${p}にしていただけませんか。`,
-      (p) => `もう少し上げて、1日$${p}です。`,
-      (p) => `最後のお願いで、1日$${p}です。`,
-    ],
-    deal: (p) => `決まりです。1日$${p}でお願いします。`,
+    open: "ここからいかがですか。",
+    counters: ["もう少し歩み寄れませんか。", "この金額でいかがですか。"],
+    deal: "承知しました。",
   },
 };
 
-function ownerMessage(kind: MessageKind, n: number, dollars: number, lang: "en" | "ja"): string {
+function ownerMessage(kind: MessageKind, days: number, lang: "en" | "ja"): string {
   const t = OWNER_TEXT[lang];
-  if (kind === "open") return t.open(dollars);
-  if (kind === "best") return t.best(dollars);
-  if (kind === "deal") return t.deal(dollars);
-  return t.counters[(n - 2) % t.counters.length](dollars);
+  if (kind === "open") return t.open;
+  if (kind === "best") return t.best;
+  if (kind === "deal") return t.deal;
+  return t.counter(days);
 }
 
-function visitorMessage(kind: "open" | "counter" | "deal", n: number, dollars: number, lang: "en" | "ja"): string {
+function visitorMessage(kind: "open" | "counter" | "deal", n: number, lang: "en" | "ja"): string {
   const t = VISITOR_TEXT[lang];
-  if (kind === "open") return t.open(dollars);
-  if (kind === "deal") return t.deal(dollars);
-  return t.counters[(n - 2) % t.counters.length](dollars);
+  if (kind === "open") return t.open;
+  if (kind === "deal") return t.deal;
+  return t.counters[Math.min(n - 2, t.counters.length - 1)];
 }
 
-function roundFromPlan(p: PlannedRound, minimumDollars: number, lang: "en" | "ja"): NegotiationRound {
+function roundFromPlan(p: PlannedRound, minimumDollars: number, days: number, lang: "en" | "ja"): NegotiationRound {
   const offerCents = p.offer * 100;
   const at = new Date().toISOString();
   if (p.by === "owner") {
-    const kind: MessageKind = p.n === 1 ? "open" : p.offer <= minimumDollars ? "best" : "counter";
-    return { n: p.n, by: "owner", offerCents, message: ownerMessage(kind, p.n, p.offer, lang), at };
+    const kind: MessageKind = p.accepts ? "deal" : p.n === 1 ? "open" : p.offer <= minimumDollars ? "best" : "counter";
+    return { n: p.n, by: "owner", offerCents, message: ownerMessage(kind, days, lang), at };
   }
   const kind = p.accepts ? "deal" : p.n === 1 ? "open" : "counter";
-  return { n: p.n, by: "visitor", offerCents, message: visitorMessage(kind, p.n, p.offer, lang), at };
+  return { n: p.n, by: "visitor", offerCents, message: visitorMessage(kind, p.n, lang), at };
 }
 
 const ROUND_MS = 450;
@@ -880,7 +870,7 @@ async function startNegotiation(
       n: 1,
       by: "owner",
       offerCents: open * 100,
-      message: ownerMessage("open", 1, open, lang),
+      message: ownerMessage("open", input.days, lang),
       at: new Date().toISOString(),
     };
     negotiation = { ...negotiation, rounds: [round] };
@@ -901,14 +891,14 @@ async function startNegotiation(
 
   for (const planned of plan.rounds) {
     await sleep(ROUND_MS);
-    const round = roundFromPlan(planned, minimumDollars, lang);
+    const round = roundFromPlan(planned, minimumDollars, input.days, lang);
     negotiation = { ...negotiation, rounds: [...negotiation.rounds, round] };
     state().upsertNegotiation(negotiation);
     cb?.onRound?.(round);
 
     const price = perDay(round.offerCents);
     if (round.by === "owner") {
-      log("Owner agent", planned.n === 1 ? `Opened at ${price}` : `Countered ${price}`, item.name, ROUND_MS, aiCost(ROUND_MS));
+      log("Owner agent", planned.accepts ? `Accepted ${price}` : planned.n === 1 ? `Opened at ${price}` : `Countered ${price}`, item.name, ROUND_MS, aiCost(ROUND_MS));
     } else {
       log("Visitor agent", planned.accepts ? `Accepted ${price}` : `Offered ${price}`, item.name, ROUND_MS, aiCost(ROUND_MS));
     }
@@ -952,7 +942,7 @@ async function submitManualOffer(negotiationId: string, offerCents: Cents, messa
     n,
     by: "visitor",
     offerCents: offerDollars * 100,
-    message: message.trim() || visitorMessage(n === 1 ? "open" : "counter", n, offerDollars, lang),
+    message: message.trim() || visitorMessage(n === 1 ? "open" : "counter", n, lang),
     at,
   };
   let rounds = [...current.rounds, visitorRound];
@@ -966,7 +956,7 @@ async function submitManualOffer(negotiationId: string, offerCents: Cents, messa
     const price = Math.min(offerDollars, ownerLastDollars);
     rounds = [
       ...rounds,
-      { n: n + 1, by: "owner", offerCents: price * 100, message: ownerMessage("deal", n + 1, price, lang), at: new Date().toISOString() },
+      { n: n + 1, by: "owner", offerCents: price * 100, message: ownerMessage("deal", current.days, lang), at: new Date().toISOString() },
     ];
     next = { ...current, rounds, status: "deal", agreedDailyCents: price * 100 };
     log("Owner agent", `Accepted ${perDay(price * 100)}`, item.name, ms, aiCost(ms));
@@ -978,7 +968,7 @@ async function submitManualOffer(negotiationId: string, offerCents: Cents, messa
     const kind: MessageKind = counter <= minimumDollars ? "best" : "counter";
     rounds = [
       ...rounds,
-      { n: n + 1, by: "owner", offerCents: counter * 100, message: ownerMessage(kind, n + 1, counter, lang), at: new Date().toISOString() },
+      { n: n + 1, by: "owner", offerCents: counter * 100, message: ownerMessage(kind, current.days, lang), at: new Date().toISOString() },
     ];
     next = { ...current, rounds };
     log("Owner agent", `Countered ${perDay(counter * 100)}`, item.name, ms, aiCost(ms));

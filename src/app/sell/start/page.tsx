@@ -1,5 +1,5 @@
-import { RoutePlaceholder } from "@/components/shared/RoutePlaceholder";
+import { StartScreen } from "@/components/onboarding/start/StartScreen";
 
 export default function Page() {
-  return <RoutePlaceholder id="S1" name="Start selling" owner="WP1" />;
+  return <StartScreen />;
 }

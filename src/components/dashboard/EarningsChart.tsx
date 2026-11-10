@@ -10,7 +10,7 @@ import {
 } from "recharts";
 import { money } from "@/lib/format";
 import { useMounted } from "./hooks";
-import type { EarningsPoint } from "./demo-series";
+import type { EarningsPoint } from "./earnings";
 
 function ChartTip({
   active,

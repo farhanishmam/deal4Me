@@ -4,12 +4,11 @@ import { useState } from "react";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Menu, MonitorPlay, Palette, Rocket } from "lucide-react";
+import { LayoutDashboard, Menu, Palette, Rocket } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Logo } from "@/components/shared/Logo";
-import { useShop } from "@/lib/store";
-import type { Shop } from "@/lib/types";
+import { useSellerShop } from "@/lib/seller";
 import { cn } from "@/lib/utils";
 
 type NavItem = {
@@ -17,33 +16,27 @@ type NavItem = {
   label: string;
   icon: LucideIcon;
   match: string[];
-  quiet?: boolean;
 };
 
 const NAV: NavItem[] = [
   { href: "/sell/dashboard", label: "Dashboard", icon: LayoutDashboard, match: ["/sell/dashboard", "/sell/rentals"] },
-  { href: "/sell/studio/mayas-gear", label: "Studio", icon: Palette, match: ["/sell/studio"] },
+  { href: "/sell/studio", label: "Studio", icon: Palette, match: ["/sell/studio"] },
   { href: "/sell/start", label: "Start selling", icon: Rocket, match: ["/sell/start", "/sell/setup"] },
-  { href: "/demo", label: "Table mode", icon: MonitorPlay, match: ["/demo"], quiet: true },
 ];
 
 const FOCUS_ROUTES = ["/sell/start", "/sell/import", "/sell/photos", "/sell/describe"];
 
-const SHOP_ID = "mayas-gear";
-
-function useSellerShop(): Pick<Shop, "name" | "neighborhood"> {
-  return useShop(SHOP_ID) ?? { name: "Maya's Gear Garage", neighborhood: "Sugar House" };
-}
-
 function NavLinks({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) {
-  const main = NAV.filter((n) => !n.quiet);
-  const quiet = NAV.filter((n) => n.quiet);
+  const { shop } = useSellerShop();
+  const nav = NAV.map((n) =>
+    n.href === "/sell/studio" ? { ...n, href: shop ? `/sell/studio/${shop.id}` : "/sell/start" } : n,
+  );
   const render = (item: NavItem) => {
     const active = item.match.some((m) => pathname === m || pathname.startsWith(m + "/"));
     const Icon = item.icon;
     return (
       <Link
-        key={item.href}
+        key={item.label}
         href={item.href}
         onClick={onNavigate}
         aria-current={active ? "page" : undefined}
@@ -51,9 +44,7 @@ function NavLinks({ pathname, onNavigate }: { pathname: string; onNavigate?: () 
           "flex h-10 items-center gap-3 rounded-lg px-3 text-sm transition-colors duration-150 outline-none focus-visible:ring-3 focus-visible:ring-primary/15",
           active
             ? "bg-primary-soft font-semibold text-primary"
-            : item.quiet
-              ? "font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
-              : "font-medium text-foreground/80 hover:bg-muted hover:text-foreground"
+            : "font-medium text-foreground/80 hover:bg-muted hover:text-foreground"
         )}
       >
         <Icon className="size-[18px] shrink-0" strokeWidth={active ? 2.25 : 1.75} />
@@ -62,26 +53,38 @@ function NavLinks({ pathname, onNavigate }: { pathname: string; onNavigate?: () 
     );
   };
   return (
-    <nav aria-label="Seller" className="flex flex-1 flex-col gap-1">
-      {main.map(render)}
-      <div className="mt-auto flex flex-col gap-1 pb-3">{quiet.map(render)}</div>
+    <nav aria-label="Seller" className="flex flex-1 flex-col gap-1 pb-3">
+      {nav.map(render)}
     </nav>
   );
 }
 
 function ShopCard() {
-  const shop = useSellerShop();
+  const { shop, hydrated } = useSellerShop();
+  if (!shop) {
+    if (!hydrated) return null;
+    return (
+      <Link
+        href="/sell/start"
+        className="flex items-center gap-3 rounded-xl border border-border bg-card p-3 text-sm font-semibold outline-none focus-visible:ring-3 focus-visible:ring-primary/15"
+      >
+        <Rocket aria-hidden className="size-[18px] shrink-0 text-primary" />
+        Create your store
+      </Link>
+    );
+  }
+  const neighborhood = shop.neighborhood?.trim();
   return (
     <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-3">
       <span
         aria-hidden
         className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-ink text-sm font-semibold text-ink-foreground"
       >
-        {shop.name.charAt(0)}
+        {shop.name.trim().charAt(0) || "S"}
       </span>
       <span className="min-w-0 leading-tight">
         <span className="block truncate text-sm font-semibold">{shop.name}</span>
-        <span className="block truncate text-xs text-muted-foreground">{shop.neighborhood}</span>
+        {neighborhood ? <span className="block truncate text-xs text-muted-foreground">{neighborhood}</span> : null}
       </span>
     </div>
   );
@@ -100,10 +103,16 @@ export function SellerShell({ children }: { children: ReactNode }) {
 
   if (focus) {
     return (
-      <div className="flex min-h-dvh flex-col bg-background">
-        <header className="flex h-16 shrink-0 items-center px-4 sm:px-8">
+      <div className="theme-ink flex min-h-dvh flex-col bg-background">
+        <header className="relative z-20 flex h-16 shrink-0 items-center justify-between px-4 sm:px-8">
           <Link href="/" aria-label="Home" className="rounded-md outline-none focus-visible:ring-3 focus-visible:ring-primary/15">
-            <Logo />
+            <Logo tone="ink" />
+          </Link>
+          <Link
+            href="/seller"
+            className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors duration-150 outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-primary/15"
+          >
+            My store
           </Link>
         </header>
         {content}

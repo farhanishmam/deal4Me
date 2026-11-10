@@ -1,5 +1,6 @@
-import { RoutePlaceholder } from "@/components/shared/RoutePlaceholder";
+import { RentalStatusView } from "@/components/deals/money/RentalStatusView";
 
-export default function Page() {
-  return <RoutePlaceholder id="V7" name="Rental status" owner="WP4" />;
+export default async function Page({ params }: PageProps<"/visit/rentals/[id]">) {
+  const { id } = await params;
+  return <RentalStatusView id={id} />;
 }

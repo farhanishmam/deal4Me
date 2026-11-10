@@ -19,6 +19,43 @@ Copy the structure and density of these, not their colors, brand names, data or 
 - `/private/tmp/claude-501/-Users-farhanishmam-GitHub-Projects-hackathon/86b1c858-45e6-4541-90b5-943c4c81541c/images/2.webp`: storefront. Top bar with shop identity, wide search, order total. Left rail with nav and categories. A row of four "reorder" cards, three large feature panels, then a four-column product grid (image, name, mono SKU, price, availability pill, quantity stepper, full-width CTA). Floating "Ask" pill bottom right.
 - `/private/tmp/claude-501/-Users-farhanishmam-GitHub-Projects-hackathon/86b1c858-45e6-4541-90b5-943c4c81541c/images/3.webp`: sign-in. Split screen: dark brand panel on the left (logo, eyebrow pill, big headline, one line, three check bullets), form on the right, footer strip.
 
+## Two profiles
+
+The product is Deal4Me. It has two phone apps, one for each profile. Both render in `PhoneFrame` with a four-tab bar. Each profile's Profile screen has a clear switch to the other profile, so one phone can demo both.
+
+**Buyer, `/visit/*`.** Tabs: Home, Chat, Messages, Profile.
+- Home: a search bar and the "Find it for me" action. Search results at `/visit/search`.
+- Chat: talks to the AI agent, which finds items and negotiates whenever the buyer wants or picks an item. Chats are saved, listed at `/visit/chats`, and can be reopened.
+- Messages: the buyer and seller talking. A thread opens only once they agree on a deal. Its id is the negotiation id. Screens at `/visit/messages` and `/visit/messages/[threadId]`.
+- Profile: name, language, card, bookings (`/visit/trips`), switch to selling.
+
+**Seller, `/seller/*`.** Tabs: Listings, Scan, Messages, Profile.
+- Listings: everything the store lists, with editing.
+- Scan: point the camera at an item or upload a photo, get an estimated price, list it.
+- Messages: the same threads as the buyer sees, for this store. Screens at `/seller/messages` and `/seller/messages/[threadId]`.
+- Profile: the seller's and store's details, and `/seller/store` to change the store by speaking, typing or uploading pictures. Switch to buying.
+
+Shared contracts: `useThreads`, `useMessages` and `useUnreadCount` from `@/lib/messages`; `useSellerShop` from `@/lib/seller`.
+
+Real data: all data is real and comes from the backend, and the store starts empty until it loads (`useHydrated`). Real shops can have a blank owner name, neighborhood or photo, so never print a stray "·" or "'s", and use `thumbFor` for item pictures. Show `error.message` when a call fails. There is no mock data, so never add any.
+
+## Visitor app
+
+The phone app follows the owner's visual concept. Reference crops, each scaled to 390px wide:
+
+- `/private/tmp/claude-501/-Users-farhanishmam-GitHub-Projects-hackathon/86b1c858-45e6-4541-90b5-943c4c81541c/scratchpad/mock/mock-ask.png`
+- `/private/tmp/claude-501/-Users-farhanishmam-GitHub-Projects-hackathon/86b1c858-45e6-4541-90b5-943c4c81541c/scratchpad/mock/mock-negotiate.png`
+- `/private/tmp/claude-501/-Users-farhanishmam-GitHub-Projects-hackathon/86b1c858-45e6-4541-90b5-943c4c81541c/scratchpad/mock/mock-approve.png`
+
+Language of the visitor app:
+
+- White screens (`bg-card`), hairline dividers between groups, and light rows in `bg-muted/60` with `rounded-xl`, instead of bordered cards.
+- Inner screens start with `ScreenHeader` from `@/components/shared/ScreenHeader`. Deal screens continue with `ItemSummary`.
+- Glacier is the visitor's own agent: the active segment, the visitor's chat bubble (`bg-info-soft`), the sparkle avatar, and quiet links such as "Earlier rounds". The other side's bubble is `bg-muted`. Crimson stays reserved for the one main action, the active tab, and the slider fill.
+- Primary buttons are full width, 48px tall, `rounded-xl`, with 17px semibold text.
+- Each screen fits in one 390x844 view without scrolling, including when the status bar and tab bar are showing in the device frame.
+- Photos: `PHOTOS` and `thumbFor()` from `@/lib/photos`.
+
 ## Tokens
 
 Use Tailwind classes only. No hex values outside storefront themes and the art files.

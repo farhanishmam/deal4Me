@@ -1,5 +1,5 @@
-import { RoutePlaceholder } from "@/components/shared/RoutePlaceholder";
+import { Profile } from "@/components/visitor/account/Profile";
 
 export default function Page() {
-  return <RoutePlaceholder id="V10" name="Profile" owner="WP3" />;
+  return <Profile />;
 }

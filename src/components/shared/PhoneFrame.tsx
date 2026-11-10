@@ -52,7 +52,7 @@ export function PhoneFrame({
       >
         <div
           className={cn(
-            "relative flex h-full w-full flex-col overflow-hidden bg-background sm:rounded-[48px]",
+            "relative flex h-full w-full flex-col overflow-hidden bg-card sm:rounded-[48px]",
             className
           )}
         >

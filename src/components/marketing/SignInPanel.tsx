@@ -1,40 +1,47 @@
-import { Logo } from "@/components/shared/Logo";
+import { THEMES, type SignInTheme } from "./signin/themes";
+import { ThemeLogo } from "./signin/ThemeMark";
 
-const bullets = ["Orders and rentals", "Storefront Studio", "Payouts"];
-
-export function SignInPanel() {
+/**
+ * Brand side of the sign-in screen: mark and wordmark, headline, and the scene.
+ * Colors come from the variables on the surrounding data-theme wrapper.
+ */
+export function SignInPanel({ theme }: { theme: SignInTheme }) {
   return (
-    <aside className="relative isolate overflow-hidden bg-ink text-ink-foreground">
-      <div
-        aria-hidden
-        className="absolute inset-x-0 bottom-0 -z-10 h-full bg-[url('/brand/ridge-dark.svg')] bg-cover bg-bottom bg-no-repeat lg:h-[46%] lg:bg-top"
-      />
-      <div className="flex h-full flex-col px-6 py-6 lg:px-14 lg:py-12">
-        <Logo tone="ink" size="md" />
+    <aside className="signin-panel relative isolate flex flex-col overflow-hidden px-4 pt-5 lg:block lg:min-h-dvh lg:px-14 lg:py-12">
+      <div className="relative z-10 flex shrink-0 flex-col lg:h-full">
+        <ThemeLogo id={theme.id} />
 
-        <div className="mt-10 lg:mt-24">
-          <span className="text-eyebrow inline-flex h-7 items-center rounded-full border border-ink-border bg-ink-raised px-3 uppercase">
-            Seller studio
-          </span>
-          <h1 className="mt-5 max-w-[11ch] text-[40px] leading-[1.06] font-bold tracking-[-0.03em] text-balance lg:mt-6 lg:text-display">
-            Your shop, in one place.
-          </h1>
-          <p className="mt-4 max-w-[36ch] text-[15px] leading-relaxed text-ink-muted lg:mt-5 lg:text-[17px]">
-            Orders, rentals and payouts for Salt Lake sellers.
-          </p>
-          <ul className="mt-8 hidden space-y-3.5 lg:block">
-            {bullets.map((b) => (
-              <li key={b} className="flex items-center gap-3 text-[15px]">
-                <span className="grid size-6 place-items-center rounded-full bg-ink-border">
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
-                    <path d="M2.5 6.2 5 8.6l4.5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </span>
-                {b}
-              </li>
+        {/* key restarts the entrance animation when the theme changes */}
+        <div key={theme.id} className="animate-rise mt-4 lg:mt-[15vh]">
+          <h1 className="signin-headline text-[40px] leading-[1.04] font-bold tracking-[-0.03em] lg:text-display">
+            {theme.headline.map((line) => (
+              <span key={line} className="block">
+                {line}
+              </span>
             ))}
-          </ul>
+          </h1>
+          {theme.eyebrow && (
+            <div className="signin-on-muted mt-3 flex items-center gap-4 lg:mt-5">
+              <span className="text-[11px] font-semibold tracking-[0.2em] whitespace-nowrap">{theme.eyebrow}</span>
+              <span aria-hidden className="signin-rule" />
+            </div>
+          )}
+          {theme.tagline && (
+            <p className="signin-on-muted mt-5 hidden max-w-[34ch] text-[17px] leading-relaxed lg:block">{theme.tagline}</p>
+          )}
         </div>
+      </div>
+
+      <div aria-hidden className="signin-scene">
+        {THEMES.map((t) => (
+          <div
+            key={t.id}
+            className="signin-scene-layer"
+            data-active={t.id === theme.id}
+            data-scene={t.id}
+            style={{ backgroundImage: `url(${t.scene})` }}
+          />
+        ))}
       </div>
     </aside>
   );

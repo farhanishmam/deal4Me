@@ -1,5 +1,8 @@
-import { RoutePlaceholder } from "@/components/shared/RoutePlaceholder";
+import { StudioView } from "../_components/StudioView";
 
-export default function Page() {
-  return <RoutePlaceholder id="S5" name="Storefront Studio" owner="WP2" />;
+export const metadata = { title: "Studio" };
+
+export default async function Page({ params }: PageProps<"/sell/studio/[shopId]">) {
+  const { shopId } = await params;
+  return <StudioView shopId={shopId} />;
 }

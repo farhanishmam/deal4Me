@@ -1,5 +1,6 @@
-import { RoutePlaceholder } from "@/components/shared/RoutePlaceholder";
+import { ReceiptView } from "@/components/deals/money/ReceiptView";
 
-export default function Page() {
-  return <RoutePlaceholder id="V9" name="Receipt" owner="WP4" />;
+export default async function Page({ params }: PageProps<"/visit/receipt/[id]">) {
+  const { id } = await params;
+  return <ReceiptView id={id} />;
 }

@@ -1,4 +1,4 @@
-import type { MockApi } from "../mock-api";
+import { realVisitor } from "@/lib/real/visitor";
+import { realStudio } from "@/lib/real/studio";
 
-// Phase 2: real AI calls go here. Each key replaces the mock function of the same name.
-export const realAi: Partial<MockApi> = {};
+export const realAi = { ...realVisitor, ...realStudio };

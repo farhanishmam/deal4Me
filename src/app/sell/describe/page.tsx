@@ -1,5 +1,7 @@
-import { RoutePlaceholder } from "@/components/shared/RoutePlaceholder";
+import { DescribeFlow } from "@/components/onboarding/describe/DescribeFlow";
+
+export const metadata = { title: "Describe your shop" };
 
 export default function Page() {
-  return <RoutePlaceholder id="S4" name="Describe by voice or text" owner="WP1" />;
+  return <DescribeFlow />;
 }

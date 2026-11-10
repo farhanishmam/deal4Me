@@ -3,10 +3,15 @@
 import { useSyncExternalStore } from "react";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { buildSeed, type SeedState, type Timers } from "./mock-data";
+import { emptyState, type AppState, type Timers } from "./data-state";
+import { withGearPhoto } from "./gear-photos";
+import { toast } from "sonner";
+import { configureShopSync, flushPendingShopSave, getPendingShopIds, queueShopSave, runShopMutation, ingestServerShop } from "./shop-sync";
+import { configureOrderSync, getPendingOrderIds, queueOrderStatus } from "./order-sync";
 import type {
   FoodOrder,
   Item,
+  ItemRequest,
   Negotiation,
   Rental,
   Shop,
@@ -14,7 +19,7 @@ import type {
   VisitorProfile,
 } from "./types";
 
-export const STORAGE_KEY = "ms2034";
+export const STORAGE_KEY = "ridge-live";
 const STEP_LOG_LIMIT = 300;
 
 export type TimerName = "onboarding" | "deal";
@@ -23,10 +28,13 @@ export type { Timers };
 /** Caller-supplied step. The store adds `id` and `at` when they are missing. */
 export type StepInput = Omit<StepEvent, "id" | "at"> & { id?: string; at?: string };
 
-export interface StoreState extends SeedState {
+export interface StoreState extends AppState {
+  dataLoaded: boolean;
+  syncError: string | null;
   /** Insert or replace by id. New shops and items go to the end of the list. */
   upsertShop: (shop: Shop) => void;
   upsertItem: (item: Item) => void;
+  upsertItemRequest: (request: ItemRequest) => void;
   /** Insert or replace by id. New records go to the front (newest first). */
   upsertNegotiation: (negotiation: Negotiation) => void;
   upsertRental: (rental: Rental) => void;
@@ -39,8 +47,8 @@ export interface StoreState extends SeedState {
   /** Stops a running timer. Does nothing when it is not running. */
   stopTimer: (name: TimerName) => void;
   /** Marks a shop live now and records how long onboarding took (stops the onboarding timer). */
-  publishShop: (shopId: string) => void;
-  /** Back to the fake data. */
+  publishShop: (shopId: string) => Promise<void>;
+  /** Clears local preferences and reloads the server records. */
   resetDemo: () => void;
 }
 
@@ -63,13 +71,26 @@ function newStepId() {
 export const useStore = create<StoreState>()(
   persist(
     (set, get) => ({
-      ...buildSeed(),
+      ...emptyState(),
+      dataLoaded: false,
+      syncError: null,
 
-      upsertShop: (shop) => set((s) => ({ shops: upsertById(s.shops, shop, "end") })),
-      upsertItem: (item) => set((s) => ({ items: upsertById(s.items, item, "end") })),
+      upsertShop: (shop) => {
+        const current = get().shops.find((entry) => entry.id === shop.id);
+        if (current && JSON.stringify(current) === JSON.stringify(shop)) return;
+        set((s) => ({ shops: upsertById(s.shops, shop, "end") }));
+        queueShopSave(shop);
+      },
+      upsertItem: (item) => set((s) => ({ items: upsertById(s.items, withGearPhoto(item), "end") })),
+      upsertItemRequest: (request) => set((s) => ({ itemRequests: upsertById(s.itemRequests, request, "start") })),
       upsertNegotiation: (n) => set((s) => ({ negotiations: upsertById(s.negotiations, n, "start") })),
       upsertRental: (r) => set((s) => ({ rentals: upsertById(s.rentals, r, "start") })),
-      upsertOrder: (o) => set((s) => ({ orders: upsertById(s.orders, o, "start") })),
+      upsertOrder: (order) => {
+        const current = get().orders.find((entry) => entry.id === order.id);
+        set((s) => ({ orders: upsertById(s.orders, order, "start") }));
+        // New orders and canonical API responses already exist on the server.
+        if (current && current.status !== order.status) queueOrderStatus(order);
+      },
 
       setVisitor: (patch) => set((s) => ({ visitor: { ...s.visitor, ...patch } })),
 
@@ -92,55 +113,86 @@ export const useStore = create<StoreState>()(
           return { timers: { ...s.timers, [name]: { ...timer, stoppedAt: Date.now() } } };
         }),
 
-      publishShop: (shopId) => {
+      publishShop: async (shopId) => {
         const { shops, timers } = get();
         const shop = shops.find((x) => x.id === shopId);
         if (!shop) return;
         const timer = timers.onboarding;
         const stoppedAt = timer ? (timer.stoppedAt ?? Date.now()) : undefined;
         const seconds = timer && stoppedAt !== undefined ? Math.max(1, Math.round((stoppedAt - timer.startedAt) / 1000)) : undefined;
-        set((s) => ({
-          shops: upsertById(
-            s.shops,
-            { ...shop, liveAt: new Date().toISOString(), onboardingSeconds: seconds ?? shop.onboardingSeconds },
-            "end",
-          ),
-          timers: timer && timer.stoppedAt === undefined ? { ...s.timers, onboarding: { ...timer, stoppedAt } } : s.timers,
-        }));
+        try {
+          await flushPendingShopSave(shopId);
+          const saved = await runShopMutation(shopId, async () => {
+            const response = await fetch(`/api/data/shops/${encodeURIComponent(shopId)}/publish`, {
+              method: "POST",
+              headers: { "content-type": "application/json" },
+              body: JSON.stringify({ onboardingSeconds: seconds }),
+            });
+            const body = await response.json().catch(() => null);
+            if (!response.ok) throw new Error(body?.error ?? "Could not publish this shop");
+            return body as Shop;
+          });
+          ingestServerShop(saved);
+          set((s) => ({
+            syncError: getPendingShopIds().size === 0 && getPendingOrderIds().size === 0 ? null : s.syncError,
+            timers: timer && timer.stoppedAt === undefined && s.timers.onboarding?.startedAt === timer.startedAt
+              ? { ...s.timers, onboarding: { ...timer, stoppedAt } }
+              : s.timers,
+          }));
+        } catch (error) {
+          const message = error instanceof Error ? error.message : "Could not publish this shop";
+          set({ syncError: message });
+          toast.error(message, { action: { label: "Retry", onClick: () => { void get().publishShop(shopId); } } });
+          get().logStep({ actor: "System", action: "Publishing failed", detail: message });
+        }
       },
 
-      resetDemo: () => set(buildSeed()),
+      resetDemo: () => set({ ...emptyState(), dataLoaded: false, syncError: null }),
     }),
     {
       name: STORAGE_KEY,
       version: 3,
       storage: createJSONStorage(() => localStorage),
-      // The StoreHydrator component rehydrates on mount, so the server and the
-      // first client render both show the seed data.
+      // Catalog and transactions come from the server, never cached demo data.
       skipHydration: true,
-      partialize: (s) => ({
-        shops: s.shops,
-        items: s.items,
-        negotiations: s.negotiations,
-        rentals: s.rentals,
-        orders: s.orders,
-        stepLog: s.stepLog,
-        visitor: s.visitor,
-        timers: s.timers,
-      }),
-      // Older saved data is dropped in favor of the current seed.
-      migrate: () => buildSeed() as unknown as StoreState,
+      partialize: (s) => ({ stepLog: s.stepLog, visitor: s.visitor, timers: s.timers }),
+      migrate: () => emptyState() as unknown as StoreState,
     },
   ),
 );
 
+configureShopSync({
+  ingest: (shop) => useStore.setState((state) => ({ shops: upsertById(state.shops, shop, "end") })),
+  onError: (message, retry) => {
+    useStore.setState({ syncError: message });
+    toast.error(message, { action: { label: "Retry", onClick: retry } });
+    useStore.getState().logStep({ actor: "System", action: "Shop changes were not saved", detail: message });
+  },
+  onSaved: () => {
+    if (getPendingShopIds().size === 0 && getPendingOrderIds().size === 0) useStore.setState({ syncError: null });
+  },
+});
+
+configureOrderSync({
+  ingest: (order) => useStore.setState((state) => ({ orders: upsertById(state.orders, order, "start") })),
+  onError: (message, retry) => {
+    useStore.setState({ syncError: message });
+    toast.error(message, retry ? { action: { label: "Retry", onClick: retry } } : undefined);
+    useStore.getState().logStep({ actor: "System", action: "Order status was not saved", detail: message });
+  },
+  onSaved: () => {
+    if (getPendingShopIds().size === 0 && getPendingOrderIds().size === 0) useStore.setState({ syncError: null });
+  },
+});
+
 /** True once the saved state has been loaded in the browser. False on the server. */
 export function useHydrated(): boolean {
-  return useSyncExternalStore(
+  const localReady = useSyncExternalStore(
     (onChange) => useStore.persist.onFinishHydration(onChange),
     () => useStore.persist.hasHydrated(),
     () => false,
   );
+  return useStore((s) => s.dataLoaded) && localReady;
 }
 
 // Small lookups, for components that only need one record.

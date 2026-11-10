@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { money, shortDate } from "@/lib/format";
+import { thumbFor } from "@/lib/photos";
 import type { Item, Rental } from "@/lib/types";
 import { useMinuteClock } from "./hooks";
 
@@ -42,12 +43,16 @@ export function ActiveRentals({
                 className="block rounded-lg p-2 outline-none transition-colors duration-150 hover:bg-muted focus-visible:ring-3 focus-visible:ring-primary/15"
               >
                 <div className="flex items-center gap-3">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={`/demo/items/${rental.itemId}.svg`}
-                    alt=""
-                    className="size-11 shrink-0 rounded-lg bg-muted object-cover"
-                  />
+                  {item ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={thumbFor(item)}
+                      alt=""
+                      className="size-11 shrink-0 rounded-lg bg-muted object-cover"
+                    />
+                  ) : (
+                    <span className="size-11 shrink-0 rounded-lg bg-muted" aria-hidden />
+                  )}
                   <div className="min-w-0 flex-1">
                     <div className="flex items-baseline justify-between gap-3">
                       <p className="truncate text-sm font-semibold">

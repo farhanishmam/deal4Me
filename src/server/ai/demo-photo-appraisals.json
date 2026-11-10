@@ -1,0 +1,104 @@
+{
+  "e81262913f20d0005b557d36dd7fae3d12e3a9d6ddc3b758cc87a67da8f7ca65:rental": {
+    "item": {
+      "name": "Black skis",
+      "brand": null,
+      "model": null,
+      "category": "Sporting goods / Skis",
+      "condition": "used",
+      "confidence": "low",
+      "searchQuery": "all-mountain skis rental per day"
+    },
+    "suggestion": {
+      "amountCents": 3500,
+      "rangeCents": [
+        2500,
+        5000
+      ],
+      "depositCents": 28000,
+      "reasoning": "Brand and model aren't visible in the close-up, so I can't identify them; these look like used dark all-mountain skis with snow on them."
+    },
+    "basis": "estimate"
+  },
+  "5a00dcc47f87b03f2edbaa0870b1948d2c3be0aa1339294bec60092f120bed85:rental": {
+    "item": {
+      "name": "Ski and ski boot set",
+      "brand": null,
+      "model": null,
+      "category": "Sporting goods / Winter sports",
+      "condition": "good",
+      "confidence": "medium",
+      "searchQuery": "ski and boot package daily rental"
+    },
+    "suggestion": {
+      "amountCents": 4500,
+      "rangeCents": [
+        3000,
+        6500
+      ],
+      "depositCents": 36000,
+      "reasoning": "Brand is not visible, so unsure; a pair of dark all-mountain skis with black and orange 3-buckle ski boots that look in good used condition."
+    },
+    "basis": "estimate"
+  },
+  "a876fb3029698c82a3751977ce5e1ba0c16fc1c6e9dde185bd19bc369d8471bc:food": {
+    "item": {
+      "name": "Beef Street Tacos with Onion, Cilantro and Lime",
+      "brand": null,
+      "model": null,
+      "category": "Tacos",
+      "condition": "new",
+      "confidence": "medium",
+      "searchQuery": "beef street tacos plate menu price"
+    },
+    "suggestion": {
+      "amountCents": 1200,
+      "rangeCents": [
+        900,
+        1600
+      ],
+      "reasoning": "A plate of two to three street-style beef tacos on corn tortillas with onion, cilantro and a lime wedge is priced in line with casual street-taco menus."
+    },
+    "basis": "estimate"
+  },
+  "e81262913f20d0005b557d36dd7fae3d12e3a9d6ddc3b758cc87a67da8f7ca65:sale": {
+    "item": {
+      "name": "Black skis",
+      "brand": null,
+      "model": null,
+      "category": "Skis",
+      "condition": "used",
+      "confidence": "low",
+      "searchQuery": "used all-mountain skis pair"
+    },
+    "suggestion": {
+      "amountCents": 18000,
+      "rangeCents": [
+        15000,
+        20000
+      ],
+      "reasoning": "Used all-mountain skis hold decent value, with the range reflecting typical wear."
+    },
+    "basis": "estimate"
+  },
+  "5a00dcc47f87b03f2edbaa0870b1948d2c3be0aa1339294bec60092f120bed85:sale": {
+    "item": {
+      "name": "Alpine skis and ski boots set",
+      "brand": null,
+      "model": null,
+      "category": "Skiing & Snowboarding",
+      "condition": "good",
+      "confidence": "medium",
+      "searchQuery": "used alpine skis and ski boots set"
+    },
+    "suggestion": {
+      "amountCents": 22000,
+      "rangeCents": [
+        19000,
+        25000
+      ],
+      "reasoning": "A skis-and-boots bundle in good used condition sells well, with the range reflecting fit, age and boot size."
+    },
+    "basis": "estimate"
+  }
+}

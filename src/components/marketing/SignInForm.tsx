@@ -13,17 +13,17 @@ export function SignInForm() {
 
   return (
     <form
-      className="animate-rise w-full max-w-[400px]"
+      className="mx-auto w-full max-w-[400px] lg:max-w-[460px]"
       onSubmit={(e) => {
         e.preventDefault();
         router.push("/sell/dashboard");
       }}
     >
-      <h2 className="text-title">Sign in</h2>
-      <p className="mt-2 text-[15px] text-muted-foreground sm:text-sm">Welcome back to your seller studio.</p>
+      <h2 className="signin-title hidden text-title lg:block">Sign in</h2>
+      <p className="mt-2 hidden text-sm text-muted-foreground lg:block">Welcome back to your seller studio.</p>
 
-      <div className="mt-8 space-y-5">
-        <div className="space-y-2">
+      <div className="space-y-3 lg:mt-8 lg:space-y-5">
+        <div className="space-y-1.5 lg:space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input
             id="email"
@@ -31,10 +31,10 @@ export function SignInForm() {
             type="email"
             autoComplete="email"
             placeholder="you@shop.com"
-            className="h-11 text-[15px] sm:text-sm"
+            className="h-11 text-[15px] placeholder:text-muted-foreground sm:text-sm"
           />
         </div>
-        <div className="space-y-2">
+        <div className="space-y-1.5 lg:space-y-2">
           <Label htmlFor="password">Password</Label>
           <div className="relative">
             <Input
@@ -48,7 +48,7 @@ export function SignInForm() {
               type="button"
               onClick={() => setShow((v) => !v)}
               aria-pressed={show}
-              className="absolute inset-y-0 right-0 flex w-16 items-center justify-center rounded-r-lg text-sm font-semibold text-primary transition-colors duration-150 hover:text-primary-hover focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/15"
+              className="absolute inset-y-0 right-0 flex w-16 items-center justify-center rounded-r-lg text-sm font-semibold text-(--link) hover:text-primary-hover focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/15"
             >
               {show ? "Hide" : "Show"}
             </button>
@@ -56,7 +56,7 @@ export function SignInForm() {
         </div>
       </div>
 
-      <div className="mt-5 flex items-center justify-between">
+      <div className="mt-1 flex items-center justify-between lg:mt-4">
         <label className="flex min-h-11 cursor-pointer items-center gap-2.5 text-sm select-none">
           <input
             type="checkbox"
@@ -66,7 +66,7 @@ export function SignInForm() {
           />
           <span
             aria-hidden
-            className="grid size-[18px] place-items-center rounded-[5px] border border-input bg-card text-transparent transition-colors duration-150 peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground peer-focus-visible:ring-3 peer-focus-visible:ring-primary/15"
+            className="grid size-[18px] place-items-center rounded-[5px] border border-input bg-card text-transparent peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground peer-focus-visible:ring-3 peer-focus-visible:ring-primary/15"
           >
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
               <path d="M2.5 6.2 5 8.6l4.5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -76,28 +76,26 @@ export function SignInForm() {
         </label>
         <Link
           href="/sign-in"
-          className="flex min-h-11 items-center text-sm font-semibold text-primary transition-colors duration-150 hover:text-primary-hover"
+          className="flex min-h-11 items-center text-sm font-semibold text-(--link) hover:text-primary-hover"
         >
           Forgot password?
         </Link>
       </div>
 
-      <Button type="submit" size="lg" className="mt-3 h-12 w-full">
+      <Button type="submit" size="lg" className="h-12 w-full lg:mt-3">
         Sign in
       </Button>
 
-      <p className="mt-8 text-center text-sm text-muted-foreground">
+      <p className="mt-3 text-center text-sm text-muted-foreground lg:mt-8">
         New here?{" "}
-        <Link href="/sell/start" className="font-semibold text-primary transition-colors duration-150 hover:text-primary-hover">
+        <Link href="/sell/start" className="inline-flex min-h-11 items-center font-semibold text-(--link) hover:text-primary-hover">
           Start selling
         </Link>
       </p>
-      <p className="mt-2 text-center text-sm">
-        <Link
-          href="/visit"
-          className="text-muted-foreground transition-colors duration-150 hover:text-foreground"
-        >
-          Visiting Salt Lake? Open the visitor app
+      <p className="text-center text-sm text-muted-foreground">
+        Visiting Salt Lake?{" "}
+        <Link href="/visit" className="inline-flex min-h-11 items-center font-semibold text-(--link) hover:text-primary-hover">
+          Open the visitor app
         </Link>
       </p>
     </form>

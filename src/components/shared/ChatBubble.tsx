@@ -40,8 +40,8 @@ export function ChatBubble({
           "max-w-[88%] text-[15px] leading-snug",
           typing ? "rounded-2xl px-4 py-3.5" : "rounded-2xl px-4 py-2.5",
           right
-            ? "rounded-br-md bg-ink text-ink-foreground"
-            : "rounded-bl-md border border-border bg-card text-card-foreground"
+            ? "rounded-br-md bg-info-soft text-foreground"
+            : "rounded-bl-md bg-muted text-foreground"
         )}
       >
         {typing ? (

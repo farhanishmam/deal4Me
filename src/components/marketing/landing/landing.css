@@ -1,0 +1,53 @@
+/* Landing: slow column drift, entrance fade, one ambient push-in. */
+
+@keyframes cin-up {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(0, calc(var(--cin-shift, 50%) * -1), 0); }
+}
+
+@keyframes cin-down {
+  from { transform: translate3d(0, calc(var(--cin-shift, 50%) * -1), 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+
+@keyframes cin-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes cin-push {
+  from { transform: scale(1.12); }
+  to { transform: scale(1); }
+}
+
+@keyframes cin-settle {
+  from { transform: scale(1.0); }
+  to { transform: scale(1.04); }
+}
+
+.cin-col {
+  will-change: transform;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+.cin-col-up { animation-name: cin-up; }
+.cin-col-down { animation-name: cin-down; }
+
+.cin-fade {
+  animation: cin-fade 1.1s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+/* Phone hero: a short push-in on load, then a very slow settle. */
+.cin-hero-img {
+  animation:
+    cin-push 1.8s cubic-bezier(0.22, 0.61, 0.36, 1) both,
+    cin-settle 40s linear 1.8s forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cin-col,
+  .cin-fade,
+  .cin-hero-img {
+    animation: none !important;
+  }
+}

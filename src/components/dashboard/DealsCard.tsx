@@ -1,4 +1,5 @@
 import { money, perDay } from "@/lib/format";
+import { thumbFor } from "@/lib/photos";
 import type { Item, Negotiation } from "@/lib/types";
 
 export function DealsCard({
@@ -21,26 +22,31 @@ export function DealsCard({
       {deals.map((deal) => {
         const item = items.find((i) => i.id === deal.itemId);
         const agreed = deal.agreedDailyCents ?? deal.askingCents;
-        const saved = Math.max(0, deal.askingCents - agreed) * deal.days;
+        const sale = deal.kind === "sale";
+        const saved = Math.max(0, deal.askingCents - agreed) * (sale ? 1 : deal.days);
         return (
           <li key={deal.id} className="flex items-center gap-3">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={`/demo/items/${deal.itemId}.svg`}
-              alt=""
-              className="size-11 shrink-0 rounded-lg bg-muted object-cover"
-            />
+            {item ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={thumbFor(item)}
+                alt=""
+                className="size-11 shrink-0 rounded-lg bg-muted object-cover"
+              />
+            ) : (
+              <span className="size-11 shrink-0 rounded-lg bg-muted" aria-hidden />
+            )}
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold">
-                {item?.name ?? "Rental"}
+                {item?.name ?? (sale ? "Purchase" : "Rental")}
               </p>
               <p className="text-label text-muted-foreground tabular-nums">
-                {deal.days} days
+                {sale ? "Purchase" : `${deal.days} ${deal.days === 1 ? "day" : "days"}`}
               </p>
             </div>
             <div className="text-right">
               <p className="text-sm font-semibold tabular-nums">
-                {perDay(agreed)}
+                {sale ? money(agreed) : perDay(agreed)}
               </p>
               {saved > 0 && (
                 <p className="text-label font-semibold text-success tabular-nums">

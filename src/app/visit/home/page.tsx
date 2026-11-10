@@ -1,5 +1,5 @@
-import { Discover } from "@/components/visitor/Discover";
+import { Ask } from "@/components/visitor/ask/Ask";
 
 export default function Page() {
-  return <Discover />;
+  return <Ask />;
 }

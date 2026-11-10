@@ -1,6 +1,5 @@
-import { mockApi, type MockApi } from "./mock-api";
+import type { Api } from "./api-contract";
 import { realApi } from "./real";
 
-// Set NEXT_PUBLIC_USE_MOCK=0 to let real calls replace the mock ones.
-export const api: MockApi =
-  process.env.NEXT_PUBLIC_USE_MOCK === "0" ? { ...mockApi, ...realApi } : mockApi;
+// Integration owns this entry point: all product calls use the real backend.
+export const api: Api = realApi;

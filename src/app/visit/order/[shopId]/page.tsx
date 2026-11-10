@@ -1,5 +1,6 @@
-import { RoutePlaceholder } from "@/components/shared/RoutePlaceholder";
+import { OrderFlow } from "@/components/visitor/order/OrderFlow";
 
-export default function Page() {
-  return <RoutePlaceholder id="V8" name="Food order" owner="WP3" />;
+export default async function Page({ params }: PageProps<"/visit/order/[shopId]">) {
+  const { shopId } = await params;
+  return <OrderFlow shopId={shopId} />;
 }
