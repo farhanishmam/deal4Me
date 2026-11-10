@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320" role="img" aria-labelledby="t d">
+  <title id="t">Deal4Me: your agent finds and negotiates the best local deals in Salt Lake. Winner, Best Use of AI, Crimson Hack 2026.</title>
+  <desc id="d">Animated banner on a dark ink background. On the left: the Deal4Me peak logo mark and wordmark, the tagline "Your agent finds and negotiates the best local deals in Salt Lake.", and a crimson award pill with a trophy reading "Winner · Best Use of AI · Crimson Hack 2026". A faint Wasatch ridgeline runs along the bottom and draws itself in from left to right. On the right, a 12 second loop shows a price tag for all-mountain skis listed at $45 per day while two agents haggle in chat bubbles: your agent (glacier blue) offers $34, the shop agent counters at $42, your agent offers $38, and the shop agent meets at $40. The price on the tag ticks down from $45 to $42 to $40, then the tag settles on a crimson Deal pill, the old $45 struck through, and a green check. The resting frame shows the agreed deal at $40.</desc>
+  <style>
+.a{animation-duration:12s;animation-iteration-count:infinite;animation-timing-function:ease-in-out}
+.fb{transform-box:fill-box;transform-origin:center}
+.num{font-variant-numeric:tabular-nums}
+.buy1{opacity:0;animation-name:buy1}
+.sel1{opacity:0;animation-name:sel1}
+.buy2{animation-name:buy2}
+.sel2{animation-name:sel2}
+.p45{opacity:0;animation-name:p45}
+.p42{opacity:0;animation-name:p42}
+.p40{fill:#b4232a;animation-name:p40}
+.nego{opacity:0;animation-name:nego}
+.deal{animation-name:deal}
+.strike{animation-name:strike}
+.check{animation-name:check}
+.ridge{stroke-dasharray:1425 1425;stroke-dashoffset:0;animation-name:ridge}
+@keyframes buy1{0%{opacity:0;transform:translateY(8px)}18.333%{opacity:0;transform:translateY(8px)}22.083%{opacity:1;transform:translateY(0)}44.167%{opacity:1;transform:translateY(0)}46.667%{opacity:0;transform:translateY(-6px)}100%{opacity:0;transform:translateY(-6px)}}
+@keyframes sel1{0%{opacity:0;transform:translateY(8px)}29.167%{opacity:0;transform:translateY(8px)}32.917%{opacity:1;transform:translateY(0)}44.167%{opacity:1;transform:translateY(0)}46.667%{opacity:0;transform:translateY(-6px)}100%{opacity:0;transform:translateY(-6px)}}
+@keyframes buy2{0%{opacity:1;transform:translateY(0)}8.333%{opacity:1;transform:translateY(0)}11.25%{opacity:0;transform:translateY(-6px)}48.75%{opacity:0;transform:translateY(8px)}52.5%{opacity:1;transform:translateY(0)}100%{opacity:1;transform:translateY(0)}}
+@keyframes sel2{0%{opacity:1;transform:translateY(0)}8.333%{opacity:1;transform:translateY(0)}11.25%{opacity:0;transform:translateY(-6px)}59.167%{opacity:0;transform:translateY(8px)}62.917%{opacity:1;transform:translateY(0)}100%{opacity:1;transform:translateY(0)}}
+@keyframes p45{0%{opacity:0;transform:translateY(-14px)}10%{opacity:0;transform:translateY(-14px)}12.917%{opacity:1;transform:translateY(0)}30.833%{opacity:1;transform:translateY(0)}32.917%{opacity:0;transform:translateY(-14px)}100%{opacity:0;transform:translateY(-14px)}}
+@keyframes p42{0%{opacity:0;transform:translateY(14px)}32.5%{opacity:0;transform:translateY(14px)}35%{opacity:1;transform:translateY(0)}60.833%{opacity:1;transform:translateY(0)}62.917%{opacity:0;transform:translateY(-14px)}100%{opacity:0;transform:translateY(-14px)}}
+@keyframes p40{0%{opacity:1;transform:translateY(0);fill:#b4232a}8.333%{opacity:1;transform:translateY(0);fill:#b4232a}10.417%{opacity:0;transform:translateY(14px);fill:#b4232a}11.25%{opacity:0;transform:translateY(14px);fill:#16181d}62.5%{opacity:0;transform:translateY(14px);fill:#16181d}65%{opacity:1;transform:translateY(0);fill:#16181d}70%{opacity:1;transform:translateY(0);fill:#16181d}73.333%{opacity:1;transform:translateY(0);fill:#b4232a}100%{opacity:1;transform:translateY(0);fill:#b4232a}}
+@keyframes nego{0%{opacity:0}11.667%{opacity:0}14.167%{opacity:1}69.167%{opacity:1}70.833%{opacity:0}100%{opacity:0}}
+@keyframes deal{0%{opacity:1;transform:scale(1)}8.333%{opacity:1;transform:scale(1)}10.833%{opacity:0;transform:scale(.92)}70.833%{opacity:0;transform:scale(.92)}73.75%{opacity:1;transform:scale(1)}100%{opacity:1;transform:scale(1)}}
+@keyframes strike{0%{opacity:1}8.333%{opacity:1}10.417%{opacity:0}72.5%{opacity:0}75%{opacity:1}100%{opacity:1}}
+@keyframes check{0%{opacity:1;transform:scale(1)}8.333%{opacity:1;transform:scale(1)}10.833%{opacity:0;transform:scale(.6)}72.917%{opacity:0;transform:scale(.6)}75.833%{opacity:1;transform:scale(1.08)}77.917%{opacity:1;transform:scale(1)}100%{opacity:1;transform:scale(1)}}
+@keyframes ridge{0%{stroke-dashoffset:0}8.333%{stroke-dashoffset:0}20%{stroke-dashoffset:-1425}40%{stroke-dashoffset:-2850}100%{stroke-dashoffset:-2850}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+  <defs>
+    <clipPath id="frame"><rect width="1280" height="320" rx="20"/></clipPath>
+    <clipPath id="priceclip"><rect x="798" y="116" width="120" height="48"/></clipPath>
+    <linearGradient id="gBack" x1="0" y1="238" x2="0" y2="320" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f7f7f5" stop-opacity="0.075"/>
+      <stop offset="1" stop-color="#f7f7f5" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="gFront" x1="0" y1="272" x2="0" y2="320" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f7f7f5" stop-opacity="0.06"/>
+      <stop offset="1" stop-color="#f7f7f5" stop-opacity="0.01"/>
+    </linearGradient>
+    <radialGradient id="gGlow" cx="980" cy="140" r="420" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f7f7f5" stop-opacity="0.05"/>
+      <stop offset="1" stop-color="#f7f7f5" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur" x="-5%" y="-50%" width="110%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>
+  </defs>
+  <rect width="1280" height="320" rx="20" fill="#14171d"/>
+  <g clip-path="url(#frame)">
+    <rect width="1280" height="320" fill="url(#gGlow)"/>
+    <!-- Wasatch ridgeline -->
+    <path d="M-48.4,281.86 L-28.72,282.88 L-22.16,281.18 L-15.6,277.78 L-9.04,276.76 L-2.48,277.44 L4.08,276.08 L23.76,281.18 L36.88,281.18 L43.44,279.14 L50,282.54 L69.68,282.54 L89.36,284.58 L109.04,284.58 L115.6,281.86 L135.28,283.56 L141.84,282.54 L154.96,276.42 L168.08,277.78 L194.32,277.78 L207.44,274.04 L227.12,266.22 L246.8,263.5 L273.04,256.36 L286.16,255 L299.28,251.26 L305.84,257.38 L312.4,261.12 L332.08,267.24 L338.64,271.32 L351.76,277.1 L378,282.2 L391.12,282.88 L430.48,292.06 L443.6,290.02 L456.72,293.42 L469.84,292.4 L482.96,288.66 L509.2,287.3 L528.88,281.18 L542,280.84 L561.68,278.12 L574.8,281.52 L601.04,282.54 L614.16,285.26 L620.72,284.24 L653.52,292.06 L666.64,291.04 L686.32,282.88 L699.44,281.86 L706,279.82 L732.24,266.56 L738.8,264.86 L778.16,241.74 L784.72,239.36 L797.84,238 L810.96,249.22 L824.08,255.34 L837.2,257.38 L850.32,261.8 L863.44,272.68 L883.12,285.6 L902.8,290.02 L909.36,295.46 L922.48,300.9 L929.04,302.26 L935.6,301.92 L942.16,305.32 L955.28,307.02 L961.84,307.36 L981.52,302.26 L994.64,301.24 L1007.76,298.18 L1020.88,292.06 L1027.44,291.04 L1034,288.32 L1040.56,283.22 L1053.68,276.42 L1079.92,251.26 L1086.48,247.18 L1093.04,249.22 L1099.6,249.56 L1119.28,256.02 L1125.84,257.04 L1145.52,265.2 L1152.08,266.22 L1165.2,264.86 L1191.44,273.7 L1204.56,274.04 L1217.68,268.26 L1224.24,269.62 L1237.36,267.92 L1243.92,268.94 L1257.04,266.22 L1270.16,266.9 L1283.28,272.34 L1296.4,273.7 L1296.4,324 L-48.4,324 Z" fill="url(#gBack)"/>
+    <path class="a ridge" d="M-48.4,281.86 L-28.72,282.88 L-22.16,281.18 L-15.6,277.78 L-9.04,276.76 L-2.48,277.44 L4.08,276.08 L23.76,281.18 L36.88,281.18 L43.44,279.14 L50,282.54 L69.68,282.54 L89.36,284.58 L109.04,284.58 L115.6,281.86 L135.28,283.56 L141.84,282.54 L154.96,276.42 L168.08,277.78 L194.32,277.78 L207.44,274.04 L227.12,266.22 L246.8,263.5 L273.04,256.36 L286.16,255 L299.28,251.26 L305.84,257.38 L312.4,261.12 L332.08,267.24 L338.64,271.32 L351.76,277.1 L378,282.2 L391.12,282.88 L430.48,292.06 L443.6,290.02 L456.72,293.42 L469.84,292.4 L482.96,288.66 L509.2,287.3 L528.88,281.18 L542,280.84 L561.68,278.12 L574.8,281.52 L601.04,282.54 L614.16,285.26 L620.72,284.24 L653.52,292.06 L666.64,291.04 L686.32,282.88 L699.44,281.86 L706,279.82 L732.24,266.56 L738.8,264.86 L778.16,241.74 L784.72,239.36 L797.84,238 L810.96,249.22 L824.08,255.34 L837.2,257.38 L850.32,261.8 L863.44,272.68 L883.12,285.6 L902.8,290.02 L909.36,295.46 L922.48,300.9 L929.04,302.26 L935.6,301.92 L942.16,305.32 L955.28,307.02 L961.84,307.36 L981.52,302.26 L994.64,301.24 L1007.76,298.18 L1020.88,292.06 L1027.44,291.04 L1034,288.32 L1040.56,283.22 L1053.68,276.42 L1079.92,251.26 L1086.48,247.18 L1093.04,249.22 L1099.6,249.56 L1119.28,256.02 L1125.84,257.04 L1145.52,265.2 L1152.08,266.22 L1165.2,264.86 L1191.44,273.7 L1204.56,274.04 L1217.68,268.26 L1224.24,269.62 L1237.36,267.92 L1243.92,268.94 L1257.04,266.22 L1270.16,266.9 L1283.28,272.34 L1296.4,273.7" fill="none" stroke="#e8606a" stroke-opacity="0.14" stroke-width="6" stroke-linejoin="round" filter="url(#blur)"/>
+    <path class="a ridge" d="M-48.4,281.86 L-28.72,282.88 L-22.16,281.18 L-15.6,277.78 L-9.04,276.76 L-2.48,277.44 L4.08,276.08 L23.76,281.18 L36.88,281.18 L43.44,279.14 L50,282.54 L69.68,282.54 L89.36,284.58 L109.04,284.58 L115.6,281.86 L135.28,283.56 L141.84,282.54 L154.96,276.42 L168.08,277.78 L194.32,277.78 L207.44,274.04 L227.12,266.22 L246.8,263.5 L273.04,256.36 L286.16,255 L299.28,251.26 L305.84,257.38 L312.4,261.12 L332.08,267.24 L338.64,271.32 L351.76,277.1 L378,282.2 L391.12,282.88 L430.48,292.06 L443.6,290.02 L456.72,293.42 L469.84,292.4 L482.96,288.66 L509.2,287.3 L528.88,281.18 L542,280.84 L561.68,278.12 L574.8,281.52 L601.04,282.54 L614.16,285.26 L620.72,284.24 L653.52,292.06 L666.64,291.04 L686.32,282.88 L699.44,281.86 L706,279.82 L732.24,266.56 L738.8,264.86 L778.16,241.74 L784.72,239.36 L797.84,238 L810.96,249.22 L824.08,255.34 L837.2,257.38 L850.32,261.8 L863.44,272.68 L883.12,285.6 L902.8,290.02 L909.36,295.46 L922.48,300.9 L929.04,302.26 L935.6,301.92 L942.16,305.32 L955.28,307.02 L961.84,307.36 L981.52,302.26 L994.64,301.24 L1007.76,298.18 L1020.88,292.06 L1027.44,291.04 L1034,288.32 L1040.56,283.22 L1053.68,276.42 L1079.92,251.26 L1086.48,247.18 L1093.04,249.22 L1099.6,249.56 L1119.28,256.02 L1125.84,257.04 L1145.52,265.2 L1152.08,266.22 L1165.2,264.86 L1191.44,273.7 L1204.56,274.04 L1217.68,268.26 L1224.24,269.62 L1237.36,267.92 L1243.92,268.94 L1257.04,266.22 L1270.16,266.9 L1283.28,272.34 L1296.4,273.7" fill="none" stroke="#f08a8e" stroke-opacity="0.34" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M-6,306.5 L19.6,312.5 L38.8,311.6 L45.2,309.5 L51.6,310.4 L83.6,306.8 L96.4,302.3 L115.6,301.4 L122,299 L141.2,296.6 L154,298.4 L166.8,293.9 L173.2,294.8 L186,292.7 L198.8,294.2 L230.8,309.8 L243.6,308.6 L256.4,304.7 L262.8,307.7 L269.2,308.6 L275.6,307.7 L282,304.1 L288.4,298.1 L301.2,299.3 L307.6,296.6 L314,289.7 L320.4,286.7 L326.8,281 L333.2,277.1 L346,279.8 L352.4,284 L371.6,288.8 L378,287.9 L384.4,290.3 L397.2,288.5 L403.6,290.3 L410,288.8 L422.8,290.9 L429.2,289.4 L435.6,285.8 L442,286.7 L454.8,284.9 L467.6,280.4 L474,281.3 L480.4,280.7 L493.2,276.5 L499.6,272 L506,275.9 L518.8,280.1 L525.2,285.8 L531.6,286.1 L538,284.6 L550.8,286.1 L570,281.9 L589.2,281.3 L621.2,273.8 L634,278 L646.8,280.4 L672.4,281 L685.2,287 L691.6,286.7 L698,289.1 L704.4,289.7 L723.6,285.5 L730,287 L736.4,286.1 L749.2,282.2 L755.6,278.6 L762,277.7 L768.4,279.5 L774.8,285.5 L781.2,289.4 L787.6,290.6 L794,290.3 L800.4,288.5 L813.2,288.5 L819.6,286.4 L838.8,290.3 L845.2,289.1 L851.6,290.6 L858,288.5 L864.4,288.2 L877.2,294.5 L896.4,296.9 L909.2,291.8 L915.6,290.9 L922,292.7 L928.4,292.4 L947.6,286.7 L954,283.7 L966.8,272.6 L973.2,277.4 L979.6,280.4 L992.4,279.8 L1018,295.4 L1030.8,297.2 L1043.6,300.2 L1050,302.9 L1056.4,300.8 L1062.8,300.2 L1069.2,303.5 L1075.6,303.8 L1101.2,302 L1107.6,303.5 L1120.4,302.9 L1126.8,300.2 L1133.2,302.3 L1139.6,301.4 L1146,299 L1158.8,298.4 L1178,293 L1190.8,291.2 L1210,293 L1216.4,290 L1222.8,290.9 L1242,286.7 L1248.4,287 L1267.6,283.7 L1274,284.6 L1299.6,292.7 L1306,292.4 L1306,324 L-6,324 Z" fill="url(#gFront)"/>
+    <path d="M-6,306.5 L19.6,312.5 L38.8,311.6 L45.2,309.5 L51.6,310.4 L83.6,306.8 L96.4,302.3 L115.6,301.4 L122,299 L141.2,296.6 L154,298.4 L166.8,293.9 L173.2,294.8 L186,292.7 L198.8,294.2 L230.8,309.8 L243.6,308.6 L256.4,304.7 L262.8,307.7 L269.2,308.6 L275.6,307.7 L282,304.1 L288.4,298.1 L301.2,299.3 L307.6,296.6 L314,289.7 L320.4,286.7 L326.8,281 L333.2,277.1 L346,279.8 L352.4,284 L371.6,288.8 L378,287.9 L384.4,290.3 L397.2,288.5 L403.6,290.3 L410,288.8 L422.8,290.9 L429.2,289.4 L435.6,285.8 L442,286.7 L454.8,284.9 L467.6,280.4 L474,281.3 L480.4,280.7 L493.2,276.5 L499.6,272 L506,275.9 L518.8,280.1 L525.2,285.8 L531.6,286.1 L538,284.6 L550.8,286.1 L570,281.9 L589.2,281.3 L621.2,273.8 L634,278 L646.8,280.4 L672.4,281 L685.2,287 L691.6,286.7 L698,289.1 L704.4,289.7 L723.6,285.5 L730,287 L736.4,286.1 L749.2,282.2 L755.6,278.6 L762,277.7 L768.4,279.5 L774.8,285.5 L781.2,289.4 L787.6,290.6 L794,290.3 L800.4,288.5 L813.2,288.5 L819.6,286.4 L838.8,290.3 L845.2,289.1 L851.6,290.6 L858,288.5 L864.4,288.2 L877.2,294.5 L896.4,296.9 L909.2,291.8 L915.6,290.9 L922,292.7 L928.4,292.4 L947.6,286.7 L954,283.7 L966.8,272.6 L973.2,277.4 L979.6,280.4 L992.4,279.8 L1018,295.4 L1030.8,297.2 L1043.6,300.2 L1050,302.9 L1056.4,300.8 L1062.8,300.2 L1069.2,303.5 L1075.6,303.8 L1101.2,302 L1107.6,303.5 L1120.4,302.9 L1126.8,300.2 L1133.2,302.3 L1139.6,301.4 L1146,299 L1158.8,298.4 L1178,293 L1190.8,291.2 L1210,293 L1216.4,290 L1222.8,290.9 L1242,286.7 L1248.4,287 L1267.6,283.7 L1274,284.6 L1299.6,292.7 L1306,292.4" fill="none" stroke="#f7f7f5" stroke-opacity="0.12" stroke-width="1.3" stroke-linejoin="round"/>
+  </g>
+  <g font-family="'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+    <!-- award pill -->
+    <rect x="72" y="58" width="372" height="34" rx="17.0" fill="#b4232a" fill-opacity="0.2" stroke="#b4232a" stroke-opacity="0.75"/>
+    <circle cx="89.0" cy="75.0" r="12" fill="#b4232a"/>
+    <g transform="translate(89 74.8)" fill="#ffffff">
+      <path d="M-4.6,-5.4 H4.6 V-2.2 A4.6,4.6 0 0 1 -4.6,-2.2 Z"/>
+      <path d="M-4.6,-4.4 H-6.6 V-2.9 A2.7,2.7 0 0 0 -3.9,0.1 M4.6,-4.4 H6.6 V-2.9 A2.7,2.7 0 0 1 3.9,0.1" fill="none" stroke="#ffffff" stroke-width="1.3" stroke-linecap="round"/>
+      <rect x="-0.95" y="2.2" width="1.9" height="2.4"/>
+      <rect x="-3.4" y="4.3" width="6.8" height="1.8" rx="0.7"/>
+    </g>
+    <text x="270" y="80" text-anchor="middle" font-size="14" font-weight="600" fill="#f7f7f5"><tspan font-weight="700">Winner</tspan><tspan fill-opacity="0.72"> · Best Use of AI · Crimson Hack 2026</tspan></text>
+    <!-- logo mark + wordmark -->
+    <g transform="translate(72 120) scale(1.875)">
+      <rect width="32" height="32" rx="9" fill="#f7f7f5"/>
+      <path d="M5.5 23.5 12.8 9.8c.4-.7 1.4-.7 1.8 0l3.3 6.1 1.9-3.2c.4-.7 1.4-.7 1.8 0l5.4 10.8c.3.6-.1 1.2-.8 1.2H6.3c-.7 0-1.1-.5-.8-1.2Z" fill="#14171d"/>
+    </g>
+    <text x="152" y="172" font-size="64" font-weight="700" letter-spacing="-1" fill="#f7f7f5">Deal4Me</text>
+    <text x="72" y="218" font-size="18" fill="#f7f7f5" fill-opacity="0.64">Your agent finds and negotiates the best local deals in Salt Lake.</text>
+    <!-- price tag -->
+    <path d="M796,66 L974,66 Q988,66 988,80 L988,204 Q988,218 974,218 L796,218 Q788,218 782.34,212.34 L757.66,187.66 Q752,182 752,174 L752,110 Q752,102 757.66,96.34 L782.34,71.66 Q788,66 796,66 Z M766.5,142 A6.5,6.5 0 1 0 779.5,142 A6.5,6.5 0 1 0 766.5,142 Z" fill="#ffffff" fill-rule="evenodd"/>
+    <text x="802" y="100" font-size="16" font-weight="600" fill="#16181d">All-mountain skis</text>
+    <g clip-path="url(#priceclip)">
+      <text class="a num p45" x="802" y="156" font-size="46" font-weight="700" letter-spacing="-1" fill="#16181d">$45</text>
+      <text class="a num p42" x="802" y="156" font-size="46" font-weight="700" letter-spacing="-1" fill="#16181d">$42</text>
+      <text class="a num p40" x="802" y="156" font-size="46" font-weight="700" letter-spacing="-1">$40</text>
+    </g>
+    <!-- the invisible price copy sizes the gap, so "/ day" sits right after the digits in any font -->
+    <text class="num" x="802" y="156" fill="#6b7280"><tspan font-size="46" font-weight="700" letter-spacing="-1" fill-opacity="0">$40</tspan><tspan font-size="16" dx="6">/ day</tspan></text>
+    <g class="a nego">
+      <rect x="802" y="174" width="106" height="26" rx="13" fill="#fbf1e5"/>
+      <text x="855" y="191.5" text-anchor="middle" font-size="13" font-weight="600" fill="#96450a">Negotiating</text>
+    </g>
+    <g class="a deal fb">
+      <rect x="802" y="174" width="62" height="26" rx="13" fill="#b4232a"/>
+      <text x="833" y="191.5" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">Deal</text>
+    </g>
+    <g class="a strike">
+      <text x="876" y="192" font-size="15" fill="#6b7280">$45</text>
+      <line x1="874" y1="187" x2="905" y2="187" stroke="#6b7280" stroke-width="1.5"/>
+    </g>
+    <g class="a check fb">
+      <circle cx="987" cy="67" r="15" fill="#15803d" stroke="#14171d" stroke-width="3"/>
+      <path d="M981,67.5 l4,4 l8,-8.5" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <!-- agent chat -->
+    <text x="1208" y="85" text-anchor="end" font-size="13" font-weight="600" fill="#7cc7dd">Your agent</text>
+    <text x="1032" y="161" font-size="13" font-weight="600" fill="#f7f7f5" fill-opacity="0.64">Shop agent</text>
+    <g class="a buy1">
+      <path d="M1087,95 H1193 A15,15 0 0 1 1208,110 V129 A4,4 0 0 1 1204,133 H1087 A15,15 0 0 1 1072,118 V110 A15,15 0 0 1 1087,95 Z" fill="#0e7490" fill-opacity="0.34" stroke="#7cc7dd" stroke-opacity="0.38" stroke-width="1"/>
+      <text x="1140" y="119.2" text-anchor="middle" font-size="15" font-weight="600" fill="#e7f3f6">Offer $34</text>
+    </g>
+    <g class="a buy2">
+      <path d="M1087,95 H1193 A15,15 0 0 1 1208,110 V129 A4,4 0 0 1 1204,133 H1087 A15,15 0 0 1 1072,118 V110 A15,15 0 0 1 1087,95 Z" fill="#0e7490" fill-opacity="0.34" stroke="#7cc7dd" stroke-opacity="0.38" stroke-width="1"/>
+      <text x="1140" y="119.2" text-anchor="middle" font-size="15" font-weight="600" fill="#e7f3f6">Offer $38</text>
+    </g>
+    <g class="a sel1">
+      <path d="M1047,171 H1153 A15,15 0 0 1 1168,186 V194 A15,15 0 0 1 1153,209 H1036 A4,4 0 0 1 1032,205 V186 A15,15 0 0 1 1047,171 Z" fill="#1e222a" stroke="#f7f7f5" stroke-opacity="0.14" stroke-width="1"/>
+      <text x="1100" y="195.2" text-anchor="middle" font-size="15" font-weight="600" fill="#f7f7f5">Counter $42</text>
+    </g>
+    <g class="a sel2">
+      <path d="M1047,171 H1153 A15,15 0 0 1 1168,186 V194 A15,15 0 0 1 1153,209 H1036 A4,4 0 0 1 1032,205 V186 A15,15 0 0 1 1047,171 Z" fill="#1e222a" stroke="#f7f7f5" stroke-opacity="0.14" stroke-width="1"/>
+      <text x="1100" y="195.2" text-anchor="middle" font-size="15" font-weight="600" fill="#f7f7f5">Meet at $40</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="t d">
+<title id="t">Two private AI agents negotiate a price in Deal4Me, and rules.ts holds the line</title>
+<desc id="d">Animated diagram of a real Deal4Me negotiation for black skis, a 3-day rental listed at $35 per day. On the left, the owner agent (Claude Haiku) knows only the private floor of $22 per day; it sees the buyer's offers but is never told they are the buyer's limit. On the right, the buyer agent (Claude Haiku) knows only its client's price of $30 per day and never sees the floor. In the public chat between them, nine verbatim messages appear one at a time; each carries its price as a separate structured chip (ask $35, offer $30, counter $33, offer $30, counter $32, offer $30, counter $31, offer $30, accept $30), because messages may not contain digits. Below, every owner move passes a rules.ts gate, and a price track from $20 to $36 shows the floor at $22, the buyer's price at $30 and the list price at $35. Each round, rules.ts highlights the only legal counter lane ($32 to $34, then $32 only, then $31 only, then accept only because no counter is left) and the owner's ask steps 35, 33, 32, 31, 30. The run ends in a deal at $30 per day, exactly min(buyer price, list price): 3 days, $90 fee, saved $15, and a $280 deposit held, not charged.</desc>
+<style>
+.sans{font-family:'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif}
+.mono{font-family:'JetBrains Mono', SFMono-Regular, Menlo, Consolas, monospace}
+text{font-family:'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif}
+text.mono,tspan.mono{font-family:'JetBrains Mono', SFMono-Regular, Menlo, Consolas, monospace}
+.gring,.rgo,.rgb,.deal,.chk,.dring{transform-box:fill-box;transform-origin:center}
+.b1{opacity:0} .b2{opacity:0} .b3{opacity:0} .b4{opacity:0} .b5{opacity:0} .b6{opacity:0} .b7{opacity:1} .b8{opacity:1} .b9{opacity:1} .col{transform:translateY(-528px)} .thumb{transform:translateX(550px)} .tv35{opacity:0} .tv33{opacity:0} .tv32{opacity:0} .tv31{opacity:0} .tv30{opacity:1} .ln1{opacity:0} .ln2{opacity:0} .ln3{opacity:0} .ln4{opacity:1} .gring,.gon,.pkt{opacity:0} .spo,.rgo{opacity:0} .spb,.rgb{opacity:0} .rd1{opacity:0} .rd2{opacity:0} .rd3{opacity:0} .rd4{opacity:0} .rd5{opacity:1} .ph,.mA,.dring{opacity:0}
+.b1,.b2,.b3,.b4,.b5,.b6,.b7,.b8,.b9,.col,.thumb,.tv35,.tv33,.tv32,.tv31,.tv30,.pd35,.pd33,.pd32,.pd31,.ln1,.ln2,.ln3,.ln4,.gring,.gon,.pkt,.spo,.spb,.rgo,.rgb,.rd1,.rd2,.rd3,.rd4,.rd5,.ph,.deal,.chk,.chkp,.sub,.mA,.mB,.dring{animation-duration:16.0s;animation-iteration-count:infinite;animation-timing-function:ease-in-out;animation-fill-mode:both}
+.b1{animation-name:kb1} .b2{animation-name:kb2} .b3{animation-name:kb3} .b4{animation-name:kb4} .b5{animation-name:kb5} .b6{animation-name:kb6} .b7{animation-name:kb7} .b8{animation-name:kb8} .b9{animation-name:kb9} .col{animation-name:kcol} .thumb{animation-name:kthumb} .tv35{animation-name:ktv35} .tv33{animation-name:ktv33} .tv32{animation-name:ktv32} .tv31{animation-name:ktv31} .tv30{animation-name:ktv30} .pd35{animation-name:kpd35} .pd33{animation-name:kpd33} .pd32{animation-name:kpd32} .pd31{animation-name:kpd31} .ln1{animation-name:kln1} .ln2{animation-name:kln2} .ln3{animation-name:kln3} .ln4{animation-name:kln4} .gring{animation-name:kgring} .gon{animation-name:kgon} .pkt{animation-name:kpkt} .spo{animation-name:kspo} .rgo{animation-name:krgo} .spb{animation-name:kspb} .rgb{animation-name:krgb} .rd1{animation-name:krd1} .rd2{animation-name:krd2} .rd3{animation-name:krd3} .rd4{animation-name:krd4} .rd5{animation-name:krd5} .ph{animation-name:kph} .deal{animation-name:kdeal} .chk{animation-name:kchk} .chkp{animation-name:kchkp} .sub{animation-name:ksub} .mA{animation-name:kmA} .mB{animation-name:kmB} .dring{animation-name:kdring}
+@keyframes kb1{0.0%{opacity:0;transform:translateY(12px)} 3.125%{opacity:0;transform:translateY(12px)} 5.625%{opacity:1;transform:translateY(0)} 27.5%{opacity:1;transform:translateY(0)} 30.0%{opacity:0;transform:translateY(0)} 100.0%{opacity:0;transform:translateY(0)}}
+@keyframes kb2{0.0%{opacity:0;transform:translateY(12px)} 11.25%{opacity:0;transform:translateY(12px)} 13.75%{opacity:1;transform:translateY(0)} 35.625%{opacity:1;transform:translateY(0)} 38.125%{opacity:0;transform:translateY(0)} 100.0%{opacity:0;transform:translateY(0)}}
+@keyframes kb3{0.0%{opacity:0;transform:translateY(12px)} 19.375%{opacity:0;transform:translateY(12px)} 21.875%{opacity:1;transform:translateY(0)} 43.75%{opacity:1;transform:translateY(0)} 46.25%{opacity:0;transform:translateY(0)} 100.0%{opacity:0;transform:translateY(0)}}
+@keyframes kb4{0.0%{opacity:0;transform:translateY(12px)} 27.5%{opacity:0;transform:translateY(12px)} 30.0%{opacity:1;transform:translateY(0)} 51.875%{opacity:1;transform:translateY(0)} 54.375%{opacity:0;transform:translateY(0)} 100.0%{opacity:0;transform:translateY(0)}}
+@keyframes kb5{0.0%{opacity:0;transform:translateY(12px)} 35.625%{opacity:0;transform:translateY(12px)} 38.125%{opacity:1;transform:translateY(0)} 60.0%{opacity:1;transform:translateY(0)} 62.5%{opacity:0;transform:translateY(0)} 100.0%{opacity:0;transform:translateY(0)}}
+@keyframes kb6{0.0%{opacity:0;transform:translateY(12px)} 43.75%{opacity:0;transform:translateY(12px)} 46.25%{opacity:1;transform:translateY(0)} 68.125%{opacity:1;transform:translateY(0)} 70.625%{opacity:0;transform:translateY(0)} 100.0%{opacity:0;transform:translateY(0)}}
+@keyframes kb7{0.0%{opacity:0;transform:translateY(12px)} 51.875%{opacity:0;transform:translateY(12px)} 54.375%{opacity:1;transform:translateY(0)} 95.0%{opacity:1;transform:translateY(0)} 97.812%{opacity:0;transform:translateY(0)} 100.0%{opacity:0;transform:translateY(0)}}
+@keyframes kb8{0.0%{opacity:0;transform:translateY(12px)} 60.0%{opacity:0;transform:translateY(12px)} 62.5%{opacity:1;transform:translateY(0)} 95.0%{opacity:1;transform:translateY(0)} 97.812%{opacity:0;transform:translateY(0)} 100.0%{opacity:0;transform:translateY(0)}}
+@keyframes kb9{0.0%{opacity:0;transform:translateY(12px)} 68.125%{opacity:0;transform:translateY(12px)} 70.625%{opacity:1;transform:translateY(0)} 95.0%{opacity:1;transform:translateY(0)} 97.812%{opacity:0;transform:translateY(0)} 100.0%{opacity:0;transform:translateY(0)}}
+@keyframes kcol{0.0%{transform:translateY(0)} 27.5%{transform:translateY(0px)} 30.313%{transform:translateY(-88px)} 35.625%{transform:translateY(-88px)} 38.438%{transform:translateY(-176px)} 43.75%{transform:translateY(-176px)} 46.562%{transform:translateY(-264px)} 51.875%{transform:translateY(-264px)} 54.688%{transform:translateY(-352px)} 60.0%{transform:translateY(-352px)} 62.812%{transform:translateY(-440px)} 68.125%{transform:translateY(-440px)} 70.938%{transform:translateY(-528px)} 98.125%{transform:translateY(-528px)} 98.438%{transform:translateY(0)} 100.0%{transform:translateY(0)}}
+@keyframes kthumb{0.0%{transform:translateX(775px)} 20.312%{transform:translateX(775px)} 24.375%{transform:translateX(685px)} 36.562%{transform:translateX(685px)} 40.625%{transform:translateX(640px)} 52.813%{transform:translateX(640px)} 56.875%{transform:translateX(595px)} 69.062%{transform:translateX(595px)} 73.125%{transform:translateX(550px)} 95.0%{transform:translateX(550px)} 99.375%{transform:translateX(775px)} 100.0%{transform:translateX(775px)}}
+@keyframes ktv35{0.0%{opacity:1} 21.812%{opacity:1} 22.563%{opacity:0} 96.812%{opacity:0} 97.562%{opacity:1} 100.0%{opacity:1}}
+@keyframes ktv33{0.0%{opacity:0} 21.812%{opacity:0} 22.563%{opacity:1} 38.063%{opacity:1} 38.812%{opacity:0} 100.0%{opacity:0}}
+@keyframes ktv32{0.0%{opacity:0} 38.063%{opacity:0} 38.812%{opacity:1} 54.312%{opacity:1} 55.062%{opacity:0} 100.0%{opacity:0}}
+@keyframes ktv31{0.0%{opacity:0} 54.312%{opacity:0} 55.062%{opacity:1} 70.562%{opacity:1} 71.312%{opacity:0} 100.0%{opacity:0}}
+@keyframes ktv30{0.0%{opacity:0} 70.562%{opacity:0} 71.312%{opacity:1} 96.812%{opacity:1} 97.562%{opacity:0} 100.0%{opacity:0}}
+@keyframes kpd35{0.0%{opacity:0} 22.5%{opacity:0} 25.0%{opacity:1} 95.0%{opacity:1} 97.5%{opacity:0} 100.0%{opacity:0}}
+@keyframes kpd33{0.0%{opacity:0} 38.75%{opacity:0} 41.25%{opacity:1} 95.0%{opacity:1} 97.5%{opacity:0} 100.0%{opacity:0}}
+@keyframes kpd32{0.0%{opacity:0} 55.0%{opacity:0} 57.5%{opacity:1} 95.0%{opacity:1} 97.5%{opacity:0} 100.0%{opacity:0}}
+@keyframes kpd31{0.0%{opacity:0} 71.25%{opacity:0} 73.75%{opacity:1} 95.0%{opacity:1} 97.5%{opacity:0} 100.0%{opacity:0}}
+@keyframes kln1{0.0%{opacity:0} 14.062%{opacity:0} 16.25%{opacity:1} 25.312%{opacity:1} 27.5%{opacity:0} 100.0%{opacity:0}}
+@keyframes kln2{0.0%{opacity:0} 30.313%{opacity:0} 32.5%{opacity:1} 41.562%{opacity:1} 43.75%{opacity:0} 100.0%{opacity:0}}
+@keyframes kln3{0.0%{opacity:0} 46.562%{opacity:0} 48.75%{opacity:1} 57.812%{opacity:1} 60.0%{opacity:0} 100.0%{opacity:0}}
+@keyframes kln4{0.0%{opacity:0} 62.812%{opacity:0} 65.0%{opacity:1} 95.0%{opacity:1} 97.188%{opacity:0} 100.0%{opacity:0}}
+@keyframes kgring{0.0%{opacity:0;transform:scale(1)} 19.313%{opacity:0;transform:scale(1)} 20.938%{opacity:.7;transform:scale(1)} 24.688%{opacity:0;transform:scale(1.28)} 24.75%{opacity:0;transform:scale(1)} 35.562%{opacity:0;transform:scale(1)} 37.188%{opacity:.7;transform:scale(1)} 40.938%{opacity:0;transform:scale(1.28)} 41.0%{opacity:0;transform:scale(1)} 51.813%{opacity:0;transform:scale(1)} 53.438%{opacity:.7;transform:scale(1)} 57.188%{opacity:0;transform:scale(1.28)} 57.25%{opacity:0;transform:scale(1)} 68.062%{opacity:0;transform:scale(1)} 69.688%{opacity:.7;transform:scale(1)} 73.438%{opacity:0;transform:scale(1.28)} 73.5%{opacity:0;transform:scale(1)} 100.0%{opacity:0;transform:scale(1)}}
+@keyframes kgon{0.0%{opacity:0} 19.688%{opacity:0} 20.938%{opacity:1} 24.062%{opacity:1} 25.625%{opacity:0} 35.938%{opacity:0} 37.188%{opacity:1} 40.312%{opacity:1} 41.875%{opacity:0} 52.188%{opacity:0} 53.438%{opacity:1} 56.563%{opacity:1} 58.125%{opacity:0} 68.438%{opacity:0} 69.688%{opacity:1} 72.812%{opacity:1} 74.375%{opacity:0} 100.0%{opacity:0}}
+@keyframes kpkt{0.0%{opacity:0;transform:translateY(0)} 18.125%{opacity:0;transform:translateY(0)} 18.75%{opacity:1;transform:translateY(0)} 21.562%{opacity:1;transform:translateY(52px)} 22.188%{opacity:0;transform:translateY(52px)} 22.25%{opacity:0;transform:translateY(0)} 34.375%{opacity:0;transform:translateY(0)} 35.0%{opacity:1;transform:translateY(0)} 37.812%{opacity:1;transform:translateY(52px)} 38.438%{opacity:0;transform:translateY(52px)} 38.5%{opacity:0;transform:translateY(0)} 50.625%{opacity:0;transform:translateY(0)} 51.25%{opacity:1;transform:translateY(0)} 54.062%{opacity:1;transform:translateY(52px)} 54.688%{opacity:0;transform:translateY(52px)} 54.75%{opacity:0;transform:translateY(0)} 66.875%{opacity:0;transform:translateY(0)} 67.5%{opacity:1;transform:translateY(0)} 70.312%{opacity:1;transform:translateY(52px)} 70.938%{opacity:0;transform:translateY(52px)} 71.0%{opacity:0;transform:translateY(0)} 100.0%{opacity:0;transform:translateY(0)}}
+@keyframes kspo{0.0%{opacity:0} 0.625%{opacity:0} 2.188%{opacity:1} 7.812%{opacity:1} 9.375%{opacity:0} 16.875%{opacity:0} 18.438%{opacity:1} 24.062%{opacity:1} 25.625%{opacity:0} 33.125%{opacity:0} 34.688%{opacity:1} 40.312%{opacity:1} 41.875%{opacity:0} 49.375%{opacity:0} 50.938%{opacity:1} 56.563%{opacity:1} 58.125%{opacity:0} 65.625%{opacity:0} 67.188%{opacity:1} 72.812%{opacity:1} 74.375%{opacity:0} 100.0%{opacity:0}}
+@keyframes krgo{0.0%{opacity:0;transform:scale(1)} 0.625%{opacity:0;transform:scale(1)} 1.25%{opacity:.6;transform:scale(1)} 5.0%{opacity:0;transform:scale(1.45)} 5.062%{opacity:0;transform:scale(1)} 16.875%{opacity:0;transform:scale(1)} 17.5%{opacity:.6;transform:scale(1)} 21.25%{opacity:0;transform:scale(1.45)} 21.312%{opacity:0;transform:scale(1)} 33.125%{opacity:0;transform:scale(1)} 33.75%{opacity:.6;transform:scale(1)} 37.5%{opacity:0;transform:scale(1.45)} 37.562%{opacity:0;transform:scale(1)} 49.375%{opacity:0;transform:scale(1)} 50.0%{opacity:.6;transform:scale(1)} 53.75%{opacity:0;transform:scale(1.45)} 53.813%{opacity:0;transform:scale(1)} 65.625%{opacity:0;transform:scale(1)} 66.25%{opacity:.6;transform:scale(1)} 70.0%{opacity:0;transform:scale(1.45)} 70.062%{opacity:0;transform:scale(1)} 100.0%{opacity:0;transform:scale(1)}}
+@keyframes kspb{0.0%{opacity:0} 8.75%{opacity:0} 10.312%{opacity:1} 15.937%{opacity:1} 17.5%{opacity:0} 25.0%{opacity:0} 26.562%{opacity:1} 32.188%{opacity:1} 33.75%{opacity:0} 41.25%{opacity:0} 42.812%{opacity:1} 48.438%{opacity:1} 50.0%{opacity:0} 57.5%{opacity:0} 59.062%{opacity:1} 64.688%{opacity:1} 66.25%{opacity:0} 100.0%{opacity:0}}
+@keyframes krgb{0.0%{opacity:0;transform:scale(1)} 8.75%{opacity:0;transform:scale(1)} 9.375%{opacity:.6;transform:scale(1)} 13.125%{opacity:0;transform:scale(1.45)} 13.188%{opacity:0;transform:scale(1)} 25.0%{opacity:0;transform:scale(1)} 25.625%{opacity:.6;transform:scale(1)} 29.375%{opacity:0;transform:scale(1.45)} 29.438%{opacity:0;transform:scale(1)} 41.25%{opacity:0;transform:scale(1)} 41.875%{opacity:.6;transform:scale(1)} 45.625%{opacity:0;transform:scale(1.45)} 45.688%{opacity:0;transform:scale(1)} 57.5%{opacity:0;transform:scale(1)} 58.125%{opacity:.6;transform:scale(1)} 61.875%{opacity:0;transform:scale(1.45)} 61.938%{opacity:0;transform:scale(1)} 100.0%{opacity:0;transform:scale(1)}}
+@keyframes krd1{0.0%{opacity:1} 18.875%{opacity:1} 19.875%{opacity:0} 97.0%{opacity:0} 98.0%{opacity:1} 100.0%{opacity:1}}
+@keyframes krd2{0.0%{opacity:0} 18.875%{opacity:0} 19.875%{opacity:1} 35.125%{opacity:1} 36.125%{opacity:0} 100.0%{opacity:0}}
+@keyframes krd3{0.0%{opacity:0} 35.125%{opacity:0} 36.125%{opacity:1} 51.375%{opacity:1} 52.375%{opacity:0} 100.0%{opacity:0}}
+@keyframes krd4{0.0%{opacity:0} 51.375%{opacity:0} 52.375%{opacity:1} 67.625%{opacity:1} 68.625%{opacity:0} 100.0%{opacity:0}}
+@keyframes krd5{0.0%{opacity:0} 67.625%{opacity:0} 68.625%{opacity:1} 97.0%{opacity:1} 98.0%{opacity:0} 100.0%{opacity:0}}
+@keyframes kph{0.0%{opacity:1} 72.812%{opacity:1} 74.688%{opacity:0} 97.812%{opacity:0} 99.688%{opacity:1} 100.0%{opacity:1}}
+@keyframes kdeal{0.0%{opacity:0;transform:scale(.9)} 73.438%{opacity:0;transform:scale(.9)} 75.938%{opacity:1;transform:scale(1)} 95.0%{opacity:1;transform:scale(1)} 97.5%{opacity:0;transform:scale(1)} 100.0%{opacity:0;transform:scale(1)}}
+@keyframes kchk{0.0%{opacity:0;transform:scale(.4)} 74.688%{opacity:0;transform:scale(.4)} 76.562%{opacity:1;transform:scale(1.12)} 77.812%{opacity:1;transform:scale(1)} 95.0%{opacity:1;transform:scale(1)} 97.5%{opacity:0;transform:scale(1)} 100.0%{opacity:0;transform:scale(1)}}
+@keyframes kchkp{0.0%{stroke-dashoffset:26;opacity:1} 76.25%{stroke-dashoffset:26;opacity:1} 78.75%{stroke-dashoffset:0;opacity:1} 95.0%{stroke-dashoffset:0;opacity:1} 97.5%{stroke-dashoffset:0;opacity:0} 97.562%{stroke-dashoffset:26;opacity:0} 100.0%{stroke-dashoffset:26;opacity:0}}
+@keyframes ksub{0.0%{opacity:0;transform:translateY(6px)} 75.938%{opacity:0;transform:translateY(6px)} 78.438%{opacity:1;transform:translateY(0)} 95.0%{opacity:1;transform:translateY(0)} 97.5%{opacity:0;transform:translateY(0)} 100.0%{opacity:0;transform:translateY(0)}}
+@keyframes kmA{0.0%{opacity:1} 75.938%{opacity:1} 77.188%{opacity:0} 97.5%{opacity:0} 99.375%{opacity:1} 100.0%{opacity:1}}
+@keyframes kmB{0.0%{opacity:0} 76.562%{opacity:0} 78.438%{opacity:1} 95.0%{opacity:1} 97.188%{opacity:0} 100.0%{opacity:0}}
+@keyframes kdring{0.0%{opacity:0;transform:scale(.8)} 72.812%{opacity:0;transform:scale(.8)} 73.75%{opacity:.8;transform:scale(.9)} 78.125%{opacity:0;transform:scale(1.7)} 100.0%{opacity:0;transform:scale(1.7)}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+<defs>
+<clipPath id="vp"><rect x="313" y="167" width="654" height="279"/></clipPath>
+<linearGradient id="fadeTop" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="1"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
+<pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" stroke="#14171d" stroke-opacity="0.12" stroke-width="2"/></pattern>
+</defs>
+<rect x="0.75" y="0.75" width="1278.5" height="718.5" rx="20" fill="#f7f7f5" stroke="#e5e7eb" stroke-width="1.5"/>
+<text x="40" y="62" class="sans" font-size="28" font-weight="700" fill="#16181d">Two agents haggle. Code holds the line.</text>
+<text x="40" y="92" class="sans" font-size="16" fill="#6b7280">Each agent sees one secret. <tspan class="mono" fill="#16181d">rules.ts</tspan> decides every legal price.</text>
+<rect x="878.0" y="42" width="362.0" height="28" rx="14" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+<circle cx="893.0" cy="56" r="3.5" fill="#15803d"/>
+<text x="903.0" y="60.5" class="sans" font-size="13" fill="#6b7280"><tspan font-weight="700" fill="#16181d">Deal4Me</tspan> · real run, verbatim · black skis, 3-day rental</text>
+<rect x="40" y="120" width="248" height="328" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+<rect class="spo" x="40" y="120" width="248" height="328" rx="12" fill="none" stroke="#14171d" stroke-width="2"/>
+<circle cx="80" cy="162" r="20" fill="#14171d"/>
+<path transform="translate(80 162) scale(1.05)" fill="#fff" d="M0-8C.9-2.6 2.6-.9 8 0C2.6.9.9 2.6 0 8C-.9 2.6-2.6.9-8 0C-2.6-.9-.9-2.6 0-8Z"/>
+<circle class="rgo" cx="80" cy="162" r="20" fill="none" stroke="#14171d" stroke-width="2"/>
+<text x="112" y="158" class="sans" font-size="18" font-weight="700" fill="#16181d">Owner agent</text>
+<text x="112" y="178" class="mono" font-size="13" fill="#6b7280">Claude Haiku</text>
+<line x1="60" y1="202" x2="268" y2="202" stroke="#e5e7eb" stroke-width="1.5"/>
+<text x="60" y="230" class="sans" font-size="13" font-weight="600" fill="#6b7280">knows</text>
+<rect x="60" y="242" width="208" height="36" rx="18" fill="#14171d"/>
+<g transform="translate(79 260) scale(1.0)"><path d="M-3.5-1.5V-4a3.5 3.5 0 0 1 7 0v2.5" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/><rect x="-5.5" y="-1.5" width="11" height="8.5" rx="2" fill="#ffffff"/></g>
+<text x="94" y="265" class="sans" font-size="14" font-weight="600" fill="#ffffff">private floor $22 / day</text>
+<text x="60" y="308" class="sans" font-size="13" font-weight="600" fill="#6b7280">never sees</text>
+<rect x="60" y="320" width="208" height="36" rx="18" fill="#f7f7f5" stroke="#c9cdd3" stroke-width="1.5" stroke-dasharray="4 4"/>
+<g transform="translate(79 338)" fill="none" stroke="#6b7280" stroke-width="1.6" stroke-linecap="round"><path d="M-7.5 0C-5-4.6 5-4.6 7.5 0C5 4.6-5 4.6-7.5 0Z"/><circle r="2.2"/><path d="M-6.5-6.5L6.5 6.5"/></g>
+<text x="94" y="343" class="sans" font-size="14" fill="#6b7280">buyer's limit</text>
+<text x="252" y="343" text-anchor="end" class="mono" font-size="14" font-weight="700" fill="#9ca3af">$••</text>
+<text x="60" y="386" class="sans" font-size="13" font-weight="600" fill="#6b7280">replies with</text>
+<rect x="60.0" y="398" width="64.8" height="26" rx="13" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+<text x="92.4" y="415.5" text-anchor="middle" class="mono" font-size="13" font-weight="400" fill="#6b7280">action</text>
+<rect x="132.8" y="398" width="57.0" height="26" rx="13" fill="#ffffff" stroke="#14171d" stroke-width="1.5"/>
+<text x="161.3" y="415.5" text-anchor="middle" class="mono" font-size="13" font-weight="700" fill="#14171d">price</text>
+<rect x="197.8" y="398" width="72.6" height="26" rx="13" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+<text x="234.1" y="415.5" text-anchor="middle" class="mono" font-size="13" font-weight="400" fill="#6b7280">message</text>
+<rect x="992" y="120" width="248" height="328" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+<rect class="spb" x="992" y="120" width="248" height="328" rx="12" fill="none" stroke="#0e7490" stroke-width="2"/>
+<circle cx="1032" cy="162" r="20" fill="#0e7490"/>
+<path transform="translate(1032 162) scale(1.05)" fill="#fff" d="M0-8C.9-2.6 2.6-.9 8 0C2.6.9.9 2.6 0 8C-.9 2.6-2.6.9-8 0C-2.6-.9-.9-2.6 0-8Z"/>
+<circle class="rgb" cx="1032" cy="162" r="20" fill="none" stroke="#0e7490" stroke-width="2"/>
+<text x="1064" y="158" class="sans" font-size="18" font-weight="700" fill="#16181d">Buyer agent</text>
+<text x="1064" y="178" class="mono" font-size="13" fill="#6b7280">Claude Haiku</text>
+<line x1="1012" y1="202" x2="1220" y2="202" stroke="#e5e7eb" stroke-width="1.5"/>
+<text x="1012" y="230" class="sans" font-size="13" font-weight="600" fill="#6b7280">knows</text>
+<rect x="1012" y="242" width="208" height="36" rx="18" fill="#0e7490"/>
+<g transform="translate(1031 260) scale(1.0)"><path d="M-3.5-1.5V-4a3.5 3.5 0 0 1 7 0v2.5" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/><rect x="-5.5" y="-1.5" width="11" height="8.5" rx="2" fill="#ffffff"/></g>
+<text x="1046" y="265" class="sans" font-size="14" font-weight="600" fill="#ffffff">your price $30 / day</text>
+<text x="1012" y="308" class="sans" font-size="13" font-weight="600" fill="#6b7280">never sees</text>
+<rect x="1012" y="320" width="208" height="36" rx="18" fill="#f7f7f5" stroke="#c9cdd3" stroke-width="1.5" stroke-dasharray="4 4"/>
+<g transform="translate(1031 338)" fill="none" stroke="#6b7280" stroke-width="1.6" stroke-linecap="round"><path d="M-7.5 0C-5-4.6 5-4.6 7.5 0C5 4.6-5 4.6-7.5 0Z"/><circle r="2.2"/><path d="M-6.5-6.5L6.5 6.5"/></g>
+<text x="1046" y="343" class="sans" font-size="14" fill="#6b7280">owner's floor</text>
+<text x="1204" y="343" text-anchor="end" class="mono" font-size="14" font-weight="700" fill="#9ca3af">$••</text>
+<text x="1012" y="386" class="sans" font-size="13" font-weight="600" fill="#6b7280">replies with</text>
+<rect x="1012.0" y="398" width="64.8" height="26" rx="13" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+<text x="1044.4" y="415.5" text-anchor="middle" class="mono" font-size="13" font-weight="400" fill="#6b7280">action</text>
+<rect x="1084.8" y="398" width="57.0" height="26" rx="13" fill="#ffffff" stroke="#0e7490" stroke-width="1.5"/>
+<text x="1113.3" y="415.5" text-anchor="middle" class="mono" font-size="13" font-weight="700" fill="#0e7490">price</text>
+<rect x="1149.8" y="398" width="72.6" height="26" rx="13" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+<text x="1186.1" y="415.5" text-anchor="middle" class="mono" font-size="13" font-weight="400" fill="#6b7280">message</text>
+<rect x="312" y="120" width="656" height="328" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+<text x="336" y="151" class="sans" font-size="15" font-weight="700" fill="#16181d">Public chat</text>
+<text x="944" y="151" text-anchor="end" class="sans" font-size="13" fill="#6b7280">both agents read it, last 12 lines</text>
+<line x1="313" y1="166" x2="967" y2="166" stroke="#e5e7eb" stroke-width="1.5"/>
+<g clip-path="url(#vp)"><g class="col">
+<g class="b1">
+<circle cx="342" cy="203" r="14" fill="#14171d"/><path transform="translate(342 203) scale(0.72)" fill="#fff" d="M0-8C.9-2.6 2.6-.9 8 0C2.6.9.9 2.6 0 8C-.9 2.6-2.6.9-8 0C-2.6-.9-.9-2.6 0-8Z"/>
+<path d="M371 186H694A16 16 0 0 1 710 202V236A16 16 0 0 1 694 252H382A16 16 0 0 1 366 236V191A5 5 0 0 1 371 186Z" fill="#efefec"/>
+<text x="382" y="214" class="sans" font-size="15" fill="#16181d">Hi there! Those black skis are in good</text>
+<text x="382" y="236" class="sans" font-size="15" fill="#16181d">shape. Tell me about your ski plans?</text>
+<rect x="720.0" y="206.0" width="72.8" height="26" rx="13" fill="#ffffff" stroke="#14171d" stroke-width="1.5"/>
+<text x="730.0" y="223.5" class="mono" font-size="13" fill="#6b7280">ask<tspan dx="6" font-weight="700" fill="#14171d">$35</tspan></text>
+</g>
+<g class="b2">
+<circle cx="938" cy="291" r="14" fill="#0e7490"/><path transform="translate(938 291) scale(0.72)" fill="#fff" d="M0-8C.9-2.6 2.6-.9 8 0C2.6.9.9 2.6 0 8C-.9 2.6-2.6.9-8 0C-2.6-.9-.9-2.6 0-8Z"/>
+<path d="M586 274H909A5 5 0 0 1 914 279V324A16 16 0 0 1 898 340H586A16 16 0 0 1 570 324V290A16 16 0 0 1 586 274Z" fill="#e7f3f6"/>
+<text x="586" y="302" class="sans" font-size="15" fill="#16181d">Just a short trip on groomed runs, and</text>
+<text x="586" y="324" class="sans" font-size="15" fill="#16181d">I'll return the skis clean and dry.</text>
+<rect x="471.6" y="294.0" width="88.4" height="26" rx="13" fill="#ffffff" stroke="#0e7490" stroke-width="1.5"/>
+<text x="481.6" y="311.5" class="mono" font-size="13" fill="#6b7280">offer<tspan dx="6" font-weight="700" fill="#0e7490">$30</tspan></text>
+</g>
+<g class="b3">
+<circle cx="342" cy="379" r="14" fill="#14171d"/><path transform="translate(342 379) scale(0.72)" fill="#fff" d="M0-8C.9-2.6 2.6-.9 8 0C2.6.9.9 2.6 0 8C-.9 2.6-2.6.9-8 0C-2.6-.9-.9-2.6 0-8Z"/>
+<path d="M371 362H694A16 16 0 0 1 710 378V412A16 16 0 0 1 694 428H382A16 16 0 0 1 366 412V367A5 5 0 0 1 371 362Z" fill="#efefec"/>
+<text x="382" y="390" class="sans" font-size="15" fill="#16181d">Sounds like a sweet little outing!</text>
+<text x="382" y="412" class="sans" font-size="15" fill="#16181d">Stretch a bit higher and they're yours.</text>
+<rect x="720.0" y="382.0" width="104.0" height="26" rx="13" fill="#ffffff" stroke="#14171d" stroke-width="1.5"/>
+<text x="730.0" y="399.5" class="mono" font-size="13" fill="#6b7280">counter<tspan dx="6" font-weight="700" fill="#14171d">$33</tspan></text>
+</g>
+<g class="b4">
+<circle cx="938" cy="467" r="14" fill="#0e7490"/><path transform="translate(938 467) scale(0.72)" fill="#fff" d="M0-8C.9-2.6 2.6-.9 8 0C2.6.9.9 2.6 0 8C-.9 2.6-2.6.9-8 0C-2.6-.9-.9-2.6 0-8Z"/>
+<path d="M586 450H909A5 5 0 0 1 914 455V500A16 16 0 0 1 898 516H586A16 16 0 0 1 570 500V466A16 16 0 0 1 586 450Z" fill="#e7f3f6"/>
+<text x="586" y="478" class="sans" font-size="15" fill="#16181d">I'll pay the full amount upfront, so</text>
+<text x="586" y="500" class="sans" font-size="15" fill="#16181d">there's no hassle for you at all.</text>
+<rect x="471.6" y="470.0" width="88.4" height="26" rx="13" fill="#ffffff" stroke="#0e7490" stroke-width="1.5"/>
+<text x="481.6" y="487.5" class="mono" font-size="13" fill="#6b7280">offer<tspan dx="6" font-weight="700" fill="#0e7490">$30</tspan></text>
+</g>
+<g class="b5">
+<circle cx="342" cy="555" r="14" fill="#14171d"/><path transform="translate(342 555) scale(0.72)" fill="#fff" d="M0-8C.9-2.6 2.6-.9 8 0C2.6.9.9 2.6 0 8C-.9 2.6-2.6.9-8 0C-2.6-.9-.9-2.6 0-8Z"/>
+<path d="M371 538H694A16 16 0 0 1 710 554V588A16 16 0 0 1 694 604H382A16 16 0 0 1 366 588V543A5 5 0 0 1 371 538Z" fill="#efefec"/>
+<text x="382" y="566" class="sans" font-size="15" fill="#16181d">Paying upfront is a lovely perk, and</text>
+<text x="382" y="588" class="sans" font-size="15" fill="#16181d">these skis are worth a touch more.</text>
+<rect x="720.0" y="558.0" width="104.0" height="26" rx="13" fill="#ffffff" stroke="#14171d" stroke-width="1.5"/>
+<text x="730.0" y="575.5" class="mono" font-size="13" fill="#6b7280">counter<tspan dx="6" font-weight="700" fill="#14171d">$32</tspan></text>
+</g>
+<g class="b6">
+<circle cx="938" cy="643" r="14" fill="#0e7490"/><path transform="translate(938 643) scale(0.72)" fill="#fff" d="M0-8C.9-2.6 2.6-.9 8 0C2.6.9.9 2.6 0 8C-.9 2.6-2.6.9-8 0C-2.6-.9-.9-2.6 0-8Z"/>
+<path d="M586 626H909A5 5 0 0 1 914 631V676A16 16 0 0 1 898 692H586A16 16 0 0 1 570 676V642A16 16 0 0 1 586 626Z" fill="#e7f3f6"/>
+<text x="586" y="654" class="sans" font-size="15" fill="#16181d">Honestly, a short groomed-run trip is all</text>
+<text x="586" y="676" class="sans" font-size="15" fill="#16181d">I need, so these would be treated gently.</text>
+<rect x="471.6" y="646.0" width="88.4" height="26" rx="13" fill="#ffffff" stroke="#0e7490" stroke-width="1.5"/>
+<text x="481.6" y="663.5" class="mono" font-size="13" fill="#6b7280">offer<tspan dx="6" font-weight="700" fill="#0e7490">$30</tspan></text>
+</g>
+<g class="b7">
+<circle cx="342" cy="731" r="14" fill="#14171d"/><path transform="translate(342 731) scale(0.72)" fill="#fff" d="M0-8C.9-2.6 2.6-.9 8 0C2.6.9.9 2.6 0 8C-.9 2.6-2.6.9-8 0C-2.6-.9-.9-2.6 0-8Z"/>
+<path d="M371 714H694A16 16 0 0 1 710 730V764A16 16 0 0 1 694 780H382A16 16 0 0 1 366 764V719A5 5 0 0 1 371 714Z" fill="#efefec"/>
+<text x="382" y="742" class="sans" font-size="15" fill="#16181d">Let's nudge it a little, and these</text>
+<text x="382" y="764" class="sans" font-size="15" fill="#16181d">black skis are yours to ride.</text>
+<rect x="720.0" y="734.0" width="104.0" height="26" rx="13" fill="#ffffff" stroke="#14171d" stroke-width="1.5"/>
+<text x="730.0" y="751.5" class="mono" font-size="13" fill="#6b7280">counter<tspan dx="6" font-weight="700" fill="#14171d">$31</tspan></text>
+</g>
+<g class="b8">
+<circle cx="938" cy="819" r="14" fill="#0e7490"/><path transform="translate(938 819) scale(0.72)" fill="#fff" d="M0-8C.9-2.6 2.6-.9 8 0C2.6.9.9 2.6 0 8C-.9 2.6-2.6.9-8 0C-2.6-.9-.9-2.6 0-8Z"/>
+<path d="M586 802H909A5 5 0 0 1 914 807V852A16 16 0 0 1 898 868H586A16 16 0 0 1 570 852V818A16 16 0 0 1 586 802Z" fill="#e7f3f6"/>
+<text x="586" y="830" class="sans" font-size="15" fill="#16181d">I'll be back on time with the skis, so your</text>
+<text x="586" y="852" class="sans" font-size="15" fill="#16181d">shop looks great. Shall we shake on it?</text>
+<rect x="471.6" y="822.0" width="88.4" height="26" rx="13" fill="#ffffff" stroke="#0e7490" stroke-width="1.5"/>
+<text x="481.6" y="839.5" class="mono" font-size="13" fill="#6b7280">offer<tspan dx="6" font-weight="700" fill="#0e7490">$30</tspan></text>
+</g>
+<g class="b9">
+<circle cx="342" cy="907" r="14" fill="#14171d"/><path transform="translate(342 907) scale(0.72)" fill="#fff" d="M0-8C.9-2.6 2.6-.9 8 0C2.6.9.9 2.6 0 8C-.9 2.6-2.6.9-8 0C-2.6-.9-.9-2.6 0-8Z"/>
+<path d="M371 890H694A16 16 0 0 1 710 906V940A16 16 0 0 1 694 956H382A16 16 0 0 1 366 940V895A5 5 0 0 1 371 890Z" fill="#efefec"/>
+<text x="382" y="918" class="sans" font-size="15" fill="#16181d">Groomed runs and a clean return,</text>
+<text x="382" y="940" class="sans" font-size="15" fill="#16181d">you've got a deal. Enjoy the slopes!</text>
+<rect x="720.0" y="910.0" width="96.2" height="26" rx="13" fill="#b4232a" stroke="#b4232a" stroke-width="1.5"/>
+<text x="730.0" y="927.5" class="mono" font-size="13" fill="#ffffff">accept<tspan dx="6" font-weight="700" fill="#ffffff">$30</tspan></text>
+</g>
+</g></g>
+<rect x="313" y="167" width="654" height="16" fill="url(#fadeTop)"/>
+<line x1="640" y1="448" x2="640" y2="504" stroke="#c9cdd3" stroke-width="2" stroke-dasharray="3 4"/>
+<circle class="pkt" cx="640" cy="450" r="4.5" fill="#b4232a"/>
+<rect class="gring" x="578" y="460" width="124" height="32" rx="16" fill="none" stroke="#15803d" stroke-width="2"/>
+<rect x="578" y="460" width="124" height="32" rx="16" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+<rect class="gon" x="578" y="460" width="124" height="32" rx="16" fill="#e9f6ee" stroke="#15803d" stroke-width="1.5"/>
+<g transform="translate(602 476)" fill="none" stroke="#14171d" stroke-width="1.8" stroke-linecap="round"><path d="M-7-7V7M7-7V7M-7-2.5H7M-7 2.5H7"/></g>
+<text x="618" y="481" class="mono" font-size="14" font-weight="700" fill="#14171d">rules.ts</text>
+<text x="562" y="481" text-anchor="end" class="sans" font-size="13" fill="#6b7280">no digits in messages</text>
+<text x="718" y="481" class="sans" font-size="13" fill="#6b7280">prices only in the structured field</text>
+<rect x="40" y="504" width="836" height="196" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+<text x="64" y="534" class="sans" font-size="15" font-weight="700" fill="#16181d">Price track<tspan font-weight="400" fill="#6b7280"> · $ / day</tspan></text>
+<rect x="606" y="523" width="22" height="14" rx="7" fill="#b4232a"/>
+<text x="636" y="534" class="sans" font-size="13" fill="#6b7280">owner's ask</text>
+<rect x="730" y="523" width="14" height="14" rx="3" fill="#15803d" fill-opacity="0.14" stroke="#15803d" stroke-width="1.25"/>
+<text x="752" y="534" class="sans" font-size="13" fill="#6b7280"><tspan class="mono">rules.ts</tspan> allows</text>
+<rect x="100" y="600" width="90" height="48" fill="url(#hatch)"/>
+<g class="ln1"><rect class="lr" x="628" y="598" width="114" height="52" rx="8" fill="#15803d" fill-opacity="0.13" stroke="#15803d" stroke-width="1.5"/>
+<text x="685.0" y="566" text-anchor="middle" class="sans" font-size="13" font-weight="600" fill="#15803d"><tspan class="mono">rules.ts</tspan> allows $32–$34</text></g>
+<g class="ln2"><rect class="lr" x="628" y="598" width="24" height="52" rx="8" fill="#15803d" fill-opacity="0.13" stroke="#15803d" stroke-width="1.5"/>
+<text x="640.0" y="566" text-anchor="middle" class="sans" font-size="13" font-weight="600" fill="#15803d"><tspan class="mono">rules.ts</tspan> allows $32 only</text></g>
+<g class="ln3"><rect class="lr" x="583" y="598" width="24" height="52" rx="8" fill="#15803d" fill-opacity="0.13" stroke="#15803d" stroke-width="1.5"/>
+<text x="595.0" y="566" text-anchor="middle" class="sans" font-size="13" font-weight="600" fill="#15803d"><tspan class="mono">rules.ts</tspan> allows $31 only</text></g>
+<g class="ln4"><rect class="lr" x="538" y="598" width="24" height="52" rx="8" fill="#15803d" fill-opacity="0.13" stroke="#15803d" stroke-width="1.5"/>
+<text x="550.0" y="566" text-anchor="middle" class="sans" font-size="13" font-weight="600" fill="#15803d"><tspan class="mono">rules.ts</tspan> allows accept at $30 · counter impossible</text></g>
+<rect x="100" y="621" width="720" height="6" rx="3" fill="#e5e7eb"/>
+<line x1="100" y1="632" x2="100" y2="639" stroke="#c9cdd3" stroke-width="1.5"/>
+<text x="100" y="668" text-anchor="middle" class="mono" font-size="13" fill="#6b7280">$20</text>
+<line x1="145" y1="632" x2="145" y2="636" stroke="#c9cdd3" stroke-width="1.5"/>
+<line x1="190" y1="632" x2="190" y2="639" stroke="#c9cdd3" stroke-width="1.5"/>
+<text x="190" y="668" text-anchor="middle" class="mono" font-size="13" fill="#6b7280">$22</text>
+<line x1="235" y1="632" x2="235" y2="636" stroke="#c9cdd3" stroke-width="1.5"/>
+<line x1="280" y1="632" x2="280" y2="639" stroke="#c9cdd3" stroke-width="1.5"/>
+<text x="280" y="668" text-anchor="middle" class="mono" font-size="13" fill="#6b7280">$24</text>
+<line x1="325" y1="632" x2="325" y2="636" stroke="#c9cdd3" stroke-width="1.5"/>
+<line x1="370" y1="632" x2="370" y2="639" stroke="#c9cdd3" stroke-width="1.5"/>
+<text x="370" y="668" text-anchor="middle" class="mono" font-size="13" fill="#6b7280">$26</text>
+<line x1="415" y1="632" x2="415" y2="636" stroke="#c9cdd3" stroke-width="1.5"/>
+<line x1="460" y1="632" x2="460" y2="639" stroke="#c9cdd3" stroke-width="1.5"/>
+<text x="460" y="668" text-anchor="middle" class="mono" font-size="13" fill="#6b7280">$28</text>
+<line x1="505" y1="632" x2="505" y2="636" stroke="#c9cdd3" stroke-width="1.5"/>
+<line x1="550" y1="632" x2="550" y2="639" stroke="#c9cdd3" stroke-width="1.5"/>
+<text x="550" y="668" text-anchor="middle" class="mono" font-size="13" fill="#6b7280">$30</text>
+<line x1="595" y1="632" x2="595" y2="636" stroke="#c9cdd3" stroke-width="1.5"/>
+<line x1="640" y1="632" x2="640" y2="639" stroke="#c9cdd3" stroke-width="1.5"/>
+<text x="640" y="668" text-anchor="middle" class="mono" font-size="13" fill="#6b7280">$32</text>
+<line x1="685" y1="632" x2="685" y2="636" stroke="#c9cdd3" stroke-width="1.5"/>
+<line x1="730" y1="632" x2="730" y2="639" stroke="#c9cdd3" stroke-width="1.5"/>
+<text x="730" y="668" text-anchor="middle" class="mono" font-size="13" fill="#6b7280">$34</text>
+<line x1="775" y1="632" x2="775" y2="636" stroke="#c9cdd3" stroke-width="1.5"/>
+<line x1="820" y1="632" x2="820" y2="639" stroke="#c9cdd3" stroke-width="1.5"/>
+<text x="820" y="668" text-anchor="middle" class="mono" font-size="13" fill="#6b7280">$36</text>
+<line x1="190" y1="598" x2="190" y2="650" stroke="#14171d" stroke-width="1.5" stroke-dasharray="4 3"/>
+<g transform="translate(140 585) scale(0.9)"><path d="M-3.5-1.5V-4a3.5 3.5 0 0 1 7 0v2.5" fill="none" stroke="#14171d" stroke-width="1.8" stroke-linecap="round"/><rect x="-5.5" y="-1.5" width="11" height="8.5" rx="2" fill="#14171d"/></g>
+<text x="150" y="590" class="sans" font-size="13" font-weight="600" fill="#14171d">owner's floor $22</text>
+<line x1="550" y1="598" x2="550" y2="650" stroke="#0e7490" stroke-width="2"/>
+<text x="550" y="590" text-anchor="middle" class="sans" font-size="13" font-weight="600" fill="#0e7490">buyer's price $30</text>
+<line x1="775" y1="598" x2="775" y2="650" stroke="#9ca3af" stroke-width="1.5"/>
+<text x="775" y="590" text-anchor="middle" class="sans" font-size="13" font-weight="600" fill="#6b7280">list $35</text>
+<circle class="pd35" cx="775" cy="624" r="4.5" fill="#b4232a" fill-opacity="0.45"/>
+<circle class="pd33" cx="685" cy="624" r="4.5" fill="#b4232a" fill-opacity="0.45"/>
+<circle class="pd32" cx="640" cy="624" r="4.5" fill="#b4232a" fill-opacity="0.45"/>
+<circle class="pd31" cx="595" cy="624" r="4.5" fill="#b4232a" fill-opacity="0.45"/>
+<circle class="dring" cx="550" cy="624" r="18" fill="none" stroke="#b4232a" stroke-width="2"/>
+<g transform="translate(0 624)"><g class="thumb">
+<rect x="-27" y="-14" width="54" height="28" rx="14" fill="#b4232a"/>
+<text class="tv35 mono" x="0" y="5" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">$35</text>
+<text class="tv33 mono" x="0" y="5" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">$33</text>
+<text class="tv32 mono" x="0" y="5" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">$32</text>
+<text class="tv31 mono" x="0" y="5" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">$31</text>
+<text class="tv30 mono" x="0" y="5" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">$30</text>
+</g></g>
+<rect x="900" y="504" width="340" height="196" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+<text x="924" y="534" class="sans" font-size="15" font-weight="700" fill="#16181d">Outcome</text>
+<text class="rd1 mono" x="1216" y="534" text-anchor="end" font-size="13" fill="#6b7280">round 1 of 6</text>
+<text class="rd2 mono" x="1216" y="534" text-anchor="end" font-size="13" fill="#6b7280">round 2 of 6</text>
+<text class="rd3 mono" x="1216" y="534" text-anchor="end" font-size="13" fill="#6b7280">round 3 of 6</text>
+<text class="rd4 mono" x="1216" y="534" text-anchor="end" font-size="13" fill="#6b7280">round 4 of 6</text>
+<text class="rd5 mono" x="1216" y="534" text-anchor="end" font-size="13" fill="#6b7280">round 5 of 6</text>
+<g class="ph"><rect x="924" y="553" width="292" height="44" rx="22" fill="#f7f7f5" stroke="#c9cdd3" stroke-width="1.5" stroke-dasharray="4 4"/><text x="1070" y="580" text-anchor="middle" class="sans" font-size="15" fill="#6b7280">negotiating…</text></g>
+<g class="ph"><rect x="924" y="614" width="190" height="12" rx="6" fill="#efefec"/><rect x="924" y="636" width="226" height="12" rx="6" fill="#efefec"/></g>
+<g class="deal"><rect x="966" y="553" width="250" height="44" rx="22" fill="#b4232a"/><text x="1091" y="581" text-anchor="middle" class="sans" font-size="18" font-weight="700" fill="#ffffff">Deal at $30 / day</text></g>
+<g class="chk"><circle cx="942" cy="575" r="15" fill="#15803d"/></g>
+<path class="chkp" d="M935.5 575.5L940 580L948.5 570.5" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="24 40"/>
+<g class="sub"><text x="924" y="626" class="sans" font-size="14" fill="#16181d">3 days · $90 fee · saved $15</text><circle cx="928" cy="643" r="3.5" fill="#b45309"/><text x="938" y="648" class="sans" font-size="14" fill="#b45309">$280 deposit held, not charged</text></g>
+<text class="mA mono" x="924" y="678" font-size="13" fill="#6b7280">deal = min(buyer price, list)</text>
+<text class="mB mono" x="924" y="678" font-size="13" fill="#6b7280">min($30 buyer, $35 list) = <tspan font-weight="700" fill="#b4232a">$30</tspan></text>
+</svg>

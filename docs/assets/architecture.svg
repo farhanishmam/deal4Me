@@ -1,0 +1,321 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="784" viewBox="0 0 1280 784" role="img" aria-labelledby="t d">
+<title id="t">Deal4Me system architecture</title>
+<desc id="d">Animated architecture diagram of Deal4Me, read left to right in four columns. Clients: a seller app at /seller/* (Listings, Scan, Messages, Profile) and a buyer app at /visit/* (Home, Chat, Messages, Profile) shown as phones, plus the web pages /sell/start onboarding (voice, photos, website), /sell/studio, the public storefront /s/[slug] and /sell/dashboard. A Zustand store mirrored to localStorage refreshes from the server on focus and every 15 seconds; messages poll every 3 seconds. Every client calls one set of Next.js API routes: /api/ai/* (transcribe, describe, search, appraise, appraise/comps, suggest-price, damage-check, storefront-instruction, restyle), /api/deals/negotiations (auto, which streams NDJSON, and [id]/messages), and /api/data/* (shops, publish, items, orders, order status, state, requests, chats, messages, rentals hold, pickup, return and settle). Routes call three server modules: src/server/ai, where transcribe.ts calls a local Whisper large-v3-turbo server on mlx-audio at 127.0.0.1:8765 and every model call goes through askClaude; src/server/deals, where an owner agent and a buyer agent negotiate through the hard limits in rules.ts and also call askClaude; and src/server/data, the catalog store, conversations and rentals ledger. askClaude runs headless Claude Code sessions through the Claude Agent SDK: Sonnet for photo vision, describe, restyle, storefront edits and damage checks; Haiku for search, pricing and both negotiation agents. State is JSON files in .data/ (catalog.json, conversations.json, negotiations.json, ai-cache/), movable with RIDGE_DATA_DIR. A loop of about 14 seconds then plays three flows, lighting the active path in crimson with a caption: 1, a seller's voice clip goes from onboarding to /api/ai/transcribe and Whisper and comes back as text, goes to /api/ai/describe where Claude Sonnet drafts the storefront, and is saved through /api/data/shops into catalog.json; 2, a buyer's query in any language goes to /api/ai/search, Claude Haiku only parses it, code filters catalog.json and the results return; 3, a negotiate request goes to /api/deals/negotiations/auto, the two Haiku agents trade offers through the rules.ts gate, the deal is saved to negotiations.json and rounds stream back to the buyer. With reduced motion the full diagram is shown without movement.</desc>
+<defs>
+<marker id="ah" viewBox="0 0 10 10" refX="4" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0.5 L10,5 L0,9.5 z" fill="#6b7280"/></marker>
+<marker id="ahc" viewBox="0 0 10 10" refX="4" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0.5 L10,5 L0,9.5 z" fill="#b4232a"/></marker>
+</defs>
+<style>
+.s{font-family:'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif}
+.m{font-family:'JetBrains Mono', SFMono-Regular, Menlo, Consolas, monospace}
+@keyframes kp1{0%{transform:translate(268px,377px);opacity:0}1.385%{transform:translate(268px,377px);opacity:0}1.794%{transform:translate(300px,377px)}1.801%{opacity:1}3.608%{transform:translate(300px,234px)}3.67%{opacity:1}4.017%{transform:translate(332px,234px)}4.155%{opacity:0}100%{transform:translate(332px,234px);opacity:0}}#p1{animation:kp1 14.44s linear infinite}@keyframes kp2{0%{transform:translate(646px,234px);opacity:0}4.155%{transform:translate(646px,234px);opacity:0}4.571%{opacity:1}5.263%{opacity:1}5.609%{transform:translate(710px,234px)}5.748%{opacity:0}100%{transform:translate(710px,234px);opacity:0}}#p2{animation:kp2 14.44s linear infinite}@keyframes kp3{0%{transform:translate(835.4px,190px);opacity:0}5.748%{transform:translate(835.4px,190px);opacity:0}6.163%{opacity:1}7.479%{opacity:1}7.825%{transform:translate(982px,190px)}7.964%{opacity:0}100%{transform:translate(982px,190px);opacity:0}}#p3{animation:kp3 14.44s linear infinite}@keyframes kp4{0%{transform:translate(982px,190px);opacity:0}9.349%{transform:translate(982px,190px);opacity:0}9.765%{opacity:1}10.769%{opacity:1}11.115%{transform:translate(835.4px,190px)}11.253%{opacity:0}100%{transform:translate(835.4px,190px);opacity:0}}#p4{animation:kp4 14.44s linear infinite}@keyframes kp5{0%{transform:translate(710px,234px);opacity:0}11.253%{transform:translate(710px,234px);opacity:0}11.669%{opacity:1}12.147%{opacity:1}12.493%{transform:translate(646px,234px)}12.632%{opacity:0}100%{transform:translate(646px,234px);opacity:0}}#p5{animation:kp5 14.44s linear infinite}@keyframes kp6{0%{transform:translate(332px,234px);opacity:0}12.632%{transform:translate(332px,234px);opacity:0}12.971%{transform:translate(300px,234px)}13.047%{opacity:1}14.522%{transform:translate(300px,377px);opacity:1}14.868%{transform:translate(268px,377px)}15.007%{opacity:0}100%{transform:translate(268px,377px);opacity:0}}#p6{animation:kp6 14.44s linear infinite}@keyframes kp7{0%{transform:translate(268px,377px);opacity:0}15.699%{transform:translate(268px,377px);opacity:0}16.101%{transform:translate(300px,377px)}16.115%{opacity:1}17.922%{transform:translate(300px,234px)}17.985%{opacity:1}18.331%{transform:translate(332px,234px)}18.47%{opacity:0}100%{transform:translate(332px,234px);opacity:0}}#p7{animation:kp7 14.44s linear infinite}@keyframes kp8{0%{transform:translate(646px,234px);opacity:0}18.47%{transform:translate(646px,234px);opacity:0}18.885%{opacity:1}19.578%{opacity:1}19.924%{transform:translate(710px,234px)}20.062%{opacity:0}100%{transform:translate(710px,234px);opacity:0}}#p8{animation:kp8 14.44s linear infinite}@keyframes kp9{0%{transform:translate(821.8px,274px);opacity:0}20.062%{transform:translate(821.8px,274px);opacity:0}20.478%{opacity:1}21.794%{opacity:1}22.133%{transform:translate(982px,274px)}22.271%{opacity:0}100%{transform:translate(982px,274px);opacity:0}}#p9{animation:kp9 14.44s linear infinite}@keyframes kp10{0%{transform:translate(982px,274px);opacity:0}23.802%{transform:translate(982px,274px);opacity:0}24.217%{opacity:1}25.222%{opacity:1}25.568%{transform:translate(821.8px,274px)}25.706%{opacity:0}100%{transform:translate(821.8px,274px);opacity:0}}#p10{animation:kp10 14.44s linear infinite}@keyframes kp11{0%{transform:translate(710px,234px);opacity:0}25.706%{transform:translate(710px,234px);opacity:0}26.122%{opacity:1}26.593%{opacity:1}26.939%{transform:translate(646px,234px)}27.078%{opacity:0}100%{transform:translate(646px,234px);opacity:0}}#p11{animation:kp11 14.44s linear infinite}@keyframes kp12{0%{transform:translate(332px,234px);opacity:0}27.078%{transform:translate(332px,234px);opacity:0}27.424%{transform:translate(300px,234px)}27.493%{opacity:1}28.968%{transform:translate(300px,377px);opacity:1}29.314%{transform:translate(268px,377px)}29.453%{opacity:0}100%{transform:translate(268px,377px);opacity:0}}#p12{animation:kp12 14.44s linear infinite}@keyframes kp13{0%{transform:translate(268px,377px);opacity:0}30.007%{transform:translate(268px,377px);opacity:0}30.374%{transform:translate(300px,377px)}30.422%{opacity:1}32.548%{transform:translate(300px,569px)}32.569%{opacity:1}32.916%{transform:translate(332px,569px)}33.054%{opacity:0}100%{transform:translate(332px,569px);opacity:0}}#p13{animation:kp13 14.44s linear infinite}@keyframes kp14{0%{transform:translate(646px,569px);opacity:0}33.054%{transform:translate(646px,569px);opacity:0}33.47%{opacity:1}34.162%{opacity:1}34.508%{transform:translate(710px,569px)}34.647%{opacity:0}100%{transform:translate(710px,569px);opacity:0}}#p14{animation:kp14 14.44s linear infinite}@keyframes kp15{0%{transform:translate(918px,509.5px);opacity:0}34.647%{transform:translate(918px,509.5px);opacity:0}35.062%{opacity:1}35.755%{opacity:1}36.101%{transform:translate(982px,509.5px)}36.24%{opacity:0}100%{transform:translate(982px,509.5px);opacity:0}}#p15{animation:kp15 14.44s linear infinite}@keyframes kp16{0%{transform:translate(268px,234px);opacity:0}41.78%{transform:translate(268px,234px);opacity:0}42.195%{opacity:1}42.888%{opacity:1}43.234%{transform:translate(332px,234px)}43.373%{opacity:0}100%{transform:translate(332px,234px);opacity:0}}#p16{animation:kp16 14.44s linear infinite}@keyframes kp17{0%{transform:translate(646px,234px);opacity:0}43.373%{transform:translate(646px,234px);opacity:0}43.788%{opacity:1}44.481%{opacity:1}44.827%{transform:translate(710px,234px)}44.965%{opacity:0}100%{transform:translate(710px,234px);opacity:0}}#p17{animation:kp17 14.44s linear infinite}@keyframes kp18{0%{transform:translate(821.8px,274px);opacity:0}44.965%{transform:translate(821.8px,274px);opacity:0}45.381%{opacity:1}46.697%{opacity:1}47.043%{transform:translate(982px,274px)}47.181%{opacity:0}100%{transform:translate(982px,274px);opacity:0}}#p18{animation:kp18 14.44s linear infinite}@keyframes kp19{0%{transform:translate(982px,274px);opacity:0}48.705%{transform:translate(982px,274px);opacity:0}49.12%{opacity:1}50.125%{opacity:1}50.471%{transform:translate(821.8px,274px)}50.609%{opacity:0}100%{transform:translate(821.8px,274px);opacity:0}}#p19{animation:kp19 14.44s linear infinite}@keyframes kp20{0%{transform:translate(918px,310px);opacity:0}51.025%{transform:translate(918px,310px);opacity:0}51.343%{transform:translate(950px,310px)}51.44%{opacity:1}53.31%{opacity:1}53.338%{transform:translate(950px,509.5px)}53.657%{transform:translate(982px,509.5px)}53.795%{opacity:0}100%{transform:translate(982px,509.5px);opacity:0}}#p20{animation:kp20 14.44s linear infinite}@keyframes kp21{0%{transform:translate(982px,509.5px);opacity:0}55.596%{transform:translate(982px,509.5px);opacity:0}55.866%{transform:translate(950px,509.5px)}56.011%{opacity:1}57.486%{opacity:1}57.562%{transform:translate(950px,310px)}57.832%{transform:translate(918px,310px)}57.971%{opacity:0}100%{transform:translate(918px,310px);opacity:0}}#p21{animation:kp21 14.44s linear infinite}@keyframes kp22{0%{transform:translate(710px,234px);opacity:0}57.971%{transform:translate(710px,234px);opacity:0}58.386%{opacity:1}58.857%{opacity:1}59.204%{transform:translate(646px,234px)}59.342%{opacity:0}100%{transform:translate(646px,234px);opacity:0}}#p22{animation:kp22 14.44s linear infinite}@keyframes kp23{0%{transform:translate(332px,234px);opacity:0}59.342%{transform:translate(332px,234px);opacity:0}59.758%{opacity:1}60.235%{opacity:1}60.582%{transform:translate(268px,234px)}60.72%{opacity:0}100%{transform:translate(268px,234px);opacity:0}}#p23{animation:kp23 14.44s linear infinite}@keyframes kp24{0%{transform:translate(268px,234px);opacity:0}65.568%{transform:translate(268px,234px);opacity:0}65.928%{transform:translate(300px,234px)}65.983%{opacity:1}67.839%{transform:translate(300px,406px)}67.853%{opacity:1}68.199%{transform:translate(332px,406px)}68.338%{opacity:0}100%{transform:translate(332px,406px);opacity:0}}#p24{animation:kp24 14.44s linear infinite}@keyframes kp25{0%{transform:translate(646px,406px);opacity:0}68.338%{transform:translate(646px,406px);opacity:0}68.753%{opacity:1}69.446%{opacity:1}69.792%{transform:translate(710px,406px)}69.931%{opacity:0}100%{transform:translate(710px,406px);opacity:0}}#p25{animation:kp25 14.44s linear infinite}@keyframes kp26{0%{transform:translate(772.9px,340px);opacity:0}69.931%{transform:translate(772.9px,340px);opacity:0}70.346%{opacity:1}71.039%{opacity:1}71.385%{transform:translate(772.9px,286px)}71.524%{opacity:0}100%{transform:translate(772.9px,286px);opacity:0}}#p26{animation:kp26 14.44s linear infinite}@keyframes kp27{0%{transform:translate(821.8px,274px);opacity:0}71.524%{transform:translate(821.8px,274px);opacity:0}71.939%{opacity:1}73.255%{opacity:1}73.601%{transform:translate(982px,274px)}73.74%{opacity:0}100%{transform:translate(982px,274px);opacity:0}}#p27{animation:kp27 14.44s linear infinite}@keyframes kp28{0%{transform:translate(982px,274px);opacity:0}75.125%{transform:translate(982px,274px);opacity:0}75.54%{opacity:1}76.544%{opacity:1}76.891%{transform:translate(821.8px,274px)}77.029%{opacity:0}100%{transform:translate(821.8px,274px);opacity:0}}#p28{animation:kp28 14.44s linear infinite}@keyframes kp29{0%{transform:translate(772.9px,286px);opacity:0}77.029%{transform:translate(772.9px,286px);opacity:0}77.445%{opacity:1}77.916%{opacity:1}78.262%{transform:translate(772.9px,340px)}78.4%{opacity:0}100%{transform:translate(772.9px,340px);opacity:0}}#p29{animation:kp29 14.44s linear infinite}@keyframes kp30{0%{transform:translate(748px,404px);opacity:0}78.4%{transform:translate(748px,404px);opacity:0}78.816%{opacity:1}79.439%{opacity:1}79.785%{transform:translate(772.8px,404px)}79.924%{opacity:0}100%{transform:translate(772.8px,404px);opacity:0}}#p30{animation:kp30 14.44s linear infinite}@keyframes kp31{0%{transform:translate(855.2px,404px);opacity:0}80.616%{transform:translate(855.2px,404px);opacity:0}81.032%{opacity:1}81.655%{opacity:1}82.001%{transform:translate(880px,404px)}82.14%{opacity:0}100%{transform:translate(880px,404px);opacity:0}}#p31{animation:kp31 14.44s linear infinite}@keyframes kp32{0%{transform:translate(880px,404px);opacity:0}82.555%{transform:translate(880px,404px);opacity:0}82.971%{opacity:1}83.594%{opacity:1}83.94%{transform:translate(855.2px,404px)}84.079%{opacity:0}100%{transform:translate(855.2px,404px);opacity:0}}#p32{animation:kp32 14.44s linear infinite}@keyframes kp33{0%{transform:translate(772.8px,404px);opacity:0}84.771%{transform:translate(772.8px,404px);opacity:0}85.187%{opacity:1}85.81%{opacity:1}86.157%{transform:translate(748px,404px)}86.295%{opacity:0}100%{transform:translate(748px,404px);opacity:0}}#p33{animation:kp33 14.44s linear infinite}@keyframes kp34{0%{transform:translate(918px,452px);opacity:0}86.711%{transform:translate(918px,452px);opacity:0}87.126%{opacity:1}87.265%{transform:translate(950px,452px)}88.241%{transform:translate(950px,509.5px)}88.442%{opacity:1}88.788%{transform:translate(982px,509.5px)}88.927%{opacity:0}100%{transform:translate(982px,509.5px);opacity:0}}#p34{animation:kp34 14.44s linear infinite}@keyframes kp35{0%{transform:translate(710px,406px);opacity:0}89.619%{transform:translate(710px,406px);opacity:0}90.035%{opacity:1}90.512%{opacity:1}90.859%{transform:translate(646px,406px)}90.997%{opacity:0}100%{transform:translate(646px,406px);opacity:0}}#p35{animation:kp35 14.44s linear infinite}@keyframes kp36{0%{transform:translate(332px,406px);opacity:0}90.997%{transform:translate(332px,406px);opacity:0}91.302%{transform:translate(300px,406px)}91.413%{opacity:1}92.888%{opacity:1}92.929%{transform:translate(300px,234px)}93.234%{transform:translate(268px,234px)}93.373%{opacity:0}100%{transform:translate(268px,234px);opacity:0}}#p36{animation:kp36 14.44s linear infinite}@keyframes kp37{0%{transform:translate(710px,406px);opacity:0}90.589%{transform:translate(710px,406px);opacity:0}91.004%{opacity:1}91.482%{opacity:1}91.828%{transform:translate(646px,406px)}91.967%{opacity:0}100%{transform:translate(646px,406px);opacity:0}}#p37{animation:kp37 14.44s linear infinite}@keyframes kp38{0%{transform:translate(332px,406px);opacity:0}91.967%{transform:translate(332px,406px);opacity:0}92.271%{transform:translate(300px,406px)}92.382%{opacity:1}93.857%{opacity:1}93.899%{transform:translate(300px,234px)}94.204%{transform:translate(268px,234px)}94.342%{opacity:0}100%{transform:translate(268px,234px);opacity:0}}#p38{animation:kp38 14.44s linear infinite}@keyframes kp39{0%{transform:translate(710px,406px);opacity:0}91.558%{transform:translate(710px,406px);opacity:0}91.974%{opacity:1}92.452%{opacity:1}92.798%{transform:translate(646px,406px)}92.936%{opacity:0}100%{transform:translate(646px,406px);opacity:0}}#p39{animation:kp39 14.44s linear infinite}@keyframes kp40{0%{transform:translate(332px,406px);opacity:0}92.936%{transform:translate(332px,406px);opacity:0}93.241%{transform:translate(300px,406px)}93.352%{opacity:1}94.827%{opacity:1}94.868%{transform:translate(300px,234px)}95.173%{transform:translate(268px,234px)}95.312%{opacity:0}100%{transform:translate(268px,234px);opacity:0}}#p40{animation:kp40 14.44s linear infinite}@keyframes kc41{0%{opacity:0}100%{opacity:0}}#c41{animation:kc41 14.44s linear infinite}@keyframes kh_buyer_phone{0%{opacity:0}41.78%{opacity:0}43.165%{opacity:1}63.213%{opacity:1}64.598%{opacity:0}65.568%{opacity:0}66.953%{opacity:1}97.666%{opacity:1}99.051%{opacity:0}100%{opacity:0}}#h_buyer_phone{animation:kh_buyer_phone 14.44s linear infinite}@keyframes kh_onboarding{0%{opacity:0}1.385%{opacity:0}2.77%{opacity:1}39.425%{opacity:1}40.81%{opacity:0}100%{opacity:0}}#h_onboarding{animation:kh_onboarding 14.44s linear infinite}@keyframes kh_chip_voice{0%{opacity:0}1.385%{opacity:0}2.77%{opacity:1}39.425%{opacity:1}40.81%{opacity:0}100%{opacity:0}}#h_chip_voice{animation:kh_chip_voice 14.44s linear infinite}@keyframes kh_api_ai{0%{opacity:0}3.601%{opacity:0}4.986%{opacity:1}39.425%{opacity:1}40.81%{opacity:0}42.819%{opacity:0}44.204%{opacity:1}63.213%{opacity:1}64.598%{opacity:0}100%{opacity:0}}#h_api_ai{animation:kh_api_ai 14.44s linear infinite}@keyframes kh_chip_transcribe{0%{opacity:0}3.601%{opacity:0}4.986%{opacity:1}39.425%{opacity:1}40.81%{opacity:0}100%{opacity:0}}#h_chip_transcribe{animation:kh_chip_transcribe 14.44s linear infinite}@keyframes kh_chip_describe{0%{opacity:0}17.916%{opacity:0}19.301%{opacity:1}39.425%{opacity:1}40.81%{opacity:0}100%{opacity:0}}#h_chip_describe{animation:kh_chip_describe 14.44s linear infinite}@keyframes kh_chip_search{0%{opacity:0}42.819%{opacity:0}44.204%{opacity:1}63.213%{opacity:1}64.598%{opacity:0}100%{opacity:0}}#h_chip_search{animation:kh_chip_search 14.44s linear infinite}@keyframes kh_api_deals{0%{opacity:0}67.784%{opacity:0}69.169%{opacity:1}97.666%{opacity:1}99.051%{opacity:0}100%{opacity:0}}#h_api_deals{animation:kh_api_deals 14.44s linear infinite}@keyframes kh_chip_auto{0%{opacity:0}67.784%{opacity:0}69.169%{opacity:1}97.666%{opacity:1}99.051%{opacity:0}100%{opacity:0}}#h_chip_auto{animation:kh_chip_auto 14.44s linear infinite}@keyframes kh_api_data{0%{opacity:0}32.5%{opacity:0}33.885%{opacity:1}39.425%{opacity:1}40.81%{opacity:0}100%{opacity:0}}#h_api_data{animation:kh_api_data 14.44s linear infinite}@keyframes kh_chip_shops{0%{opacity:0}32.5%{opacity:0}33.885%{opacity:1}39.425%{opacity:1}40.81%{opacity:0}100%{opacity:0}}#h_chip_shops{animation:kh_chip_shops 14.44s linear infinite}@keyframes kh_srv_ai{0%{opacity:0}5.194%{opacity:0}6.579%{opacity:1}39.425%{opacity:1}40.81%{opacity:0}44.411%{opacity:0}45.796%{opacity:1}63.213%{opacity:1}64.598%{opacity:0}100%{opacity:0}}#h_srv_ai{animation:kh_srv_ai 14.44s linear infinite}@keyframes kh_txt_transcribe{0%{opacity:0}5.194%{opacity:0}6.579%{opacity:1}39.425%{opacity:1}40.81%{opacity:0}100%{opacity:0}}#h_txt_transcribe{animation:kh_txt_transcribe 14.44s linear infinite}@keyframes kh_chip_ask{0%{opacity:0}19.508%{opacity:0}20.893%{opacity:1}39.425%{opacity:1}40.81%{opacity:0}44.411%{opacity:0}45.796%{opacity:1}63.213%{opacity:1}64.598%{opacity:0}70.97%{opacity:0}72.355%{opacity:1}97.666%{opacity:1}99.051%{opacity:0}100%{opacity:0}}#h_chip_ask{animation:kh_chip_ask 14.44s linear infinite}@keyframes kh_srv_deals{0%{opacity:0}69.377%{opacity:0}70.762%{opacity:1}97.666%{opacity:1}99.051%{opacity:0}100%{opacity:0}}#h_srv_deals{animation:kh_srv_deals 14.44s linear infinite}@keyframes kh_gate{0%{opacity:0}79.508%{opacity:0}80.893%{opacity:1}81.447%{opacity:1}82.832%{opacity:0}83.663%{opacity:0}85.048%{opacity:1}85.602%{opacity:1}86.988%{opacity:0}100%{opacity:0}}#h_gate{animation:kh_gate 14.44s linear infinite}@keyframes kh_ring_owner{0%{opacity:0}78.4%{opacity:0}79.785%{opacity:1}79.924%{opacity:1}81.309%{opacity:0}85.602%{opacity:0}86.988%{opacity:1}88.026%{opacity:1}89.411%{opacity:0}100%{opacity:0}}#h_ring_owner{animation:kh_ring_owner 14.44s linear infinite}@keyframes kh_ring_buyer{0%{opacity:0}81.447%{opacity:0}82.832%{opacity:1}84.079%{opacity:1}85.464%{opacity:0}100%{opacity:0}}#h_ring_buyer{animation:kh_ring_buyer 14.44s linear infinite}@keyframes kh_srv_data{0%{opacity:0}34.093%{opacity:0}35.478%{opacity:1}39.425%{opacity:1}40.81%{opacity:0}100%{opacity:0}}#h_srv_data{animation:kh_srv_data 14.44s linear infinite}@keyframes kh_whisper{0%{opacity:0}7.41%{opacity:0}8.795%{opacity:1}39.425%{opacity:1}40.81%{opacity:0}100%{opacity:0}}#h_whisper{animation:kh_whisper 14.44s linear infinite}@keyframes kh_claude{0%{opacity:0}21.717%{opacity:0}23.109%{opacity:1}39.425%{opacity:1}40.81%{opacity:0}46.627%{opacity:0}48.012%{opacity:1}63.213%{opacity:1}64.598%{opacity:0}73.186%{opacity:0}74.571%{opacity:1}97.666%{opacity:1}99.051%{opacity:0}100%{opacity:0}}#h_claude{animation:kh_claude 14.44s linear infinite}@keyframes kh_sonnet{0%{opacity:0}21.717%{opacity:0}23.109%{opacity:1}39.425%{opacity:1}40.81%{opacity:0}100%{opacity:0}}#h_sonnet{animation:kh_sonnet 14.44s linear infinite}@keyframes kh_haiku{0%{opacity:0}46.627%{opacity:0}48.012%{opacity:1}63.213%{opacity:1}64.598%{opacity:0}73.186%{opacity:0}74.571%{opacity:1}97.666%{opacity:1}99.051%{opacity:0}100%{opacity:0}}#h_haiku{animation:kh_haiku 14.44s linear infinite}@keyframes kh_files{0%{opacity:0}35.686%{opacity:0}37.071%{opacity:1}39.425%{opacity:1}40.81%{opacity:0}53.241%{opacity:0}54.626%{opacity:1}63.213%{opacity:1}64.598%{opacity:0}88.373%{opacity:0}89.758%{opacity:1}97.666%{opacity:1}99.051%{opacity:0}100%{opacity:0}}#h_files{animation:kh_files 14.44s linear infinite}@keyframes kh_file_catalog{0%{opacity:0}35.686%{opacity:0}37.071%{opacity:1}39.425%{opacity:1}40.81%{opacity:0}53.241%{opacity:0}54.626%{opacity:1}63.213%{opacity:1}64.598%{opacity:0}100%{opacity:0}}#h_file_catalog{animation:kh_file_catalog 14.44s linear infinite}@keyframes kh_file_negotiations{0%{opacity:0}88.373%{opacity:0}89.758%{opacity:1}97.666%{opacity:1}99.051%{opacity:0}100%{opacity:0}}#h_file_negotiations{animation:kh_file_negotiations 14.44s linear infinite}@keyframes kh_path_L_buy_ai{0%{opacity:0}41.78%{opacity:0}43.165%{opacity:1}63.213%{opacity:1}64.598%{opacity:0}100%{opacity:0}}#h_path_L_buy_ai{animation:kh_path_L_buy_ai 14.44s linear infinite}@keyframes kh_path_L_buy_deals{0%{opacity:0}65.568%{opacity:0}66.953%{opacity:1}97.666%{opacity:1}99.051%{opacity:0}100%{opacity:0}}#h_path_L_buy_deals{animation:kh_path_L_buy_deals 14.44s linear infinite}@keyframes kh_path_L_onb_ai{0%{opacity:0}1.385%{opacity:0}2.77%{opacity:1}39.425%{opacity:1}40.81%{opacity:0}100%{opacity:0}}#h_path_L_onb_ai{animation:kh_path_L_onb_ai 14.44s linear infinite}@keyframes kh_path_L_onb_data{0%{opacity:0}30.007%{opacity:0}31.392%{opacity:1}39.425%{opacity:1}40.81%{opacity:0}100%{opacity:0}}#h_path_L_onb_data{animation:kh_path_L_onb_data 14.44s linear infinite}@keyframes kh_path_M_ai{0%{opacity:0}3.601%{opacity:0}4.986%{opacity:1}39.425%{opacity:1}40.81%{opacity:0}42.819%{opacity:0}44.204%{opacity:1}63.213%{opacity:1}64.598%{opacity:0}100%{opacity:0}}#h_path_M_ai{animation:kh_path_M_ai 14.44s linear infinite}@keyframes kh_path_M_deals{0%{opacity:0}67.784%{opacity:0}69.169%{opacity:1}97.666%{opacity:1}99.051%{opacity:0}100%{opacity:0}}#h_path_M_deals{animation:kh_path_M_deals 14.44s linear infinite}@keyframes kh_path_M_data{0%{opacity:0}32.5%{opacity:0}33.885%{opacity:1}39.425%{opacity:1}40.81%{opacity:0}100%{opacity:0}}#h_path_M_data{animation:kh_path_M_data 14.44s linear infinite}@keyframes kh_path_R_tr_W{0%{opacity:0}5.194%{opacity:0}6.579%{opacity:1}39.425%{opacity:1}40.81%{opacity:0}100%{opacity:0}}#h_path_R_tr_W{animation:kh_path_R_tr_W 14.44s linear infinite}@keyframes kh_path_R_ask_C{0%{opacity:0}19.508%{opacity:0}20.893%{opacity:1}39.425%{opacity:1}40.81%{opacity:0}44.411%{opacity:0}45.796%{opacity:1}63.213%{opacity:1}64.598%{opacity:0}70.97%{opacity:0}72.355%{opacity:1}97.666%{opacity:1}99.051%{opacity:0}100%{opacity:0}}#h_path_R_ask_C{animation:kh_path_R_ask_C 14.44s linear infinite}@keyframes kh_path_V_deals_ask{0%{opacity:0}69.377%{opacity:0}70.762%{opacity:1}97.666%{opacity:1}99.051%{opacity:0}100%{opacity:0}}#h_path_V_deals_ask{animation:kh_path_V_deals_ask 14.44s linear infinite}@keyframes kh_path_R_ai_F{0%{opacity:0}51.025%{opacity:0}52.41%{opacity:1}63.213%{opacity:1}64.598%{opacity:0}100%{opacity:0}}#h_path_R_ai_F{animation:kh_path_R_ai_F 14.44s linear infinite}@keyframes kh_path_R_deals_F{0%{opacity:0}86.711%{opacity:0}88.096%{opacity:1}97.666%{opacity:1}99.051%{opacity:0}100%{opacity:0}}#h_path_R_deals_F{animation:kh_path_R_deals_F 14.44s linear infinite}@keyframes kh_path_R_data_F{0%{opacity:0}34.093%{opacity:0}35.478%{opacity:1}39.425%{opacity:1}40.81%{opacity:0}100%{opacity:0}}#h_path_R_data_F{animation:kh_path_R_data_F 14.44s linear infinite}@keyframes kh_step0{0%{opacity:0}1.385%{opacity:0}2.77%{opacity:1}39.425%{opacity:1}40.81%{opacity:0}100%{opacity:0}}#h_step0{animation:kh_step0 14.44s linear infinite}@keyframes kh_step1{0%{opacity:0}41.78%{opacity:0}43.165%{opacity:1}63.213%{opacity:1}64.598%{opacity:0}100%{opacity:0}}#h_step1{animation:kh_step1 14.44s linear infinite}@keyframes kh_step2{0%{opacity:0}65.568%{opacity:0}66.953%{opacity:1}97.666%{opacity:1}99.051%{opacity:0}100%{opacity:0}}#h_step2{animation:kh_step2 14.44s linear infinite}@keyframes kh_detail0{0%{opacity:0}1.385%{opacity:0}2.77%{opacity:1}39.425%{opacity:1}40.81%{opacity:0}100%{opacity:0}}#h_detail0{animation:kh_detail0 14.44s linear infinite}@keyframes kh_detail1{0%{opacity:0}41.78%{opacity:0}43.165%{opacity:1}63.213%{opacity:1}64.598%{opacity:0}100%{opacity:0}}#h_detail1{animation:kh_detail1 14.44s linear infinite}@keyframes kh_detail2{0%{opacity:0}65.568%{opacity:0}66.953%{opacity:1}97.666%{opacity:1}99.051%{opacity:0}100%{opacity:0}}#h_detail2{animation:kh_detail2 14.44s linear infinite}
+@media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+<g id="base">
+<rect x="0.5" y="0.5" width="1279" height="783" rx="20" fill="#f7f7f5" stroke="#e5e7eb" stroke-width="1"/>
+<text class="s" x="40" y="56" font-size="26" font-weight="700" fill="#16181d">How Deal4Me fits together</text>
+<text class="s" x="40" y="84" font-size="15" fill="#6b7280">One Next.js 16 server. Every model call is a headless Claude Code session; speech-to-text and data stay on this machine.</text>
+<path d="M1004,72 L1030,58 L1046,64 L1072,40 L1090,52 L1104,46 L1128,30 L1146,44 L1160,38 L1186,56 L1204,50 L1240,72" fill="none" stroke="#d6d8dc" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M1118,38 L1128,30 L1138,37" fill="none" stroke="#d6d8dc" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="28" y="104" width="252" height="566" rx="16" fill="#efefec" stroke="#e5e7eb" stroke-width="1" fill-opacity="0.55"/>
+<text class="s" x="41" y="129" font-size="13" font-weight="700" fill="#16181d">Clients</text>
+<text class="m" x="267" y="129" font-size="13" fill="#6b7280" text-anchor="end">browser</text>
+<rect x="320" y="104" width="338" height="566" rx="16" fill="#efefec" stroke="#e5e7eb" stroke-width="1" fill-opacity="0.55"/>
+<text class="s" x="333" y="129" font-size="13" font-weight="700" fill="#16181d">Next.js API routes</text>
+<text class="m" x="645" y="129" font-size="13" fill="#6b7280" text-anchor="end">src/app/api</text>
+<rect x="698" y="104" width="232" height="566" rx="16" fill="#efefec" stroke="#e5e7eb" stroke-width="1" fill-opacity="0.55"/>
+<text class="s" x="711" y="129" font-size="13" font-weight="700" fill="#16181d">Server modules</text>
+<text class="m" x="917" y="129" font-size="13" fill="#6b7280" text-anchor="end">src/server</text>
+<rect x="970" y="104" width="282" height="566" rx="16" fill="#efefec" stroke="#e5e7eb" stroke-width="1" fill-opacity="0.55"/>
+<text class="s" x="983" y="129" font-size="13" font-weight="700" fill="#16181d">Models and storage</text>
+<rect x="40" y="144" width="108" height="180" rx="18" fill="#ffffff" stroke="#14171d" stroke-width="1.5"/>
+<rect x="80" y="153" width="28" height="5" rx="2.5" fill="#d6d8dc"/>
+<text class="s" x="52" y="182" font-size="14" font-weight="700" fill="#14171d">Seller app</text>
+<text class="m" x="52" y="200" font-size="13" fill="#6b7280">/seller/*</text>
+<path d="M52,211 H136" stroke="#e5e7eb" stroke-width="1"/>
+<rect x="52" y="222.5" width="9" height="9" rx="2.5" fill="#efefec" stroke="#14171d" stroke-width="1"/>
+<text class="s" x="68" y="232" font-size="13" fill="#16181d">Listings</text>
+<rect x="52" y="242.5" width="9" height="9" rx="2.5" fill="#efefec" stroke="#14171d" stroke-width="1"/>
+<text class="s" x="68" y="252" font-size="13" fill="#16181d">Scan</text>
+<rect x="52" y="262.5" width="9" height="9" rx="2.5" fill="#efefec" stroke="#14171d" stroke-width="1"/>
+<text class="s" x="68" y="272" font-size="13" fill="#16181d">Messages</text>
+<rect x="52" y="282.5" width="9" height="9" rx="2.5" fill="#efefec" stroke="#14171d" stroke-width="1"/>
+<text class="s" x="68" y="292" font-size="13" fill="#16181d">Profile</text>
+<rect x="77" y="312" width="34" height="4" rx="2" fill="#d6d8dc"/>
+<rect x="160" y="144" width="108" height="180" rx="18" fill="#ffffff" stroke="#0e7490" stroke-width="1.5"/>
+<rect x="200" y="153" width="28" height="5" rx="2.5" fill="#d6d8dc"/>
+<text class="s" x="172" y="182" font-size="14" font-weight="700" fill="#0e7490">Buyer app</text>
+<text class="m" x="172" y="200" font-size="13" fill="#6b7280">/visit/*</text>
+<path d="M172,211 H256" stroke="#e5e7eb" stroke-width="1"/>
+<rect x="172" y="222.5" width="9" height="9" rx="2.5" fill="#e7f3f6" stroke="#0e7490" stroke-width="1"/>
+<text class="s" x="188" y="232" font-size="13" fill="#16181d">Home</text>
+<rect x="172" y="242.5" width="9" height="9" rx="2.5" fill="#e7f3f6" stroke="#0e7490" stroke-width="1"/>
+<text class="s" x="188" y="252" font-size="13" fill="#16181d">Chat</text>
+<rect x="172" y="262.5" width="9" height="9" rx="2.5" fill="#e7f3f6" stroke="#0e7490" stroke-width="1"/>
+<text class="s" x="188" y="272" font-size="13" fill="#16181d">Messages</text>
+<rect x="172" y="282.5" width="9" height="9" rx="2.5" fill="#e7f3f6" stroke="#0e7490" stroke-width="1"/>
+<text class="s" x="188" y="292" font-size="13" fill="#16181d">Profile</text>
+<rect x="197" y="312" width="34" height="4" rx="2" fill="#d6d8dc"/>
+<rect x="40" y="340" width="228" height="74" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+<text class="s" x="54" y="364" font-size="15" font-weight="700" fill="#16181d">Onboarding</text>
+<text class="m" x="254" y="364" font-size="13" fill="#6b7280" text-anchor="end">/sell/start</text>
+<rect x="54" y="378" width="52" height="24" rx="6" fill="#efefec"/>
+<text class="s" x="80" y="394.5" font-size="13" fill="#16181d" text-anchor="middle">voice</text>
+<rect x="112" y="378" width="60" height="24" rx="6" fill="#efefec"/>
+<text class="s" x="142" y="394.5" font-size="13" fill="#16181d" text-anchor="middle">photos</text>
+<rect x="178" y="378" width="68" height="24" rx="6" fill="#efefec"/>
+<text class="s" x="212" y="394.5" font-size="13" fill="#16181d" text-anchor="middle">website</text>
+<rect x="40" y="428" width="228" height="88" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+<text class="s" x="54" y="454" font-size="13" font-weight="600" fill="#16181d">Studio</text>
+<text class="m" x="254" y="454" font-size="13" fill="#6b7280" text-anchor="end">/sell/studio</text>
+<text class="s" x="54" y="476" font-size="13" font-weight="600" fill="#16181d">Storefront</text>
+<text class="m" x="254" y="476" font-size="13" fill="#6b7280" text-anchor="end">/s/[slug]</text>
+<text class="s" x="54" y="498" font-size="13" font-weight="600" fill="#16181d">Dashboard</text>
+<text class="m" x="254" y="498" font-size="13" fill="#6b7280" text-anchor="end">/sell/dashboard</text>
+<rect x="40" y="530" width="228" height="128" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+<text class="s" x="54" y="556" font-size="15" font-weight="700" fill="#16181d">Client state</text>
+<text class="s" x="54" y="580" font-size="13" fill="#16181d">Zustand store + localStorage</text>
+<text class="s" x="54" y="602" font-size="13" fill="#6b7280">refresh on focus and every 15 s</text>
+<text class="s" x="54" y="622" font-size="13" fill="#6b7280">messages poll every 3 s</text>
+<rect x="332" y="144" width="314" height="180" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+<text class="m" x="346" y="170" font-size="15" font-weight="700" fill="#16181d">/api/ai/*</text>
+<text class="s" x="632" y="170" font-size="13" fill="#6b7280" text-anchor="end">9 routes</text>
+<rect x="346" y="186" width="90" height="24" rx="6" fill="#efefec"/>
+<text class="m" x="391" y="202.5" font-size="13" fill="#16181d" text-anchor="middle">transcribe</text>
+<rect x="442" y="186" width="74.4" height="24" rx="6" fill="#efefec"/>
+<text class="m" x="479.2" y="202.5" font-size="13" fill="#16181d" text-anchor="middle">describe</text>
+<rect x="522.4" y="186" width="58.8" height="24" rx="6" fill="#efefec"/>
+<text class="m" x="551.8" y="202.5" font-size="13" fill="#16181d" text-anchor="middle">search</text>
+<rect x="346" y="216" width="74.4" height="24" rx="6" fill="#efefec"/>
+<text class="m" x="383.2" y="232.5" font-size="13" fill="#16181d" text-anchor="middle">appraise</text>
+<rect x="426.4" y="216" width="121.2" height="24" rx="6" fill="#efefec"/>
+<text class="m" x="487" y="232.5" font-size="13" fill="#16181d" text-anchor="middle">appraise/comps</text>
+<rect x="346" y="246" width="113.4" height="24" rx="6" fill="#efefec"/>
+<text class="m" x="402.7" y="262.5" font-size="13" fill="#16181d" text-anchor="middle">suggest-price</text>
+<rect x="465.4" y="246" width="105.6" height="24" rx="6" fill="#efefec"/>
+<text class="m" x="518.2" y="262.5" font-size="13" fill="#16181d" text-anchor="middle">damage-check</text>
+<rect x="346" y="276" width="183.6" height="24" rx="6" fill="#efefec"/>
+<text class="m" x="437.8" y="292.5" font-size="13" fill="#16181d" text-anchor="middle">storefront-instruction</text>
+<rect x="535.6" y="276" width="66.6" height="24" rx="6" fill="#efefec"/>
+<text class="m" x="568.9" y="292.5" font-size="13" fill="#16181d" text-anchor="middle">restyle</text>
+<rect x="332" y="340" width="314" height="132" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+<text class="m" x="346" y="366" font-size="15" font-weight="700" fill="#16181d">/api/deals/negotiations</text>
+<rect x="346" y="382" width="43.2" height="24" rx="6" fill="#efefec"/>
+<text class="m" x="367.6" y="398.5" font-size="13" fill="#16181d" text-anchor="middle">auto</text>
+<text class="s" x="399.2" y="398.5" font-size="13" fill="#6b7280">agent vs agent, NDJSON stream</text>
+<rect x="346" y="412" width="113.4" height="24" rx="6" fill="#efefec"/>
+<text class="m" x="402.7" y="428.5" font-size="13" fill="#16181d" text-anchor="middle">[id]/messages</text>
+<text class="s" x="469.4" y="428.5" font-size="13" fill="#6b7280">buyer vs owner agent</text>
+<text class="s" x="346" y="460" font-size="13" fill="#6b7280">GET lists, POST starts a manual deal</text>
+<rect x="332" y="488" width="314" height="170" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+<text class="m" x="346" y="514" font-size="15" font-weight="700" fill="#16181d">/api/data/*</text>
+<rect x="346" y="530" width="51" height="24" rx="6" fill="#efefec"/>
+<text class="m" x="371.5" y="546.5" font-size="13" fill="#16181d" text-anchor="middle">shops</text>
+<rect x="403" y="530" width="152.4" height="24" rx="6" fill="#efefec"/>
+<text class="m" x="479.2" y="546.5" font-size="13" fill="#16181d" text-anchor="middle">shops/[id]/publish</text>
+<rect x="561.4" y="530" width="51" height="24" rx="6" fill="#efefec"/>
+<text class="m" x="586.9" y="546.5" font-size="13" fill="#16181d" text-anchor="middle">items</text>
+<rect x="346" y="559" width="58.8" height="24" rx="6" fill="#efefec"/>
+<text class="m" x="375.4" y="575.5" font-size="13" fill="#16181d" text-anchor="middle">orders</text>
+<rect x="410.8" y="559" width="152.4" height="24" rx="6" fill="#efefec"/>
+<text class="m" x="487" y="575.5" font-size="13" fill="#16181d" text-anchor="middle">orders/[id]/status</text>
+<rect x="569.2" y="559" width="51" height="24" rx="6" fill="#efefec"/>
+<text class="m" x="594.7" y="575.5" font-size="13" fill="#16181d" text-anchor="middle">state</text>
+<rect x="346" y="588" width="74.4" height="24" rx="6" fill="#efefec"/>
+<text class="m" x="383.2" y="604.5" font-size="13" fill="#16181d" text-anchor="middle">requests</text>
+<rect x="426.4" y="588" width="51" height="24" rx="6" fill="#efefec"/>
+<text class="m" x="451.9" y="604.5" font-size="13" fill="#16181d" text-anchor="middle">chats</text>
+<rect x="483.4" y="588" width="74.4" height="24" rx="6" fill="#efefec"/>
+<text class="m" x="520.6" y="604.5" font-size="13" fill="#16181d" text-anchor="middle">messages</text>
+<rect x="346" y="617" width="66.6" height="24" rx="6" fill="#efefec"/>
+<text class="m" x="379.3" y="633.5" font-size="13" fill="#16181d" text-anchor="middle">rentals</text>
+<text class="s" x="422.6" y="633.5" font-size="13" fill="#6b7280">hold · pickup · return · settle</text>
+<rect x="710" y="144" width="208" height="180" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+<text class="m" x="724" y="170" font-size="15" font-weight="700" fill="#16181d">src/server/ai</text>
+<text class="m" x="724" y="194.5" font-size="13" fill="#16181d">transcribe.ts</text>
+<text class="s" x="724" y="222" font-size="13" fill="#6b7280">search · appraise · restyle</text>
+<rect x="724" y="262" width="97.8" height="24" rx="6" fill="#efefec"/>
+<text class="m" x="772.9" y="278.5" font-size="13" font-weight="700" fill="#16181d" text-anchor="middle">askClaude()</text>
+<text class="s" x="904" y="314.5" font-size="13" fill="#6b7280" text-anchor="end">catalog · cache</text>
+<rect x="710" y="340" width="208" height="132" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+<text class="m" x="724" y="366" font-size="15" font-weight="700" fill="#16181d">src/server/deals</text>
+<path d="M747,404 H772.8 M855.2,404 H881" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="3 3"/>
+<circle cx="736" cy="404" r="11" fill="#14171d"/>
+<circle cx="892" cy="404" r="11" fill="#0e7490"/>
+<circle cx="736" cy="404" r="4" fill="#ffffff"/>
+<circle cx="892" cy="404" r="4" fill="#ffffff"/>
+<rect x="772.8" y="392" width="82.4" height="24" rx="6" fill="#ffffff" stroke="#14171d" stroke-width="1.5"/>
+<text class="m" x="814" y="408.5" font-size="13" font-weight="700" fill="#16181d" text-anchor="middle">rules.ts</text>
+<text class="s" x="736" y="436" font-size="13" fill="#6b7280" text-anchor="middle">owner</text>
+<text class="s" x="892" y="436" font-size="13" fill="#6b7280" text-anchor="middle">buyer</text>
+<text class="s" x="814" y="436" font-size="13" fill="#6b7280" text-anchor="middle">hard limits</text>
+<rect x="710" y="488" width="208" height="170" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+<text class="m" x="724" y="514" font-size="15" font-weight="700" fill="#16181d">src/server/data</text>
+<rect x="724" y="533" width="8" height="8" rx="2" fill="#efefec" stroke="#6b7280" stroke-width="1"/>
+<text class="s" x="740" y="542" font-size="13" fill="#16181d">catalog store</text>
+<rect x="724" y="557" width="8" height="8" rx="2" fill="#efefec" stroke="#6b7280" stroke-width="1"/>
+<text class="s" x="740" y="566" font-size="13" fill="#16181d">conversations</text>
+<rect x="724" y="581" width="8" height="8" rx="2" fill="#efefec" stroke="#6b7280" stroke-width="1"/>
+<text class="s" x="740" y="590" font-size="13" fill="#16181d">rentals ledger</text>
+<text class="s" x="724" y="640" font-size="13" fill="#6b7280">zod-checked, atomic writes</text>
+<rect x="982" y="144" width="258" height="96" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+<text class="s" x="996" y="169" font-size="15" font-weight="700" fill="#16181d">Whisper large-v3-turbo</text>
+<text class="s" x="996" y="190" font-size="13" fill="#6b7280">local speech-to-text, mlx-audio</text>
+<rect x="996" y="202" width="121.2" height="24" rx="6" fill="#efefec"/>
+<text class="m" x="1056.6" y="218.5" font-size="13" fill="#16181d" text-anchor="middle">127.0.0.1:8765</text>
+<rect x="982" y="254" width="258" height="218" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+<text class="s" x="996" y="282" fill="#16181d"><tspan font-size="18" font-weight="700">Claude</tspan><tspan font-size="13" fill="#6b7280" dx="8">via Claude Agent SDK</tspan></text>
+<text class="s" x="996" y="302" font-size="13" fill="#6b7280">headless Claude Code sessions</text>
+<rect x="994" y="316" width="234" height="72" rx="10" fill="#f7f7f5" stroke="#e5e7eb" stroke-width="1"/>
+<text class="s" x="1006" y="337" font-size="14" font-weight="700" fill="#16181d">Sonnet</text>
+<text class="s" x="1006" y="357" font-size="13" fill="#16181d">vision · describe · restyle</text>
+<text class="s" x="1006" y="375" font-size="13" fill="#16181d">storefront edits · damage check</text>
+<rect x="994" y="396" width="234" height="72" rx="10" fill="#f7f7f5" stroke="#e5e7eb" stroke-width="1"/>
+<text class="s" x="1006" y="417" font-size="14" font-weight="700" fill="#16181d">Haiku</text>
+<text class="s" x="1006" y="437" font-size="13" fill="#16181d">search · pricing</text>
+<text class="s" x="1006" y="455" font-size="13" fill="#16181d">both negotiation agents</text>
+<rect x="982" y="488" width="258" height="170" rx="12" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.5"/>
+<text class="m" x="996" y="514" font-size="15" font-weight="700" fill="#16181d">.data/</text>
+<text class="s" x="1226" y="514" font-size="13" fill="#6b7280" text-anchor="end">JSON files on disk</text>
+<path d="M997,531 h6 l4,4 v9 h-10 z" fill="#ffffff" stroke="#6b7280" stroke-width="1" stroke-linejoin="round"/>
+<text class="m" x="1014" y="542" font-size="13" fill="#16181d">catalog.json</text>
+<path d="M997,553 h6 l4,4 v9 h-10 z" fill="#ffffff" stroke="#6b7280" stroke-width="1" stroke-linejoin="round"/>
+<text class="m" x="1014" y="564" font-size="13" fill="#16181d">conversations.json</text>
+<path d="M997,575 h6 l4,4 v9 h-10 z" fill="#ffffff" stroke="#6b7280" stroke-width="1" stroke-linejoin="round"/>
+<text class="m" x="1014" y="586" font-size="13" fill="#16181d">negotiations.json</text>
+<path d="M996,599 h4 l2,2 h6 v8 h-12 z" fill="#efefec" stroke="#6b7280" stroke-width="1" stroke-linejoin="round"/>
+<text class="m" x="1014" y="608" font-size="13" fill="#16181d">ai-cache/</text>
+<text class="s" x="996" y="640" font-size="13" fill="#6b7280"><tspan class="m">RIDGE_DATA_DIR</tspan> moves it</text>
+</g>
+<g id="links">
+<path d="M300,234 L300,569" fill="none" stroke="#6b7280" stroke-width="2" stroke-linejoin="round"/>
+<path d="M268,377 L300,377" fill="none" stroke="#6b7280" stroke-width="2" stroke-linejoin="round"/>
+<path d="M268,472 L300,472" fill="none" stroke="#6b7280" stroke-width="2" stroke-linejoin="round"/>
+<path d="M268,569 L300,569" fill="none" stroke="#6b7280" stroke-width="2" stroke-linejoin="round"/>
+<path d="M268,234 L326,234" fill="none" stroke="#6b7280" stroke-width="2" stroke-linejoin="round" marker-end="url(#ah)"/>
+<path d="M300,406 L326,406" fill="none" stroke="#6b7280" stroke-width="2" stroke-linejoin="round" marker-end="url(#ah)"/>
+<path d="M300,569 L326,569" fill="none" stroke="#6b7280" stroke-width="2" stroke-linejoin="round" marker-end="url(#ah)"/>
+<circle cx="300.0" cy="234" r="3" fill="#6b7280"/>
+<circle cx="300.0" cy="377" r="3" fill="#6b7280"/>
+<circle cx="300.0" cy="472" r="3" fill="#6b7280"/>
+<circle cx="300.0" cy="569" r="3" fill="#6b7280"/>
+<circle cx="300.0" cy="406" r="3" fill="#6b7280"/>
+<circle cx="300.0" cy="569" r="3" fill="#6b7280"/>
+<path d="M646,234 L704,234" fill="none" stroke="#6b7280" stroke-width="2" stroke-linejoin="round" marker-end="url(#ah)"/>
+<path d="M646,406 L704,406" fill="none" stroke="#6b7280" stroke-width="2" stroke-linejoin="round" marker-end="url(#ah)"/>
+<path d="M646,569 L704,569" fill="none" stroke="#6b7280" stroke-width="2" stroke-linejoin="round" marker-end="url(#ah)"/>
+<path d="M835.4,190 L976,190" fill="none" stroke="#6b7280" stroke-width="2" stroke-linejoin="round" marker-end="url(#ah)"/>
+<path d="M821.8,274 L976,274" fill="none" stroke="#6b7280" stroke-width="2" stroke-linejoin="round" marker-end="url(#ah)"/>
+<path d="M772.9,340 L772.9,292" fill="none" stroke="#6b7280" stroke-width="2" stroke-linejoin="round" marker-end="url(#ah)"/>
+<path d="M918,509.5 L976,509.5" fill="none" stroke="#6b7280" stroke-width="2" stroke-linejoin="round" marker-end="url(#ah)"/>
+<path d="M918,310 L950,310 L950,509.5" fill="none" stroke="#6b7280" stroke-width="2" stroke-linejoin="round"/>
+<path d="M918,452 L950,452" fill="none" stroke="#6b7280" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="950.0" cy="310" r="3" fill="#6b7280"/>
+<circle cx="950.0" cy="452" r="3" fill="#6b7280"/>
+<circle cx="950.0" cy="509.5" r="3" fill="#6b7280"/>
+</g>
+<g id="hl">
+<g id="h_buyer_phone" opacity="0"><rect x="160" y="144" width="108" height="180" rx="18" fill="none" stroke="#b4232a" stroke-width="2"/></g>
+<g id="h_onboarding" opacity="0"><rect x="40" y="340" width="228" height="74" rx="12" fill="none" stroke="#b4232a" stroke-width="2"/></g>
+<g id="h_chip_voice" opacity="0"><rect x="54" y="378" width="52" height="24" rx="6" fill="#fbeeee" stroke="#b4232a" stroke-width="1"/><text class="s" x="80" y="394.5" font-size="13" fill="#b4232a" text-anchor="middle">voice</text></g>
+<g id="h_api_ai" opacity="0"><rect x="332" y="144" width="314" height="180" rx="12" fill="none" stroke="#b4232a" stroke-width="2"/></g>
+<g id="h_chip_transcribe" opacity="0"><rect x="346" y="186" width="90" height="24" rx="6" fill="#fbeeee" stroke="#b4232a" stroke-width="1"/><text class="m" x="391" y="202.5" font-size="13" fill="#b4232a" text-anchor="middle">transcribe</text></g>
+<g id="h_chip_describe" opacity="0"><rect x="442" y="186" width="74.4" height="24" rx="6" fill="#fbeeee" stroke="#b4232a" stroke-width="1"/><text class="m" x="479.2" y="202.5" font-size="13" fill="#b4232a" text-anchor="middle">describe</text></g>
+<g id="h_chip_search" opacity="0"><rect x="522.4" y="186" width="58.8" height="24" rx="6" fill="#fbeeee" stroke="#b4232a" stroke-width="1"/><text class="m" x="551.8" y="202.5" font-size="13" fill="#b4232a" text-anchor="middle">search</text></g>
+<g id="h_api_deals" opacity="0"><rect x="332" y="340" width="314" height="132" rx="12" fill="none" stroke="#b4232a" stroke-width="2"/></g>
+<g id="h_chip_auto" opacity="0"><rect x="346" y="382" width="43.2" height="24" rx="6" fill="#fbeeee" stroke="#b4232a" stroke-width="1"/><text class="m" x="367.6" y="398.5" font-size="13" fill="#b4232a" text-anchor="middle">auto</text></g>
+<g id="h_api_data" opacity="0"><rect x="332" y="488" width="314" height="170" rx="12" fill="none" stroke="#b4232a" stroke-width="2"/></g>
+<g id="h_chip_shops" opacity="0"><rect x="346" y="530" width="51" height="24" rx="6" fill="#fbeeee" stroke="#b4232a" stroke-width="1"/><text class="m" x="371.5" y="546.5" font-size="13" fill="#b4232a" text-anchor="middle">shops</text></g>
+<g id="h_srv_ai" opacity="0"><rect x="710" y="144" width="208" height="180" rx="12" fill="none" stroke="#b4232a" stroke-width="2"/></g>
+<g id="h_txt_transcribe" opacity="0"><text class="m" x="724" y="194.5" font-size="13" fill="#b4232a">transcribe.ts</text></g>
+<g id="h_chip_ask" opacity="0"><rect x="724" y="262" width="97.8" height="24" rx="6" fill="#fbeeee" stroke="#b4232a" stroke-width="1"/><text class="m" x="772.9" y="278.5" font-size="13" font-weight="700" fill="#b4232a" text-anchor="middle">askClaude()</text></g>
+<g id="h_srv_deals" opacity="0"><rect x="710" y="340" width="208" height="132" rx="12" fill="none" stroke="#b4232a" stroke-width="2"/></g>
+<g id="h_gate" opacity="0"><rect x="772.8" y="392" width="82.4" height="24" rx="6" fill="#fbeeee" stroke="#b4232a" stroke-width="1.5"/><text class="m" x="814" y="408.5" font-size="13" font-weight="700" fill="#b4232a" text-anchor="middle">rules.ts</text></g>
+<g id="h_ring_owner" opacity="0"><circle cx="736" cy="404" r="15" fill="none" stroke="#b4232a" stroke-width="2"/></g>
+<g id="h_ring_buyer" opacity="0"><circle cx="892" cy="404" r="15" fill="none" stroke="#b4232a" stroke-width="2"/></g>
+<g id="h_srv_data" opacity="0"><rect x="710" y="488" width="208" height="170" rx="12" fill="none" stroke="#b4232a" stroke-width="2"/></g>
+<g id="h_whisper" opacity="0"><rect x="982" y="144" width="258" height="96" rx="12" fill="none" stroke="#b4232a" stroke-width="2"/></g>
+<g id="h_claude" opacity="0"><rect x="982" y="254" width="258" height="218" rx="12" fill="none" stroke="#b4232a" stroke-width="2"/></g>
+<g id="h_sonnet" opacity="0"><rect x="994" y="316" width="234" height="72" rx="10" fill="#fbeeee" stroke="#b4232a" stroke-width="1.5"/><text class="s" x="1006" y="337" font-size="14" font-weight="700" fill="#b4232a">Sonnet</text><text class="s" x="1006" y="357" font-size="13" fill="#b4232a">vision · describe · restyle</text><text class="s" x="1006" y="375" font-size="13" fill="#b4232a">storefront edits · damage check</text></g>
+<g id="h_haiku" opacity="0"><rect x="994" y="396" width="234" height="72" rx="10" fill="#fbeeee" stroke="#b4232a" stroke-width="1.5"/><text class="s" x="1006" y="417" font-size="14" font-weight="700" fill="#b4232a">Haiku</text><text class="s" x="1006" y="437" font-size="13" fill="#b4232a">search · pricing</text><text class="s" x="1006" y="455" font-size="13" fill="#b4232a">both negotiation agents</text></g>
+<g id="h_files" opacity="0"><rect x="982" y="488" width="258" height="170" rx="12" fill="none" stroke="#b4232a" stroke-width="2"/></g>
+<g id="h_file_catalog" opacity="0"><rect x="990" y="527" width="242" height="21" rx="5" fill="#fbeeee"/><path d="M997,531 h6 l4,4 v9 h-10 z" fill="#ffffff" stroke="#b4232a" stroke-width="1" stroke-linejoin="round"/><text class="m" x="1014" y="542" font-size="13" fill="#b4232a">catalog.json</text></g>
+<g id="h_file_negotiations" opacity="0"><rect x="990" y="571" width="242" height="21" rx="5" fill="#fbeeee"/><path d="M997,575 h6 l4,4 v9 h-10 z" fill="#ffffff" stroke="#b4232a" stroke-width="1" stroke-linejoin="round"/><text class="m" x="1014" y="586" font-size="13" fill="#b4232a">negotiations.json</text></g>
+<g id="h_path_L_buy_ai" opacity="0"><path d="M268,234 L326,234" fill="none" stroke="#b4232a" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ahc)"/></g>
+<g id="h_path_L_buy_deals" opacity="0"><path d="M268,234 L300,234 L300,406 L326,406" fill="none" stroke="#b4232a" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ahc)"/></g>
+<g id="h_path_L_onb_ai" opacity="0"><path d="M268,377 L300,377 L300,234 L326,234" fill="none" stroke="#b4232a" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ahc)"/></g>
+<g id="h_path_L_onb_data" opacity="0"><path d="M268,377 L300,377 L300,569 L326,569" fill="none" stroke="#b4232a" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ahc)"/></g>
+<g id="h_path_M_ai" opacity="0"><path d="M646,234 L704,234" fill="none" stroke="#b4232a" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ahc)"/></g>
+<g id="h_path_M_deals" opacity="0"><path d="M646,406 L704,406" fill="none" stroke="#b4232a" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ahc)"/></g>
+<g id="h_path_M_data" opacity="0"><path d="M646,569 L704,569" fill="none" stroke="#b4232a" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ahc)"/></g>
+<g id="h_path_R_tr_W" opacity="0"><path d="M835.4,190 L976,190" fill="none" stroke="#b4232a" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ahc)"/></g>
+<g id="h_path_R_ask_C" opacity="0"><path d="M821.8,274 L976,274" fill="none" stroke="#b4232a" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ahc)"/></g>
+<g id="h_path_V_deals_ask" opacity="0"><path d="M772.9,340 L772.9,292" fill="none" stroke="#b4232a" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ahc)"/></g>
+<g id="h_path_R_ai_F" opacity="0"><path d="M918,310 L950,310 L950,509.5 L976,509.5" fill="none" stroke="#b4232a" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ahc)"/></g>
+<g id="h_path_R_deals_F" opacity="0"><path d="M918,452 L950,452 L950,509.5 L976,509.5" fill="none" stroke="#b4232a" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ahc)"/></g>
+<g id="h_path_R_data_F" opacity="0"><path d="M918,509.5 L976,509.5" fill="none" stroke="#b4232a" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ahc)"/></g>
+</g>
+<g id="packets">
+<g id="p1" opacity="0"><circle r="5.5" fill="#b4232a" stroke="#ffffff" stroke-width="2"/></g>
+<g id="p2" opacity="0"><circle r="5.5" fill="#b4232a" stroke="#ffffff" stroke-width="2"/></g>
+<g id="p3" opacity="0"><circle r="5.5" fill="#b4232a" stroke="#ffffff" stroke-width="2"/></g>
+<g id="p4" opacity="0"><circle r="5" fill="#ffffff" stroke="#b4232a" stroke-width="2.5"/></g>
+<g id="p5" opacity="0"><circle r="5" fill="#ffffff" stroke="#b4232a" stroke-width="2.5"/></g>
+<g id="p6" opacity="0"><circle r="5" fill="#ffffff" stroke="#b4232a" stroke-width="2.5"/></g>
+<g id="p7" opacity="0"><circle r="5.5" fill="#b4232a" stroke="#ffffff" stroke-width="2"/></g>
+<g id="p8" opacity="0"><circle r="5.5" fill="#b4232a" stroke="#ffffff" stroke-width="2"/></g>
+<g id="p9" opacity="0"><circle r="5.5" fill="#b4232a" stroke="#ffffff" stroke-width="2"/></g>
+<g id="p10" opacity="0"><circle r="5" fill="#ffffff" stroke="#b4232a" stroke-width="2.5"/></g>
+<g id="p11" opacity="0"><circle r="5" fill="#ffffff" stroke="#b4232a" stroke-width="2.5"/></g>
+<g id="p12" opacity="0"><circle r="5" fill="#ffffff" stroke="#b4232a" stroke-width="2.5"/></g>
+<g id="p13" opacity="0"><circle r="5.5" fill="#b4232a" stroke="#ffffff" stroke-width="2"/></g>
+<g id="p14" opacity="0"><circle r="5.5" fill="#b4232a" stroke="#ffffff" stroke-width="2"/></g>
+<g id="p15" opacity="0"><circle r="5.5" fill="#b4232a" stroke="#ffffff" stroke-width="2"/></g>
+<g id="p16" opacity="0"><circle r="5.5" fill="#b4232a" stroke="#ffffff" stroke-width="2"/></g>
+<g id="p17" opacity="0"><circle r="5.5" fill="#b4232a" stroke="#ffffff" stroke-width="2"/></g>
+<g id="p18" opacity="0"><circle r="5.5" fill="#b4232a" stroke="#ffffff" stroke-width="2"/></g>
+<g id="p19" opacity="0"><circle r="5" fill="#ffffff" stroke="#b4232a" stroke-width="2.5"/></g>
+<g id="p20" opacity="0"><circle r="5.5" fill="#b4232a" stroke="#ffffff" stroke-width="2"/></g>
+<g id="p21" opacity="0"><circle r="5" fill="#ffffff" stroke="#b4232a" stroke-width="2.5"/></g>
+<g id="p22" opacity="0"><circle r="5" fill="#ffffff" stroke="#b4232a" stroke-width="2.5"/></g>
+<g id="p23" opacity="0"><circle r="5" fill="#ffffff" stroke="#b4232a" stroke-width="2.5"/></g>
+<g id="p24" opacity="0"><circle r="5.5" fill="#b4232a" stroke="#ffffff" stroke-width="2"/></g>
+<g id="p25" opacity="0"><circle r="5.5" fill="#b4232a" stroke="#ffffff" stroke-width="2"/></g>
+<g id="p26" opacity="0"><circle r="5.5" fill="#b4232a" stroke="#ffffff" stroke-width="2"/></g>
+<g id="p27" opacity="0"><circle r="5.5" fill="#b4232a" stroke="#ffffff" stroke-width="2"/></g>
+<g id="p28" opacity="0"><circle r="5" fill="#ffffff" stroke="#b4232a" stroke-width="2.5"/></g>
+<g id="p29" opacity="0"><circle r="5" fill="#ffffff" stroke="#b4232a" stroke-width="2.5"/></g>
+<g id="p30" opacity="0"><circle r="4.5" fill="#b4232a" stroke="#ffffff" stroke-width="2"/></g>
+<g id="p31" opacity="0"><circle r="4.5" fill="#b4232a" stroke="#ffffff" stroke-width="2"/></g>
+<g id="p32" opacity="0"><circle r="4.5" fill="#b4232a" stroke="#ffffff" stroke-width="2"/></g>
+<g id="p33" opacity="0"><circle r="4.5" fill="#b4232a" stroke="#ffffff" stroke-width="2"/></g>
+<g id="p34" opacity="0"><circle r="5.5" fill="#b4232a" stroke="#ffffff" stroke-width="2"/></g>
+<g id="p35" opacity="0"><circle r="4.5" fill="#ffffff" stroke="#b4232a" stroke-width="2.5"/></g>
+<g id="p36" opacity="0"><circle r="4.5" fill="#ffffff" stroke="#b4232a" stroke-width="2.5"/></g>
+<g id="p37" opacity="0"><circle r="4.5" fill="#ffffff" stroke="#b4232a" stroke-width="2.5"/></g>
+<g id="p38" opacity="0"><circle r="4.5" fill="#ffffff" stroke="#b4232a" stroke-width="2.5"/></g>
+<g id="p39" opacity="0"><circle r="4.5" fill="#ffffff" stroke="#b4232a" stroke-width="2.5"/></g>
+<g id="p40" opacity="0"><circle r="4.5" fill="#ffffff" stroke="#b4232a" stroke-width="2.5"/></g>
+</g>
+<g id="caption">
+<rect x="40" y="692" width="212" height="30" rx="15" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<text class="s" x="146" y="712" font-size="14" font-weight="600" fill="#16181d" text-anchor="middle">1 · Seller describes the shop</text>
+<rect x="262" y="692" width="222" height="30" rx="15" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<text class="s" x="373" y="712" font-size="14" font-weight="600" fill="#16181d" text-anchor="middle">2 · Buyer asks in any language</text>
+<rect x="494" y="692" width="280" height="30" rx="15" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+<text class="s" x="634" y="712" font-size="14" font-weight="600" fill="#16181d" text-anchor="middle">3 · Two agents negotiate inside rules.ts</text>
+<text class="s" x="1161.9" y="712" font-size="13" fill="#6b7280">active path</text>
+<path d="M1135.9,707.5 H1153.9" stroke="#b4232a" stroke-width="2.5" stroke-linecap="round"/>
+<text class="s" x="1071.3" y="712" font-size="13" fill="#6b7280">seller</text>
+<circle cx="1060.3" cy="707.5" r="5" fill="#14171d"/>
+<text class="s" x="997.8" y="712" font-size="13" fill="#6b7280">buyer</text>
+<circle cx="986.8" cy="707.5" r="5" fill="#0e7490"/>
+<g id="c41"><text class="s" x="40" y="748" font-size="14" fill="#6b7280">Every model call goes through askClaude. A failed call returns 502 or 503 and never falls back to canned data.</text></g>
+<g id="h_step0" opacity="0"><rect x="40" y="692" width="212" height="30" rx="15" fill="#b4232a"/><text class="s" x="146" y="712" font-size="14" font-weight="600" fill="#ffffff" text-anchor="middle">1 · Seller describes the shop</text></g>
+<g id="h_step1" opacity="0"><rect x="262" y="692" width="222" height="30" rx="15" fill="#b4232a"/><text class="s" x="373" y="712" font-size="14" font-weight="600" fill="#ffffff" text-anchor="middle">2 · Buyer asks in any language</text></g>
+<g id="h_step2" opacity="0"><rect x="494" y="692" width="280" height="30" rx="15" fill="#b4232a"/><text class="s" x="634" y="712" font-size="14" font-weight="600" fill="#ffffff" text-anchor="middle">3 · Two agents negotiate inside rules.ts</text></g>
+<g id="h_detail0" opacity="0"><text class="s" x="40" y="748" font-size="14" fill="#6b7280">Whisper turns the voice clip into text on this machine, Sonnet drafts the storefront, and the seller saves it to catalog.json.</text></g>
+<g id="h_detail1" opacity="0"><text class="s" x="40" y="748" font-size="14" fill="#6b7280">Haiku only parses the request into a filter. Code picks published shops from catalog.json and checks prices and dates live.</text></g>
+<g id="h_detail2" opacity="0"><text class="s" x="40" y="748" font-size="14" fill="#6b7280">Each agent turn is a Haiku call. rules.ts checks every offer against the floor, and rounds stream back to the buyer as NDJSON.</text></g>
+</g>
+</svg>
