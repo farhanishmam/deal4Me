@@ -1,24 +1,23 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useSyncExternalStore, type ReactNode } from "react";
 import { syncAcrossFrames, useDemo } from "./store";
 import { Notices } from "./ui/Notices";
 
+const noSubscription = () => () => {};
+
 /**
- * Client-only root for the phone app. Rendering only after mount keeps the
+ * Client-only root for the phone app. Rendering only on the client keeps the
  * localStorage-backed store out of server HTML, so there are no hydration
  * mismatches. The inline script in the layout has already painted the right
  * background colour, so the gap is invisible.
  */
 export function RapportRoot({ children }: { children: ReactNode }) {
-  const [mounted, setMounted] = useState(false);
+  // false in server HTML and during hydration, true once React renders on the client.
+  const mounted = useSyncExternalStore(noSubscription, () => true, () => false);
   const theme = useDemo((s) => s.theme);
 
-  useEffect(() => {
-    const stop = syncAcrossFrames();
-    setMounted(true);
-    return stop;
-  }, []);
+  useEffect(() => syncAcrossFrames(), []);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-rp", theme);

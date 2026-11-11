@@ -24,7 +24,6 @@ function simulate({ list, floor, max, maxRounds, rng }) {
   const normFloor = state.floorCents;
   const picked = floorDollar(max);
   let last = null;
-  let previous = null;
   let status = null;
   let agreed;
   let visitorOffers = 0;
@@ -52,7 +51,6 @@ function simulate({ list, floor, max, maxRounds, rng }) {
     visitorOffers++;
 
     const oOpts = ownerOptions(state, { kind: "offer", offerCents: v.priceCents, previousOfferCents: last });
-    previous = last;
     last = v.priceCents;
     assert.ok(oOpts.allowed.length > 0);
     const o = applyOwner(state, oOpts, pick(rng, oOpts.allowed), wildPrice(rng, state.askCents));
