@@ -1,7 +1,7 @@
 import { gearPhotoFor, isSkiGear, SKI_GEAR_GALLERY, SKI_GEAR_PHOTO } from "../src/lib/gear-photos.ts";
 import { createHash } from "node:crypto";
 
-const base = process.argv.slice(2).find((argument) => !argument.startsWith("--")) ?? "http://localhost:3001";
+const base = process.argv.slice(2).find((argument) => !argument.startsWith("--")) ?? "http://localhost:3000";
 
 async function state() {
   const response = await fetch(new URL("/api/data/state", base), { cache: "no-store" });

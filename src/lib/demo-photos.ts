@@ -19,7 +19,7 @@ export const DEMO_GEAR_PHOTOS: DemoPhoto[] = [
     name: "Black skis",
     category: "Ski gear",
     condition: "used",
-    prices: { rental: { amount: 35, low: 25, high: 50 }, sale: { amount: 180, low: 140, high: 220 } },
+    prices: { rental: { amount: 35, low: 25, high: 50 }, sale: { amount: 180, low: 150, high: 200 } },
   },
   {
     src: "/demo/photos/rent-gear.jpg",
@@ -27,7 +27,7 @@ export const DEMO_GEAR_PHOTOS: DemoPhoto[] = [
     name: "Ski and boot set",
     category: "Ski gear",
     condition: "good",
-    prices: { rental: { amount: 45, low: 30, high: 65 }, sale: { amount: 260, low: 210, high: 320 } },
+    prices: { rental: { amount: 45, low: 30, high: 65 }, sale: { amount: 220, low: 190, high: 250 } },
   },
 ];
 

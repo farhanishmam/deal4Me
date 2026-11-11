@@ -142,12 +142,12 @@ The negotiate screen streams the rounds as NDJSON from `POST /api/deals/negotiat
 - the **kind** (rental, food, sale)
 - a **category**, which must be one the catalog actually has
 - English **keywords**, even for a Japanese query
-- **rentalDays** and the **budget**, with whether it is daily or for the whole trip (*"skis for 3 days under $90"* means $90 total). Yen is converted at ¥150 per dollar
+- **rentalDays** and the **budget**, with whether it is daily or for the whole trip (*"skis for 3 days under $90"* means $90 total). Yen is converted at ¥150 per dollar and euros at $1.10 per euro
 - **dates** in America/Denver and a **size**
 - the **matching item ids**, chosen by meaning, so *"adult skis"* drops the junior packages
 - a one-line **summary template** in the query's own language
 
-**Code then runs that filter on live data.** It keeps only published shops. A total budget is checked against `days × daily fee`, so *3 days under $150* means *≤ $50/day*. The item's max days must cover the trip. Items available for the requested dates and size sort first. It returns at most 6, and strips each item's private minimum and price suggestion before the response leaves the server. Only the parsed filter is cached, keyed by the normalized query, language, today's date and the catalog's content, so **prices are checked fresh on every search**.
+**Code then runs that filter on live data.** It keeps only published shops. A total budget is checked against `days × daily fee`, so *3 days under $150* means *≤ $50/day*. The item's max days must cover the trip. Items available for the requested dates and size sort first. Dates in the query win; saved profile dates apply only when they are a future start, with an optional later end, and agree with any duration in the query. It returns at most 6, and strips each item's private minimum and price suggestion before the response leaves the server. Only the parsed filter is cached, keyed by the normalized query, language, today's date and the catalog's content, so **prices are checked fresh on every search**.
 
 The buyer app ships in English and 日本語. Queries, search summaries and the agents' negotiation lines work in English, Japanese, Spanish, French, German, Korean and Chinese. Storefronts can add languages from the studio.
 
@@ -157,7 +157,7 @@ The buyer app ships in English and 日本語. Queries, search summaries and the 
   <img src="docs/assets/architecture.svg" alt="Deal4Me architecture, animated through one seller and one buyer story. Clients on the left: buyer app /visit, seller app /seller, onboarding /sell/start, studio, public storefront /s/[slug] and dashboard, with a Zustand store that refreshes every 15 seconds and messages that poll every 3 seconds. Next.js API routes in the middle: /api/ai (appraise, comps, search, describe, restyle, storefront-instruction, suggest-price, damage-check, transcribe), /api/deals/negotiations with an NDJSON auto stream, and /api/data for shops, items, orders, requests, rentals, chats and messages. Server modules: src/server/ai with askClaude, src/server/deals with two negotiation agents behind rules.ts, and src/server/data. On the right: Claude through the Claude Agent SDK (Sonnet for vision, describe, restyle, storefront edits and damage checks; Haiku for search, pricing and both negotiation agents), a local Whisper speech-to-text server on port 8765, and JSON files in .data. Packets light the path of a voice description becoming a storefront, a buyer query being parsed and filtered, and a negotiation running through rules.ts." width="100%">
 </p>
 
-**One Next.js 16 app, three API families, JSON on disk.** 36 Deal4Me pages (plus 12 in the separate `/rapport` prototype), 25 route handlers and about 110 components, all TypeScript.
+**One Next.js 16 app, three API families, JSON on disk.** 35 Deal4Me pages (plus 12 in the separate `/rapport` prototype), 25 route handlers and about 110 components, all TypeScript.
 
 | Layer | What lives there |
 |---|---|
@@ -189,7 +189,7 @@ Each write reads, changes, re-validates the whole state with zod, writes a temp 
 
 | State | Reached by | What happens |
 |---|---|---|
-| `reserved` | **Authorize $X hold** → `POST /api/data/rentals/hold` | Hold = days × daily price + deposit, computed on the server: the agreed price and days come from the **stored deal**, or the item's list price when no negotiation is sent. The client never sets the price. One hold per negotiation. 6-digit pickup code + QR |
+| `reserved` | **Authorize $X hold** → `POST /api/data/rentals/hold` | Hold = days × daily price + deposit, computed on the server: the agreed price and days come from the **stored deal**, or the item's list price when no negotiation is sent. The client never sets the price. One hold per negotiation. The hold starts at the buyer's requested pickup time when it fits the item's availability window, otherwise when the window opens (now if it is already open). Negotiation checks the same window, so a deal it agrees can be booked, and the hold route refuses a pickup outside the window with **409**. 6-digit pickup code + QR |
 | `picked_up` | **Confirm pickup** → `POST /rentals/[id]/pickup` | 3 pickup photos saved |
 | `returned` | **Start return** → `POST /rentals/[id]/return` | 3 return photos + **Claude damage check**: *clear* or *review*, each with a one-sentence note. Lighting, angle and background don't count, and the prompt says *"Do not accuse anyone."* |
 | `settled` | Owner: **Settle** or **Report damage** → `POST /rentals/[id]/settle` | Captured = `min(hold, fee + damage)`, released = the rest. A damage charge must be > $0 and ≤ the deposit, and needs a note |
@@ -200,12 +200,12 @@ Every transition returns **409** if it is out of order. Payments run on a **simu
 
 These are code and tests, not prompts:
 
-- **The floor stays out of buyer screens, search, the agents' lines and the negotiation list.** `GET /api/data/state` and search strip each rental's `minDailyFeeCents` and each item's price suggestion, whose low end sets a sale item's floor. Only seller screens ask for `?view=seller`, which includes both, and a seller save that leaves them out keeps the stored ones (the minimum capped at a lower new daily fee). The negotiation list blanks private fields, the owner agent's lines can't contain numbers or limit words, and in manual mode the owner never walks early, because a forced walk would reveal the floor. There are no accounts yet, so any client can still ask for the seller view (see [Limits](#-limits)).
+- **The floor stays out of buyer screens, search, the agents' lines and the negotiation list.** `GET /api/data/state` and search strip each rental's `minDailyFeeCents` and each item's price suggestion, whose low end sets a sale item's floor. Only seller screens ask for `?view=seller`, which includes both, and a seller save that leaves them out keeps the stored ones (the minimum capped at a lower new daily fee, and the suggestion only while the item keeps its kind). The negotiation list blanks private fields, the owner agent's lines can't contain numbers or limit words, and in manual mode the owner never walks early, because a forced walk would reveal the floor. There are no accounts yet, so any client can still ask for the seller view (see [Limits](#-limits)).
 - **The model never picks a number outside the rules.** Prices are integers in a structured field and are clamped to the legal range. A disallowed action is refused. The buyer agent can only offer its exact price.
 - **Every price comes from saved data.** Negotiation, hold, request and food order routes read list price, floor and agreed price from the catalog or the stored deal, and zod drops anything else the client sends.
 - **Untrusted text stays data.** Transcripts, hints, website text, item cards and chat history go inside delimited blocks marked untrusted, never into system prompts. Model output can only point at items and photos that already exist: search keeps catalog ids only, and an imported item keeps a photo only if it came from that page.
 - **Website import blocks private addresses.** `http(s)` only, no credentials, ports 80/443 only, no `localhost`/`.local`/`.internal`. DNS is resolved and checked against private, loopback and reserved ranges (including IPv4-mapped IPv6) before every hop. The fetch resolves the name again, so DNS rebinding is not ruled out. At most 5 redirects, 12 s and 2 MB, and 14 hostile URLs in the tests.
-- **Sample results can't be spoofed.** Sample photos match on the SHA-256 of their bytes plus the kind, so renaming a file can't select them. Their responses say `basis: "demo"` and `demoSource: "captured_ai"`, and the UI labels them as prepared.
+- **Sample results can't be spoofed.** Sample photos match on the SHA-256 of their bytes plus the kind, so renaming a file can't select them. Their responses say `basis: "demo"` and `demoSource: "captured_ai"`, and the UI labels them as sample prices.
 - **People decide.** Voice fills a text box and never submits. The buyer approves every booking. A damage check only flags a return for review, and *a person makes the final call*.
 - **Uploads are bounded.** Photos sent to Claude must be JPEG, PNG, WebP or GIF and ≤5 MB (appraisal answers SVG with **415**), and one photo import takes at most 12. Audio is ≤25 MB, and a recording stops at 90 s.
 
@@ -344,7 +344,7 @@ public/                   demo photos, ski listing photos (credits in public/lis
 - **Payments are simulated.** Holds, captures and releases are recorded but not charged. A hold doesn't block other renters, and the server doesn't verify the pickup code.
 - **Requests are inquiries.** A date/size request waits for the seller to confirm. It doesn't reserve stock or take payment.
 - **Language coverage varies.** The buyer UI is English and Japanese, and storefront labels are English, Japanese and Spanish. Search and negotiation lines cover 7 languages. Item names aren't translated.
-- **Demo caches are explicit.** The sample scripts, websites and photos replay saved results from real runs, including the sample sale prices ($180 skis, $220 set), and the UI labels sample prices as prepared. Anything new runs live.
+- **Demo caches are explicit.** The sample scripts, websites and photos replay saved results from real runs, including the sample sale prices ($180 skis, $220 set), and the UI labels them as sample prices. Anything new runs live.
 - **Voice needs the local speech server**, which uses MLX, so it runs on Apple Silicon.
 
 ## 👥 Team

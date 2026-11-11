@@ -11,14 +11,6 @@ Read this before building any screen. The look must be clean and premium, with v
 5. **Numbers look engineered.** Money and metrics use `tabular-nums`. Order IDs, SKUs and pickup codes use `font-mono`.
 6. **Things arrive, they don't jump.** Use `animate-rise` for entering content and `transition-colors duration-150` for hover. Keep motion subtle.
 
-## Structure references
-
-Copy the structure and density of these, not their colors, brand names, data or copy:
-
-- `/private/tmp/claude-501/-Users-farhanishmam-GitHub-Projects-hackathon/86b1c858-45e6-4541-90b5-943c4c81541c/images/1.webp`: seller dashboard. Left sidebar with wordmark, active item as a soft tint, account card pinned to the bottom. Greeting over page title, search plus one CTA on the right. Four KPI tiles, chart card plus side list, then a table with status pills.
-- `/private/tmp/claude-501/-Users-farhanishmam-GitHub-Projects-hackathon/86b1c858-45e6-4541-90b5-943c4c81541c/images/2.webp`: storefront. Top bar with shop identity, wide search, order total. Left rail with nav and categories. A row of four "reorder" cards, three large feature panels, then a four-column product grid (image, name, mono SKU, price, availability pill, quantity stepper, full-width CTA). Floating "Ask" pill bottom right.
-- `/private/tmp/claude-501/-Users-farhanishmam-GitHub-Projects-hackathon/86b1c858-45e6-4541-90b5-943c4c81541c/images/3.webp`: sign-in. Split screen: dark brand panel on the left (logo, eyebrow pill, big headline, one line, three check bullets), form on the right, footer strip.
-
 ## Two profiles
 
 The product is Deal4Me. It has two phone apps, one for each profile. Both render in `PhoneFrame` with a four-tab bar. Each profile's Profile screen has a clear switch to the other profile, so one phone can demo both.
@@ -40,12 +32,6 @@ Shared contracts: `useThreads`, `useMessages` and `useUnreadCount` from `@/lib/m
 Real data: all data is real and comes from the backend, and the store starts empty until it loads (`useHydrated`). Real shops can have a blank owner name, neighborhood or photo, so never print a stray "·" or "'s", and use `thumbFor` for item pictures. Show `error.message` when a call fails. There is no mock data, so never add any.
 
 ## Visitor app
-
-The phone app follows the owner's visual concept. Reference crops, each scaled to 390px wide:
-
-- `/private/tmp/claude-501/-Users-farhanishmam-GitHub-Projects-hackathon/86b1c858-45e6-4541-90b5-943c4c81541c/scratchpad/mock/mock-ask.png`
-- `/private/tmp/claude-501/-Users-farhanishmam-GitHub-Projects-hackathon/86b1c858-45e6-4541-90b5-943c4c81541c/scratchpad/mock/mock-negotiate.png`
-- `/private/tmp/claude-501/-Users-farhanishmam-GitHub-Projects-hackathon/86b1c858-45e6-4541-90b5-943c4c81541c/scratchpad/mock/mock-approve.png`
 
 Language of the visitor app:
 
@@ -98,24 +84,11 @@ Never use a weight above 700 or sizes outside this list, apart from a large pick
 
 ## Copy
 
-Sentence case, plain, short. No emoji, no exclamation marks, no marketing filler ("seamless", "powerful", "unlock"). Money shows as dollars ($40), never cents. Deposits always read "held, not charged". Only fictional people and businesses. No real logos, University of Utah marks, or the word "Olympic". The product name comes from `BRAND` in `src/lib/brand.ts`, because it will change.
+Sentence case, plain, short. No emoji, no exclamation marks, no marketing filler ("seamless", "powerful", "unlock"). Money shows in whole dollars ($40), with cents only when the price has them. Deposits always read "held, not charged". Only fictional people and businesses. No real logos, University of Utah marks, or the word "Olympic". The product name comes from `BRAND` in `src/lib/brand.ts`, because it will change.
 
 ## Art
 
 Item art lives at `/demo/items/<itemId>.svg`, upload samples at `/demo/uploads/upload-01.svg` to `upload-12.svg`, shop heroes at `/demo/heroes/<shopId>.svg`, and brand art at `/brand/ridge-dark.svg` and `/brand/ridge-light.svg`. The Wasatch ridgeline is the one recurring brand motif. Use it sparingly.
-
-## Data contract
-
-Shop IDs, which are also their slugs: `canyon-taco`, `second-chair`, `mayas-gear`, `theos-closet`.
-
-| Shop | Item IDs |
-| --- | --- |
-| Canyon Taco Co. | `ct-carne-asada`, `ct-al-pastor`, `ct-baja-fish`, `ct-burrito`, `ct-taco-plate`, `ct-nachos`, `ct-horchata`, `ct-jamaica` |
-| Second Chair Coffee | `sc-breakfast-burrito`, `sc-avocado-toast`, `sc-granola`, `sc-latte`, `sc-cold-brew`, `sc-mocha`, `sc-croissant`, `sc-cinnamon-roll` |
-| Maya's Gear Garage | `mg-skis`, `mg-boots`, `mg-jacket`, `mg-snowshoes` |
-| Theo's Ski Closet | `tc-snowboard`, `tc-goggles` |
-
-Seed records: rental `rental-seed-1`, food orders `order-seed-1` to `order-seed-4`, negotiation `neg-seed-1`.
 
 ## Stack notes
 

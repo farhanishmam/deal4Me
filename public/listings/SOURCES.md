@@ -28,4 +28,4 @@ Pexels photos are available under the [Pexels License](https://www.pexels.com/li
 
 Existing owner/demo-upload images `/demo/photos/skis.jpg` and `/demo/photos/rent-gear.jpg` remain assigned to Black skis and Ski and boot set respectively; their original image-appraisal bytes are preserved.
 
-For repeated uploads of those exact same sample photographs, a separate stock cover is assigned and the uploaded original stays in that listing's gallery. Run `node scripts/backfill-gear-photos.mjs http://localhost:3001 --distinct-covers` to apply and verify these catalog assignments without changing prices, sizes, or availability.
+For repeated uploads of those exact same sample photographs, a separate stock cover is assigned and the uploaded original stays in that listing's gallery. Run `node scripts/backfill-gear-photos.mjs http://localhost:3000 --distinct-covers` to apply and verify these catalog assignments without changing prices, sizes, or availability.

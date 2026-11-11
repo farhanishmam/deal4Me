@@ -1,6 +1,6 @@
 # Seller and buyer walkthrough
 
-Open the running app at `http://localhost:3001`. Use the URL printed by Next.js if the port changes. Run `npm run stt` in another terminal for voice input and allow microphone access.
+Open the running app at `http://localhost:3000`. Use the URL printed by Next.js if the port changes. Run `npm run stt` in another terminal for voice input and allow microphone access.
 
 ## 1. Seller: create the store
 
@@ -14,7 +14,7 @@ The same start screen offers photo uploads and website imports. `/seller/profile
 
 ## 2. Seller: price an item and set availability
 
-From `/seller/profile`, choose **Price and list an item**, or open `/seller/scan`. Upload a ski photo. The result shows separate **Rent** and **Buy** estimates with ranges and reasoning. Choose a mode, adjust the price if needed, and list it. Actual new uploads use the backend appraisal service.
+Open the **Scan** tab (`/seller/scan`), or choose **Scan an item** at `/seller/listings`. Upload a ski photo. The result shows separate **Rent** and **Buy** estimates with ranges and reasoning. Choose a mode, adjust the price if needed, and list it. Actual new uploads use the backend appraisal service.
 
 At `/seller/listings`, find the item by name and open it. Set:
 
@@ -38,7 +38,7 @@ Choose **Switch to buying** in the seller profile, or open `/visit/home`. Try:
 
 Results come from published backend inventory. Voice input lets the buyer review the transcript before submitting a search. Prices and availability are read from the saved catalog.
 
-Open the matching item, review its photos, availability window, and sizes, then choose **Dates & size** or **Choose dates & size**. Enter pickup and return times inside the seller's window, choose `170 cm`, and send the request. For the example above, November 11 at 9 AM through November 13 at 9 AM is a two-day rental. Use future dates when rehearsing later.
+Tap **Dates & size** on the result card to open the request form directly, or open the item to review its photos, availability window, and sizes and choose **Choose dates & size**. Enter pickup and return times inside the seller's window, choose `170 cm`, and send the request. For the example above, November 11 at 9 AM through November 13 at 9 AM is a two-day rental. Use future dates when rehearsing later.
 
 Unavailable items remain visible with their status, and requests outside the seller's dates or sizes are rejected. A sale listing instead offers **Request this item** with the desired time and size.
 
@@ -46,7 +46,7 @@ Unavailable items remain visible with their status, and requests outside the sel
 
 Open `/seller/listings` for the same store. **Buyer requests** shows the requested item, dates, size, and status. The buyer can also see the saved request at `/visit/trips`. A rental request's success screen offers **Negotiate this request**.
 
-Requests persist on the backend and await seller confirmation. Sending one does not reserve inventory or charge a card. Checkout uses a simulated payment ledger.
+Requests persist on the backend and await seller confirmation. Sending one does not reserve inventory or charge a card. Checkout uses a simulated payment ledger. The hold starts at the requested pickup time when it fits the seller's window, otherwise when the window opens, so send a dated request before negotiating to book a specific time.
 
 ## Listing photos
 

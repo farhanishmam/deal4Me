@@ -3,7 +3,7 @@ import { WEBSITE_DEMOS } from "../src/lib/website-demo.ts";
 import { VOICE_DEMO_SCRIPTS } from "../src/lib/voice-demo.ts";
 import { DEMO_GEAR_PHOTOS, DEMO_FOOD_PHOTOS } from "../src/lib/demo-photos.ts";
 
-const base = process.argv[2] ?? "http://localhost:3001";
+const base = process.argv[2] ?? "http://localhost:3000";
 let failed = false;
 
 async function post(path, body) {

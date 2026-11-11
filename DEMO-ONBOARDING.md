@@ -4,9 +4,9 @@ The start screen is `/sell/start`. It has three entry points and no business/loc
 
 ## Before presenting
 
-Keep the app running with `npm run dev` and speech transcription running in another terminal with `npm run stt`. The speech model is already downloaded on this machine. Use localhost or HTTPS, allow microphone access, and rehearse one recording before presenting.
+Keep the app running with `npm run dev` and speech transcription running in another terminal with `npm run stt`. The first `npm run stt` downloads the speech model. Use localhost or HTTPS, allow microphone access, and rehearse one recording before presenting.
 
-Run `npm run demo:prepare` to warm and verify both websites, both descriptions, and all three sample photos. It defaults to this machine's app at `http://localhost:3001`. Pass a different app URL if needed: `npm run demo:prepare -- http://localhost:3000`. The preparation script uses Node 22.18 or newer. It does not create or publish shops.
+Run `npm run demo:prepare` to warm and verify both websites, both descriptions, and all three sample photos. It defaults to `http://localhost:3000`. Pass a different app URL if your app runs elsewhere: `npm run demo:prepare -- http://localhost:3001`. The preparation script uses Node 22.18 or newer. It does not create or publish shops.
 
 Website and description results are saved in `.data/ai-cache` and survive app restarts. Uploaded-photo appraisals are also cached. Keep `.data` in place for the presentation; it is intentionally ignored by Git. A fresh machine needs one preparation run with the AI service connected through its existing Claude login or `ANTHROPIC_API_KEY`. The genuine sample image appraisals are included in the repository. New websites, descriptions, and photos still use real processing and show errors when processing fails.
 
@@ -29,9 +29,9 @@ Open **Snap up to 12 photos**, then choose **Try ski photos** or **Try taco phot
 | Ski and boot set | `public/demo/photos/rent-gear.jpg` | $45/day |
 | Taco plate | `public/demo/photos/find-food.jpg` | $12 |
 
-These are real photos with appraisals captured from successful live image requests. The backend recognizes their exact image bytes; unrelated uploads cannot receive these sample results. The sample UI labels prepared prices. Choose Gear or Food for your own uploads, up to 12 images, then review prices and build the storefront.
+These are real photos with appraisals captured from successful live image requests. The backend recognizes their exact image bytes; unrelated uploads cannot receive these sample results. The sample UI labels them as sample prices. Choose Gear or Food for your own uploads, up to 12 images, then review prices and build the storefront.
 
-The optional **Sell it** toggle uses prepared demo sale prices of $180 for the skis and $260 for the set. Those sale values are authored examples; the rental and food sample appraisals are captured AI results.
+The optional **Sell it** toggle shows sale prices of $180 for the skis and $220 for the set, also captured from live image requests. The prices in these sample appraisals are the captured output; the two rental description lines were reworded to drop the model's first-person hedging.
 
 ## Record a description
 
