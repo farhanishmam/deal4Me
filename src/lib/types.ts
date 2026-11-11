@@ -27,9 +27,9 @@ export interface Shop { id: string; slug: string; sellerKind: SellerKind; name: 
 export interface NegotiationRound { n: number; by: "visitor" | "owner"; offerCents: Cents; message: string; at: string }
 export interface Negotiation { id: string; itemId: string; days: number; askingCents: Cents; visitorMaxCents: Cents; rounds: NegotiationRound[]; maxRounds: number; mode: "agent" | "manual"; status: "running" | "deal" | "no_deal"; agreedDailyCents?: Cents; kind?: "rental" | "sale" }
 export type RentalStatus = "reserved" | "picked_up" | "returned" | "settled";
-export interface Rental { id: string; itemId: string; shopId: string; negotiationId?: string; days: number; dailyFeeCents: Cents; depositCents: Cents; holdCents: Cents; capturedCents?: Cents; releasedCents?: Cents; status: RentalStatus; pickupCode: string; pickupAt: string; returnBy: string; pickupPhotos: string[]; returnPhotos: string[]; damageCheck?: { result: "clear" | "review"; note: string } }
+export interface Rental { id: string; itemId: string; shopId: string; negotiationId?: string; days: number; dailyFeeCents: Cents; depositCents: Cents; holdCents: Cents; capturedCents?: Cents; releasedCents?: Cents; status: RentalStatus; pickupCode: string; pickupAt: string; returnBy: string; pickupPhotos: string[]; returnPhotos: string[]; damageCheck?: { result: "clear" | "review"; note: string }; damageNote?: string }
 export interface OrderLine { itemId: string; qty: number }
-export interface FoodOrder { id: string; shopId: string; lines: OrderLine[]; totalCents: Cents; pickupTime: string; pickupCode: string; status: "placed" | "accepted" | "ready" | "picked_up" }
+export interface FoodOrder { id: string; shopId: string; lines: OrderLine[]; totalCents: Cents; pickupTime: string; pickupCode: string; status: "placed" | "accepted" | "ready" | "picked_up"; note?: string }
 export interface AgentCard { kind: "rental" | "food" | "shop"; itemId?: string; shopId?: string; title: string; subtitle: string; priceLabel: string; actions: { label: string; href: string }[] }
 export type Actor = "Onboarding agent" | "Deals agent" | "Storefront agent" | "Visitor agent" | "Owner agent" | "Payments" | "System";
 // latency and cost are filled by real calls in Phase 2

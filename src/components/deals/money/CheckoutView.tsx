@@ -14,7 +14,7 @@ import { useHydrated, useItem, useShop, useStore } from "@/lib/store";
 import { approveCopy, type ApproveKey } from "./approve/copy";
 import { NavRow, Steps } from "./approve/Parts";
 import { PhoneSkeleton } from "./Parts";
-import { when } from "./terms";
+import { useNow, when } from "./terms";
 
 const Hairline = () => <div className="mx-4 h-px bg-border" aria-hidden />;
 
@@ -22,6 +22,7 @@ export function CheckoutView({ itemId }: { itemId: string }) {
   const router = useRouter();
   const params = useSearchParams();
   const hydrated = useHydrated();
+  const now = useNow();
   const item = useItem(itemId);
   const shop = useShop(item?.shopId);
   const visitor = useStore((s) => s.visitor);
@@ -95,10 +96,17 @@ export function CheckoutView({ itemId }: { itemId: string }) {
   const backHref = deal
     ? `/visit/negotiate/${itemId}?negotiation=${deal.id}`
     : `/visit/negotiate/${itemId}?days=${days}`;
-  const pickupDate =
-    visitor.tripStart && !Number.isNaN(Date.parse(visitor.tripStart))
-      ? when(visitor.tripStart)
-      : undefined;
+  // The hold starts at the buyer's chosen pickup time when it fits this item's availability window.
+  // Otherwise (no trip date, a past one, or one left over from another item) it starts when the window
+  // opens, or now if it is already open. That is the start the deal was checked against.
+  const tripStart = Date.parse(visitor.tripStart);
+  const opens = item.availableFrom ? Date.parse(item.availableFrom) : NaN;
+  const until = item.availableUntil ? Date.parse(item.availableUntil) : NaN;
+  const fits = tripStart > now && !(tripStart < opens) && !(tripStart + days * 86_400_000 > until);
+  const start = fits ? tripStart : opens > now ? opens : NaN;
+  const pickupAt =
+    now > 0 && Number.isFinite(start) ? new Date(start).toISOString() : undefined;
+  const pickupDate = pickupAt ? when(pickupAt) : undefined;
 
   async function authorize() {
     if (locked.current) return;
@@ -110,6 +118,7 @@ export function CheckoutView({ itemId }: { itemId: string }) {
         itemId,
         days,
         negotiationId: deal?.id,
+        pickupAt,
       });
       router.push(`/visit/rentals/${rental.id}`);
     } catch (e) {

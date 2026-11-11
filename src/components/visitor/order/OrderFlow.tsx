@@ -4,12 +4,13 @@ import { useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { Check, Loader2, Minus, Plus, Store } from "lucide-react";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { cartKey } from "@/components/storefront/useCart";
 import { ScreenHeader } from "@/components/shared/ScreenHeader";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { api } from "@/lib/api";
 import { clockTime, money } from "@/lib/format";
 import { thumbFor } from "@/lib/photos";
-import { useShop, useStore } from "@/lib/store";
+import { useHydrated, useShop, useStore } from "@/lib/store";
 import type { FoodOrder, Item } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useO } from "./copy";
@@ -17,7 +18,6 @@ import { useO } from "./copy";
 type Cart = Record<string, number>;
 type Pickup = "asap" | "15" | "30";
 
-const cartKey = (shopId: string) => `ms2034-cart:${shopId}`;
 const PICKUP_MINUTES: Record<Pickup, number> = { asap: 10, "15": 15, "30": 30 };
 
 function subscribe(cb: () => void) {
@@ -82,6 +82,7 @@ function Stepper({ name, value, onChange, disabled }: { name: string; value: num
 
 export function OrderFlow({ shopId }: { shopId: string }) {
   const c = useO();
+  const hydrated = useHydrated();
   const shop = useShop(shopId);
   const items = useStore((s) => s.items);
   const logStep = useStore((s) => s.logStep);
@@ -93,6 +94,9 @@ export function OrderFlow({ shopId }: { shopId: string }) {
   const [placed, setPlaced] = useState<FoodOrder | null>(null);
 
   const menu = items.filter((i) => i.shopId === shopId && i.kind === "food" && i.available);
+
+  // The catalog arrives after the first paint; wait for it before saying the shop is missing.
+  if (!hydrated) return <div className="flex min-h-full flex-col bg-card" />;
 
   if (!shop || menu.length === 0) {
     return (
@@ -122,7 +126,15 @@ export function OrderFlow({ shopId }: { shopId: string }) {
   for (const item of menu) groups.set(item.category, [...(groups.get(item.category) ?? []), item]);
 
   function setQty(id: string, qty: number) {
-    setEdited({ ...cart, [id]: qty });
+    const next: Cart = { ...cart, [id]: qty };
+    if (qty <= 0) delete next[id];
+    setEdited(next);
+    // The storefront reads the same cart, so its total stays in step with these edits.
+    try {
+      window.localStorage.setItem(cartKey(shopId), JSON.stringify(next));
+    } catch {
+      /* storage can be blocked */
+    }
     if (phase === "error") setPhase("idle");
   }
 
@@ -132,7 +144,7 @@ export function OrderFlow({ shopId }: { shopId: string }) {
     try {
       const at = new Date();
       at.setMinutes(at.getMinutes() + PICKUP_MINUTES[pickup]);
-      const order = await api.placeFoodOrder(shop.id, lines, at.toISOString());
+      const order = await api.placeFoodOrder(shop.id, lines, at.toISOString(), note.trim() || undefined);
       try {
         window.localStorage.removeItem(cartKey(shop.id));
       } catch {

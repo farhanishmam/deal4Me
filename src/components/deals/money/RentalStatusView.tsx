@@ -224,6 +224,7 @@ export function RentalStatusView({ id }: { id: string }) {
               <p className="text-[40px] leading-none font-bold tracking-tight tabular-nums">{money(charged)}</p>
               <span className={pillCls}>{t("holdReleased", { amount: money(released) })}</span>
             </div>
+            {rental.damageNote && <p className="mt-2 text-[15px] text-muted-foreground">{rental.damageNote}</p>}
           </Block>
         )}
 

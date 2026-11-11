@@ -1,6 +1,7 @@
 import { randomInt } from "node:crypto";
 import type { DataState } from "@/lib/data-state";
 import type { Rental } from "@/lib/types";
+import { availabilityIssue } from "@/server/availability";
 import { deals } from "@/server/deals/store";
 import { DataError } from "./store";
 
@@ -35,7 +36,7 @@ export function createHold(state: DataState, input: HoldInput, provider: Payment
   const existing = input.negotiationId && state.rentals.find((r) => r.negotiationId === input.negotiationId);
   if (existing) return existing;
   const item = state.items.find((i) => i.id === input.itemId);
-  if (!item) throw new DataError("Item not found", 404);
+  if (!item || !state.shops.some((s) => s.id === item.shopId && s.liveAt)) throw new DataError("Published item not found", 404);
   if (item.kind !== "rental" || !item.rental) throw new DataError("This item is not for rent", 400);
   if (!item.available) throw new DataError("This item is not available right now", 409);
   const terms = item.rental;
@@ -55,6 +56,10 @@ export function createHold(state: DataState, input: HoldInput, provider: Payment
 
   const holdCents = days * dailyFeeCents + terms.depositCents;
   const pickup = input.pickupAt && Number.isFinite(Date.parse(input.pickupAt)) ? new Date(input.pickupAt) : new Date();
+  const returnBy = new Date(pickup.getTime() + days * DAY_MS);
+  // Holds follow the same window rules as requests, including no pickup in the past.
+  const issue = availabilityIssue(item, { startsAt: pickup.toISOString(), endsAt: returnBy.toISOString() });
+  if (issue) throw new DataError(issue, 409);
   const rental: Rental = {
     id: `rental-${crypto.randomUUID()}`,
     itemId: item.id,
@@ -67,7 +72,7 @@ export function createHold(state: DataState, input: HoldInput, provider: Payment
     status: "reserved",
     pickupCode: String(randomInt(100000, 1000000)),
     pickupAt: pickup.toISOString(),
-    returnBy: new Date(pickup.getTime() + days * DAY_MS).toISOString(),
+    returnBy: returnBy.toISOString(),
     pickupPhotos: [],
     returnPhotos: [],
   };
@@ -76,8 +81,8 @@ export function createHold(state: DataState, input: HoldInput, provider: Payment
   return rental;
 }
 
-/** Captures the fee plus any extra, never more than the hold, and releases the rest. */
-export function settleHold(state: DataState, rentalId: string, extraChargeCents: number, provider: PaymentProvider = simulatedPayments): Rental {
+/** Captures the fee plus any extra, never more than the hold, and releases the rest. A damage charge keeps its note for the renter. */
+export function settleHold(state: DataState, rentalId: string, extraChargeCents: number, provider: PaymentProvider = simulatedPayments, damageNote?: string): Rental {
   const current = state.rentals.find((r) => r.id === rentalId);
   if (!current) throw new DataError("Rental not found", 404);
   if (current.status === "settled") throw new DataError("This rental is already settled", 409);
@@ -85,7 +90,7 @@ export function settleHold(state: DataState, rentalId: string, extraChargeCents:
   const capturedCents = Math.min(current.holdCents, current.days * current.dailyFeeCents + extraChargeCents);
   const releasedCents = current.holdCents - capturedCents;
   provider.capture({ rentalId, captureCents: capturedCents, releaseCents: releasedCents });
-  const next: Rental = { ...current, status: "settled", capturedCents, releasedCents };
+  const next: Rental = { ...current, status: "settled", capturedCents, releasedCents, ...(extraChargeCents > 0 && damageNote ? { damageNote } : {}) };
   state.rentals = state.rentals.map((r) => (r.id === rentalId ? next : r));
   return next;
 }

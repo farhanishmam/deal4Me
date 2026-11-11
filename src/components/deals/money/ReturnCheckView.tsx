@@ -168,10 +168,10 @@ export function ReturnCheckView({ id }: { id: string }) {
     setStage(`Charging ${money(fee + extra)}`);
     const t = setTimeout(() => setStage(`Releasing ${money(rental.holdCents - fee - extra)}`), 600);
     try {
+      await api.settleRental(rental.id, extra, extra > 0 ? note.trim() : undefined);
       if (extra > 0) {
         logStep({ actor: "Owner agent", action: "Damage reported", detail: `${money(extra)}: ${note.trim()}` });
       }
-      await api.settleRental(rental.id, extra);
       setMode("idle");
     } catch {
       setFailed(true);
@@ -309,6 +309,7 @@ export function ReturnCheckView({ id }: { id: string }) {
                         id="damage-note"
                         value={note}
                         onChange={(e) => setNote(e.target.value)}
+                        maxLength={500}
                         placeholder="Scratch on the left ski tip"
                         className="min-h-20"
                       />

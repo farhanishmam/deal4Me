@@ -5,8 +5,8 @@ import { realNegotiate } from "@/lib/real/negotiate";
 import { useStore } from "@/lib/store";
 import type { FoodOrder, Rental } from "@/lib/types";
 
-async function placeFoodOrder(...[shopId, lines, pickupTime]: Parameters<Api["placeFoodOrder"]>): Promise<FoodOrder> {
-  const order = await postJson<FoodOrder>("/api/data/orders", { shopId, lines, pickupTime });
+async function placeFoodOrder(...[shopId, lines, pickupTime, note]: Parameters<Api["placeFoodOrder"]>): Promise<FoodOrder> {
+  const order = await postJson<FoodOrder>("/api/data/orders", { shopId, lines, pickupTime, ...(note ? { note } : {}) });
   useStore.getState().upsertOrder(order);
   logStep("Storefront agent", "Order placed", `${order.lines.length} items`);
   return order;
@@ -26,8 +26,8 @@ async function markPickedUp(rentalId: string, photos: string[]): Promise<Rental>
   return rental;
 }
 
-async function settleRental(rentalId: string, extraChargeCents = 0): Promise<Rental> {
-  const rental = await postJson<Rental>(`/api/data/rentals/${encodeURIComponent(rentalId)}/settle`, { extraChargeCents });
+async function settleRental(rentalId: string, extraChargeCents = 0, note?: string): Promise<Rental> {
+  const rental = await postJson<Rental>(`/api/data/rentals/${encodeURIComponent(rentalId)}/settle`, { extraChargeCents, ...(note ? { note } : {}) });
   useStore.getState().upsertRental(rental);
   logStep("Payments", "Simulated hold settled", `${money(rental.capturedCents ?? 0)} charged, ${money(rental.releasedCents ?? 0)} released, no real charge`);
   return rental;

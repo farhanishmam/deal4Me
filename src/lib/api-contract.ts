@@ -20,9 +20,9 @@ export interface Api {
   askVisitorAgent(message: string, profile: VisitorProfile): Promise<{ reply: string; cards: AgentCard[]; steps: string[] }>;
   startNegotiation(input: { itemId: string; days: number; visitorMaxCents: Cents; mode: "agent" | "manual" }, cb?: { onRound?: (round: NegotiationRound) => void; signal?: AbortSignal }): Promise<Negotiation>;
   submitManualOffer(negotiationId: string, offerCents: Cents, message: string): Promise<Negotiation>;
-  createRentalHold(input: { itemId: string; days: number; negotiationId?: string }): Promise<Rental>;
+  createRentalHold(input: { itemId: string; days: number; negotiationId?: string; pickupAt?: string }): Promise<Rental>;
   markPickedUp(rentalId: string, photos: string[]): Promise<Rental>;
   submitReturn(rentalId: string, photos: string[]): Promise<Rental>;
-  settleRental(rentalId: string, extraChargeCents?: Cents): Promise<Rental>;
-  placeFoodOrder(shopId: string, lines: OrderLine[], pickupTime: string): Promise<FoodOrder>;
+  settleRental(rentalId: string, extraChargeCents?: Cents, note?: string): Promise<Rental>;
+  placeFoodOrder(shopId: string, lines: OrderLine[], pickupTime: string, note?: string): Promise<FoodOrder>;
 }

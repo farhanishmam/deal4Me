@@ -18,6 +18,15 @@ export async function updateItem(item: Item): Promise<Item> {
   return saved;
 }
 
+/** Adds one new item; the server also lists it in its category's storefront section. */
+export async function createItem(item: Item): Promise<Item> {
+  await flushPendingShopSave(item.shopId);
+  const saved = await runShopMutation(item.shopId, () => postJson<{ item: Item; shop: Shop }>("/api/data/items", { item, create: true }));
+  useStore.getState().upsertItem(saved.item);
+  ingestServerShop(saved.shop);
+  return saved.item;
+}
+
 export async function publishShop(shopId: string, onboardingSeconds?: number): Promise<Shop> {
   await flushPendingShopSave(shopId);
   const saved = await runShopMutation(shopId, () => postJson<Shop>(`/api/data/shops/${encodeURIComponent(shopId)}/publish`, { onboardingSeconds }));

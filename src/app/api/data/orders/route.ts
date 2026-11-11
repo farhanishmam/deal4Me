@@ -7,6 +7,7 @@ export const runtime = "nodejs";
 const BodySchema = z.object({
   shopId: z.string().min(1), pickupTime: z.string().datetime(),
   lines: z.array(z.object({ itemId: z.string().min(1), qty: z.number().int().min(1).max(100) })).min(1).max(100),
+  note: z.string().trim().max(120).optional(),
 });
 
 export async function POST(request: Request) {
@@ -14,7 +15,7 @@ export async function POST(request: Request) {
   if (!parsed.success) return Response.json({ error: "Choose items, quantities and a pickup time" }, { status: 400 });
   try {
     const order = updateDataState((state) => {
-      const { shopId, lines, pickupTime } = parsed.data;
+      const { shopId, lines, pickupTime, note } = parsed.data;
       const shop = state.shops.find((s) => s.id === shopId && s.liveAt);
       if (!shop) throw new DataError("Shop is not live", 404);
       if (Date.parse(pickupTime) < Date.now() - 60000) throw new DataError("Choose a future pickup time");
@@ -26,7 +27,7 @@ export async function POST(request: Request) {
       }, 0);
       const order: FoodOrder = {
         id: `order-${randomUUID()}`, shopId, lines, totalCents, pickupTime,
-        pickupCode: String(randomInt(100000, 1000000)), status: "placed",
+        pickupCode: String(randomInt(100000, 1000000)), status: "placed", ...(note ? { note } : {}),
       };
       state.orders.unshift(order);
       return order;

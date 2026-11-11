@@ -1,4 +1,4 @@
-import { saveShop } from "@/lib/real/catalog";
+import { createItem } from "@/lib/real/catalog";
 import { postForm } from "@/lib/real/http";
 import { rentalTerms } from "@/lib/real/onboarding-records";
 import { useStore } from "@/lib/store";
@@ -138,20 +138,10 @@ export function buildItem(shopId: string, kind: ScanKind, photo: Photo, appraisa
 }
 
 /**
- * Adds a new item to the store. The items endpoint behind updateItem only edits
- * existing items, so a new one is saved with its shop, in a storefront section
- * for its category, the same way photo import saves inventory.
+ * Adds a new item to the store. The server appends it and lists it in a storefront
+ * section for its category, so items saved from another device are kept.
  */
 export async function listNewItem(shopId: string, item: Item): Promise<Item> {
-  const state = useStore.getState();
-  const shop = state.shops.find((s) => s.id === shopId);
-  if (!shop) throw new Error("Your store is not loaded yet. Try again in a moment.");
-  const existing = state.items.filter((i) => i.shopId === shopId);
-  const sections = shop.storefront.sections.map((s) => ({ ...s, itemIds: [...s.itemIds] }));
-  const section = sections.find((s) => s.title === item.category);
-  if (section) section.itemIds.push(item.id);
-  else sections.push({ id: `${item.id}-section`, title: item.category, itemIds: [item.id] });
-  await saveShop({ ...shop, storefront: { ...shop.storefront, sections } }, [...existing, item]);
-  useStore.getState().upsertItem(item);
-  return item;
+  if (!useStore.getState().shops.some((s) => s.id === shopId)) throw new Error("Your store is not loaded yet. Try again in a moment.");
+  return createItem(item);
 }

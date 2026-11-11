@@ -132,7 +132,7 @@ export function ReceiptView({ id }: { id: string }) {
             {money(fee)}
           </Line>
           {damage > 0 && (
-            <Line label={t("damage")} hint={t("fromDeposit")}>
+            <Line label={t("damage")} hint={rental.damageNote ?? t("fromDeposit")}>
               {money(damage)}
             </Line>
           )}

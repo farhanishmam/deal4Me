@@ -76,7 +76,7 @@ export const ShopSchema = z.object({
 export const OrderSchema = z.object({
   id, shopId: id, lines: z.array(z.object({ itemId: id, qty: z.number().int().min(1).max(100) })).min(1).max(100),
   totalCents: cents, pickupTime: z.string().datetime(), pickupCode: z.string().max(100),
-  status: z.enum(["placed", "accepted", "ready", "picked_up"]),
+  status: z.enum(["placed", "accepted", "ready", "picked_up"]), note: z.string().trim().min(1).max(120).optional(),
 });
 
 export const PhotosSchema = z.array(photo.refine((p) => /^data:image\/(jpeg|png|webp|gif);base64,/i.test(p), "Upload a JPEG, PNG, WebP or GIF photo")).min(1).max(6);
@@ -87,6 +87,7 @@ export const RentalSchema = z.object({
   status: z.enum(["reserved", "picked_up", "returned", "settled"]), pickupCode: z.string(),
   pickupAt: z.string().datetime(), returnBy: z.string().datetime(),
   pickupPhotos: z.array(photo), returnPhotos: z.array(photo), damageCheck: DamageCheckSchema.optional(),
+  damageNote: z.string().trim().min(1).max(500).optional(),
 });
 
 export const ItemRequestSchema = z.object({

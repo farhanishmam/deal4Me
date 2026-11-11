@@ -85,6 +85,11 @@ export function OrdersTable({
                 className="col-start-1 row-start-1 truncate text-sm font-semibold sm:col-auto sm:row-auto sm:font-normal"
               >
                 {shop?.name ?? order.shopId}
+                {order.note && (
+                  <span className="block truncate text-xs font-normal text-muted-foreground">
+                    Note: {order.note}
+                  </span>
+                )}
               </span>
               <span
                 role="cell"

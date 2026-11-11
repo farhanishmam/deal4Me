@@ -25,13 +25,14 @@ export function publicDataState(state: DataState): Omit<DataState, "items"> & { 
 
 /**
  * Buyer screens never load the private terms, and a seller screen may save before its seller view
- * arrives, so a save can leave them out. Keep the stored ones then: the price suggestion as it was, and
+ * arrives, so a save can leave them out. Keep the stored ones then: the price suggestion as it was (only
+ * while the item keeps its kind, since a rental's suggestion is a daily rate), and
  * the private minimum lowered to the new daily fee when the fee drops below it (the schema requires
  * minimum ≤ daily fee).
  */
 export function keepPrivateTerms(input: ItemInput, stored: StoredItem | undefined): StoredItem {
   const { rental, ...fields } = input;
-  const suggestion = fields.suggestion ?? stored?.suggestion;
+  const suggestion = fields.suggestion ?? (stored?.kind === input.kind ? stored.suggestion : undefined);
   const rest = suggestion ? { ...fields, suggestion } : fields;
   if (!rental) return rest;
   let minDailyFeeCents = rental.minDailyFeeCents;

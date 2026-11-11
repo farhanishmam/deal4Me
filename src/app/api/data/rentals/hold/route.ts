@@ -12,7 +12,7 @@ const HoldSchema = z.object({
   itemId: z.string().trim().min(1).max(180),
   days: z.number().int().min(1).max(365),
   negotiationId: z.string().trim().min(1).max(180).optional(),
-  pickupAt: z.string().datetime().optional(),
+  pickupAt: z.string().datetime({ offset: true }).optional(),
 });
 
 export async function POST(request: Request) {
