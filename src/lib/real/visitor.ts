@@ -26,15 +26,22 @@ async function askVisitorAgent(
   profile: VisitorProfile,
 ): Promise<{ reply: string; cards: AgentCard[]; steps: string[] }> {
   const t = TEXT[profile.language === "ja" ? "ja" : "en"];
+  // Saved trip dates never expire, so send them only as a future start with an optional later end.
+  const start = profile.tripStart ? Date.parse(profile.tripStart) : NaN;
+  const end = profile.tripEnd ? Date.parse(profile.tripEnd) : NaN;
+  const sendStart = start > Date.now();
+  const sendEnd = sendStart && end > start;
+  // The profile size is free text; only a single size can match a listed size.
+  const size = profile.preferredSize?.trim();
   let res: SearchResponse;
   try {
     res = await postJson<SearchResponse>("/api/ai/search", {
       query: message,
       lang: profile.language,
       budgetCents: profile.budgetCents,
-      ...(profile.tripStart && Number.isFinite(Date.parse(profile.tripStart)) ? { startsAt: new Date(profile.tripStart).toISOString() } : {}),
-      ...(profile.tripEnd && Number.isFinite(Date.parse(profile.tripEnd)) ? { endsAt: new Date(profile.tripEnd).toISOString() } : {}),
-      ...(profile.preferredSize?.trim() ? { size: profile.preferredSize.trim() } : {}),
+      ...(sendStart ? { startsAt: new Date(start).toISOString() } : {}),
+      ...(sendEnd ? { endsAt: new Date(end).toISOString() } : {}),
+      ...(size && !size.includes(",") && size.length <= 80 ? { size } : {}),
     }, { signal: AbortSignal.timeout(35_000) });
   } catch (error) {
     if (error instanceof DOMException && (error.name === "TimeoutError" || error.name === "AbortError")) {
@@ -42,7 +49,7 @@ async function askVisitorAgent(
     }
     throw error;
   }
-  const cards = res.cards.slice(0, 4);
+  const cards = res.cards;
   logStep(
     "Visitor agent",
     cards.length > 0 ? "Searched listings" : "No matching listings",

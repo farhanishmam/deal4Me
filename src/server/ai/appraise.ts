@@ -287,7 +287,8 @@ const JUNK = /\b(parts|repair|broken|lot of|for parts|replica|empty box)\b/i;
 
 type CompsOut = { suggestion: PriceSuggestion; basis: "comparable_listings" | "estimate"; comps: Comp[]; ms: number };
 
-const cache = ((globalThis as { __compsCache?: Map<string, Omit<CompsOut, "ms">> }).__compsCache ??= new Map());
+// Only the raw listings are cached, because the outlier band and the fallback depend on each caller's estimate.
+const cache = ((globalThis as { __compsRawCache?: Map<string, Comp[]> }).__compsRawCache ??= new Map());
 
 function quantile(sorted: number[], q: number): number {
   const pos = (sorted.length - 1) * q;
@@ -299,22 +300,23 @@ function quantile(sorted: number[], q: number): number {
 export async function findComps(input: { searchQuery: string; kind: AppraiseKind; estimate: PriceSuggestion }): Promise<CompsOut> {
   const started = Date.now();
   const key = `${input.kind}:${input.searchQuery.trim().toLowerCase()}`;
-  const hit = cache.get(key);
-  if (hit) return { ...hit, ms: Date.now() - started };
-
   const estimate: Omit<CompsOut, "ms"> = { suggestion: input.estimate, basis: "estimate", comps: [] };
   const estimateUsd = input.estimate.amountCents / 100;
-  const r = await askClaude<unknown>({
-    system: COMPS_SYSTEM,
-    prompt: `Do at most 2 web searches for current comparable ${input.kind === "rental" ? "rental listings" : input.kind === "food" ? "food menu prices per serving" : "secondhand listings"} for: ${JSON.stringify(input.searchQuery.slice(0, 200))}. Return up to 6 listings with title, price in USD${input.kind === "rental" ? " per day" : ""}, and url.`,
-    model: "sonnet",
-    effort: "low",
-    tools: ["WebSearch"],
-    schema: COMPS_SCHEMA,
-    timeoutMs: 45000,
-  });
-  const parsed = z.object({ comps: z.array(z.object({ title: z.string().min(1).max(500), priceUsd: z.number().finite().positive(), url: z.url().refine((value) => /^https?:\/\//i.test(value)) })).max(6) }).parse(r.data);
-  const comps = parsed.comps.filter(
+  let raw: Comp[] | undefined = cache.get(key);
+  if (!raw) {
+    const r = await askClaude<unknown>({
+      system: COMPS_SYSTEM,
+      prompt: `Do at most 2 web searches for current comparable ${input.kind === "rental" ? "rental listings" : input.kind === "food" ? "food menu prices per serving" : "secondhand listings"} for: ${JSON.stringify(input.searchQuery.slice(0, 200))}. Return up to 6 listings with title, price in USD${input.kind === "rental" ? " per day" : ""}, and url.`,
+      model: "sonnet",
+      effort: "low",
+      tools: ["WebSearch"],
+      schema: COMPS_SCHEMA,
+      timeoutMs: 45000,
+    });
+    raw = z.object({ comps: z.array(z.object({ title: z.string().min(1).max(500), priceUsd: z.number().finite().positive(), url: z.url().refine((value) => /^https?:\/\//i.test(value)) })).max(6) }).parse(r.data).comps;
+    cache.set(key, raw);
+  }
+  const comps = raw.filter(
     (c) =>
       c && typeof c.title === "string" && typeof c.priceUsd === "number" && typeof c.url === "string" &&
       !JUNK.test(c.title) && c.priceUsd >= estimateUsd * 0.2 && c.priceUsd <= estimateUsd * 5,
@@ -328,6 +330,5 @@ export async function findComps(input: { searchQuery: string; kind: AppraiseKind
     if (input.kind === "rental" && input.estimate.depositCents === undefined) delete s.depositCents;
     out = { suggestion: s, basis: "comparable_listings", comps };
   }
-  cache.set(key, out);
   return { ...out, ms: Date.now() - started };
 }

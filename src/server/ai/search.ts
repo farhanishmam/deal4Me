@@ -11,6 +11,7 @@ const SYSTEM = `You turn a shopper's request into a catalog search filter and ch
 
 const LANGS: Lang[] = ["en", "ja", "es", "fr", "de", "ko", "zh"];
 const JPY_PER_USD = 150;
+const USD_PER_EUR = 1.1;
 
 const SCHEMA = {
   type: "object",
@@ -95,7 +96,7 @@ const FALLBACK_TEXT: Record<Lang, (n: number) => string> = {
 
 function toCents(amount: number | null, currency: Parsed["currency"]): number | null {
   if (amount === null || !Number.isFinite(amount) || amount <= 0) return null;
-  const usd = currency === "JPY" ? amount / JPY_PER_USD : amount;
+  const usd = currency === "JPY" ? amount / JPY_PER_USD : currency === "EUR" ? amount * USD_PER_EUR : amount;
   return Math.round(usd * 100);
 }
 
@@ -224,9 +225,20 @@ export async function searchCatalog(input: SearchInput): Promise<SearchResult> {
   }
   const categories = [...new Set(items.map((i) => i.category))];
 
-  const parsed = await parseWithClaude(input.query, categories, lang, items);
+  // Copy, because concurrent identical queries share the parsed filter.
+  const parsed = { ...(await parseWithClaude(input.query, categories, lang, items)) };
   if (parsed.category && !categories.includes(parsed.category)) parsed.category = null;
-  const request = { startsAt: parsed.startsAt ?? input.startsAt, endsAt: parsed.endsAt ?? input.endsAt, size: parsed.size ?? input.size };
+  // Dates are used as a pair. Dates in the query win. Saved profile dates apply only when they are a
+  // future pair (or a future start) that agrees with any duration in the query, so a stale profile
+  // cannot mark every result unavailable or change the stated rental length.
+  const profileStart = input.startsAt ? Date.parse(input.startsAt) : NaN;
+  const profileEnd = input.endsAt ? Date.parse(input.endsAt) : NaN;
+  const profileDays = Number.isFinite(profileEnd) ? Math.ceil((profileEnd - profileStart) / DAY_MS) : null;
+  const profileOk = profileStart > Date.now() && (!input.endsAt || profileEnd > profileStart) && (parsed.rentalDays === null || profileDays === null || profileDays === parsed.rentalDays);
+  const dates = parsed.startsAt || parsed.endsAt
+    ? { startsAt: parsed.startsAt ?? undefined, endsAt: parsed.endsAt ?? undefined }
+    : profileOk ? { startsAt: input.startsAt, endsAt: input.endsAt } : {};
+  const request: Pick<SearchInput, "startsAt" | "endsAt" | "size"> = { ...dates, size: parsed.size ?? input.size };
   if (request.startsAt && request.endsAt && Date.parse(request.endsAt) > Date.parse(request.startsAt)) parsed.rentalDays = Math.ceil((Date.parse(request.endsAt) - Date.parse(request.startsAt)) / DAY_MS);
 
   const maxCents = toCents(parsed.maxPrice, parsed.currency);
