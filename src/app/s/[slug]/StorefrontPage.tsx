@@ -18,7 +18,8 @@ export function StorefrontPage() {
   const shops = useStore((s) => s.shops);
   const allItems = useStore((s) => s.items);
 
-  const shop = shops.find((s) => s.slug === slug || s.id === slug);
+  // A draft cannot take orders or requests yet, so it is treated as missing.
+  const shop = shops.find((s) => (s.slug === slug || s.id === slug) && s.liveAt);
   const items = useMemo(() => (shop ? allItems.filter((i) => i.shopId === shop.id) : []), [allItems, shop]);
 
   useEffect(() => {

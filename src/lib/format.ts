@@ -119,18 +119,46 @@ function partsAt(ms: number) {
   return out;
 }
 
-/**
- * ISO string for a wall-clock time in Salt Lake City, `dayOffset` days from
- * today (0 = today, 1 = tomorrow, -1 = yesterday).
- */
-export function zonedIso(dayOffset: number, hour: number, minute = 0, from: Date = new Date()): string {
-  const today = partsAt(from.getTime());
-  const want = Date.UTC(today.year, today.month - 1, today.day + dayOffset, hour, minute);
+/** The instant whose Salt Lake wall clock reads `want` (a Date.UTC of those fields). */
+function fromWallClock(want: number): number {
   let ms = want;
   for (let i = 0; i < 2; i++) {
     const p = partsAt(ms);
     const wall = Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute);
     ms += want - wall;
   }
-  return new Date(ms).toISOString();
+  // A time skipped by the spring-forward change has no instant; move it forward, as browsers do.
+  const p = partsAt(ms);
+  const wall = Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute);
+  return wall === want ? ms : ms + (want - wall);
+}
+
+/**
+ * ISO string for a wall-clock time in Salt Lake City, `dayOffset` days from
+ * today (0 = today, 1 = tomorrow, -1 = yesterday).
+ */
+export function zonedIso(dayOffset: number, hour: number, minute = 0, from: Date = new Date()): string {
+  const today = partsAt(from.getTime());
+  return new Date(fromWallClock(Date.UTC(today.year, today.month - 1, today.day + dayOffset, hour, minute))).toISOString();
+}
+
+// datetime-local and date inputs have no zone, so their values are read and
+// written as Salt Lake wall-clock times to match every other date on screen.
+
+const pad2 = (n: number) => String(n).padStart(2, "0");
+
+/** "2026-11-07T19:00:00.000Z" -> "2026-11-07T12:00". Empty for anything that is not a date. */
+export function toZonedInput(iso: string | undefined): string {
+  const d = iso ? toDate(iso) : undefined;
+  if (!d) return "";
+  const p = partsAt(d.getTime());
+  return `${p.year}-${pad2(p.month)}-${pad2(p.day)}T${pad2(p.hour)}:${pad2(p.minute)}`;
+}
+
+/** "2026-11-07T12:00" (Salt Lake time) -> "2026-11-07T19:00:00.000Z". Undefined when it does not parse. */
+export function fromZonedInput(local: string): string | undefined {
+  const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(local);
+  if (!m) return undefined;
+  const ms = fromWallClock(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]), Number(m[4]), Number(m[5])));
+  return Number.isFinite(ms) ? new Date(ms).toISOString() : undefined;
 }

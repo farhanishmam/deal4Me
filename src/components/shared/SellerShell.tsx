@@ -21,7 +21,7 @@ type NavItem = {
 const NAV: NavItem[] = [
   { href: "/sell/dashboard", label: "Dashboard", icon: LayoutDashboard, match: ["/sell/dashboard", "/sell/rentals"] },
   { href: "/sell/studio", label: "Studio", icon: Palette, match: ["/sell/studio"] },
-  { href: "/sell/start", label: "Start selling", icon: Rocket, match: ["/sell/start", "/sell/setup"] },
+  { href: "/sell/start", label: "Start selling", icon: Rocket, match: ["/sell/start"] },
 ];
 
 const FOCUS_ROUTES = ["/sell/start", "/sell/import", "/sell/photos", "/sell/describe"];

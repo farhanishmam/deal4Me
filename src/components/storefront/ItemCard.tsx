@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Check, Minus, Plus } from "lucide-react";
 import { money } from "@/lib/format";
+import { thumbFor } from "@/lib/photos";
 import type { Item } from "@/lib/types";
 import { fill, type Dict } from "./i18n";
 
@@ -52,7 +53,7 @@ export function ItemCard({
     <article className="sf-card" style={{ "--i": Math.min(index, 8) } as React.CSSProperties}>
       <div className="sf-art">
         <Image
-          src={item.photoUrl}
+          src={thumbFor(item)}
           alt={item.name}
           width={800}
           height={600}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Loader2, Lock, Sparkles } from "lucide-react";
 import { toast } from "sonner";
@@ -13,6 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/lib/api";
 import { money, perDay } from "@/lib/format";
+import { thumbFor } from "@/lib/photos";
 import type { Condition, Item, PriceSuggestion } from "@/lib/types";
 
 const CONDITIONS: { value: Condition; label: string }[] = [
@@ -74,6 +75,8 @@ export function ItemSheet({
   const [daily, setDaily] = useState(toDollars(item.rental?.dailyFeeCents));
   const [deposit, setDeposit] = useState(toDollars(item.rental?.depositCents));
   const [minimum, setMinimum] = useState(toDollars(item.rental?.minDailyFeeCents));
+  // Whether the private minimum was known when the sheet opened. A later refresh must not change that.
+  const [minimumLoaded] = useState(() => item.rental?.minDailyFeeCents !== undefined);
   const [maxDays, setMaxDays] = useState(String(item.rental?.maxDays ?? 7));
   const [binding, setBinding] = useState(item.rental?.bindingCheckRequired ?? false);
 
@@ -82,19 +85,22 @@ export function ItemSheet({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Ask the deals agent when the item has no suggestion yet.
+  // Ask the deals agent once per opened item. Background refreshes replace `item`
+  // with a new object, which must not trigger another paid call.
+  const opened = useRef(item);
   useEffect(() => {
-    if (item.suggestion) return;
+    const first = opened.current;
+    if (first.suggestion) return;
     let alive = true;
     api
-      .suggestPrice(item)
+      .suggestPrice(first)
       .then((s) => alive && setSuggestion(s))
       .catch(() => undefined)
       .finally(() => alive && setAsking(false));
     return () => {
       alive = false;
     };
-  }, [item]);
+  }, []);
 
   const useSuggestion = () => {
     if (!suggestion) return;
@@ -120,7 +126,7 @@ export function ItemSheet({
       const dailyFeeCents = toCents(daily);
       const depositCents = toCents(deposit);
       // Blank before the private minimum has loaded: leave it out and the server keeps the saved one.
-      const minDailyFeeCents = !minimum.trim() && item.rental?.minDailyFeeCents === undefined ? undefined : toCents(minimum);
+      const minDailyFeeCents = !minimum.trim() && !minimumLoaded ? undefined : toCents(minimum);
       const days = Number.parseInt(maxDays, 10);
       if (dailyFeeCents === null || depositCents === null || minDailyFeeCents === null) return setError("Enter every amount.");
       if (!Number.isFinite(days) || days < 1) return setError("Max days must be at least 1.");
@@ -163,7 +169,7 @@ export function ItemSheet({
         <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-5 py-5">
           <div className="relative overflow-hidden rounded-xl bg-muted">
             <Image
-              src={item.photoUrl}
+              src={thumbFor(item)}
               alt={item.name}
               width={800}
               height={600}
@@ -227,7 +233,7 @@ export function ItemSheet({
                       label="Private minimum daily fee"
                       value={minimum}
                       onChange={setMinimum}
-                      placeholder={item.rental?.minDailyFeeCents === undefined ? "Unchanged" : undefined}
+                      placeholder={minimumLoaded ? undefined : "Unchanged"}
                     />
                   </Field>
                   <Field label="Max days">

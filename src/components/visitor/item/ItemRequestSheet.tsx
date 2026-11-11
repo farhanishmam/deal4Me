@@ -7,25 +7,26 @@ import { useMinuteClock } from "@/components/dashboard/hooks";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { api } from "@/lib/api";
-import { money } from "@/lib/format";
+import { fromZonedInput, money, toZonedInput, zonedIso } from "@/lib/format";
 import { useStore } from "@/lib/store";
 import type { Item, ItemRequest } from "@/lib/types";
 import { useC } from "./copy";
 
 const DAY_MS = 86_400_000;
-const toLocal = (value: string | undefined) => {
-  if (!value) return "";
-  const date = new Date(value);
-  return Number.isFinite(date.getTime()) ? new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16) : "";
+// The inputs hold Salt Lake wall-clock times, the zone every availability label uses.
+const toLocal = toZonedInput;
+/** Epoch ms of an input value; NaN when it does not parse. */
+const inputMs = (value: string) => Date.parse(fromZonedInput(value) ?? "");
+const shiftLocal = (value: string, ms: number) => {
+  const at = inputMs(value) + ms;
+  return Number.isFinite(at) ? toLocal(new Date(at).toISOString()) : "";
 };
 
 /** Tomorrow at 10:00, unless the item opens later. */
 function defaultPickup(item: Item): string {
-  const d = new Date();
-  d.setDate(d.getDate() + 1);
-  d.setHours(10, 0, 0, 0);
+  const tomorrow = Date.parse(zonedIso(1, 10));
   const from = item.availableFrom ? Date.parse(item.availableFrom) : NaN;
-  return toLocal(new Date(Number.isFinite(from) && from > d.getTime() ? from : d.getTime()).toISOString());
+  return toLocal(new Date(Number.isFinite(from) && from > tomorrow ? from : tomorrow).toISOString());
 }
 
 /** Full-screen request form that sits inside the phone, in place of the item page. */
@@ -43,7 +44,7 @@ export function ItemRequestSheet({ item, onClose, defaultDays = 1, initialReques
     const given = toLocal(initialRequest?.endsAt);
     if (given && initialRequest?.startsAt) return given;
     const from = toLocal(initialRequest?.startsAt) || defaultPickup(item);
-    return toLocal(new Date(new Date(from).getTime() + defaultDays * DAY_MS).toISOString());
+    return shiftLocal(from, defaultDays * DAY_MS);
   });
   const preferredSize = initialRequest?.size ?? profile.preferredSize ?? "";
   const [size, setSize] = useState(item.sizes?.includes(preferredSize) || !item.sizes?.length ? preferredSize : "");
@@ -52,15 +53,15 @@ export function ItemRequestSheet({ item, onClose, defaultDays = 1, initialReques
   const [saved, setSaved] = useState<ItemRequest | null>(null);
   const now = useMinuteClock();
   const available = item.available && (!item.availableUntil || !now || now <= Date.parse(item.availableUntil));
-  const startsAt = start ? new Date(start) : null;
-  const endsAt = end ? new Date(end) : null;
+  const startsAt = start ? new Date(inputMs(start)) : null;
+  const endsAt = end ? new Date(inputMs(end)) : null;
   const days = startsAt && endsAt ? Math.max(1, Math.ceil((endsAt.getTime() - startsAt.getTime()) / DAY_MS)) : defaultDays;
   const total = rental ? (agreedCents ?? item.rental?.dailyFeeCents ?? 0) * days : agreedCents ?? item.priceCents ?? 0;
 
   function setPickup(value: string) {
     setStart(value);
-    if (value && (!end || Date.parse(end) <= Date.parse(value))) {
-      setEnd(toLocal(new Date(Date.parse(value) + defaultDays * DAY_MS).toISOString()));
+    if (value && (!end || inputMs(end) <= inputMs(value))) {
+      setEnd(shiftLocal(value, defaultDays * DAY_MS));
     }
   }
 

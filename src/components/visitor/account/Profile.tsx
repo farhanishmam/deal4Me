@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowLeftRight, ChevronRight, User } from "lucide-react";
+import { fromZonedInput, toZonedInput } from "@/lib/format";
 import { useStore } from "@/lib/store";
 import type { Lang } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -16,11 +17,13 @@ const LANGS: { code: Lang; name: string }[] = [
   { code: "ja", name: "日本語" },
 ];
 
+/** The Salt Lake calendar day of an ISO time, as a date input value. */
 function localDate(value: string): string {
-  if (!value) return "";
-  const date = new Date(value);
-  return Number.isFinite(date.getTime()) ? new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 10) : "";
+  return toZonedInput(value).slice(0, 10);
 }
+
+/** 9:00 AM Salt Lake time on the chosen day. */
+const dayStart = (day: string) => (day ? fromZonedInput(`${day}T09:00`) ?? "" : "");
 
 function LinkRow({ href, label }: { href: string; label: string }) {
   return (
@@ -100,8 +103,8 @@ export function Profile() {
             </div>
           </div>
           <label className="flex flex-col gap-1.5 px-4 py-3 text-[15px]"><span className="font-medium">{lang === "ja" ? "服・スキーのサイズ" : "Clothing or ski size"}</span><input aria-label="Preferred clothing or ski size" value={preferredSize} onChange={(event) => setVisitor({ preferredSize: event.target.value })} maxLength={80} placeholder="M, boot 26.5, skis 170 cm" className="h-11 rounded-lg border border-border bg-card px-3 outline-none focus-visible:ring-3 focus-visible:ring-primary/15" /></label>
-          <label className="flex flex-col gap-1.5 px-4 py-3 text-[15px]"><span className="font-medium">{lang === "ja" ? "利用開始日" : "When you need it"}</span><input type="date" aria-label="Preferred start date" value={localDate(tripStart)} onChange={(event) => setVisitor({ tripStart: event.target.value ? new Date(`${event.target.value}T09:00:00`).toISOString() : "" })} className="h-11 rounded-lg border border-border bg-card px-3" /></label>
-          <label className="flex flex-col gap-1.5 px-4 py-3 text-[15px]"><span className="font-medium">{lang === "ja" ? "利用終了日" : "Until"}</span><input type="date" aria-label="Preferred end date" value={localDate(tripEnd)} min={localDate(tripStart)} onChange={(event) => setVisitor({ tripEnd: event.target.value ? new Date(`${event.target.value}T09:00:00`).toISOString() : "" })} className="h-11 rounded-lg border border-border bg-card px-3" /></label>
+          <label className="flex flex-col gap-1.5 px-4 py-3 text-[15px]"><span className="font-medium">{lang === "ja" ? "利用開始日" : "When you need it"}</span><input type="date" aria-label="Preferred start date" value={localDate(tripStart)} onChange={(event) => setVisitor({ tripStart: dayStart(event.target.value) })} className="h-11 rounded-lg border border-border bg-card px-3" /></label>
+          <label className="flex flex-col gap-1.5 px-4 py-3 text-[15px]"><span className="font-medium">{lang === "ja" ? "利用終了日" : "Until"}</span><input type="date" aria-label="Preferred end date" value={localDate(tripEnd)} min={localDate(tripStart)} onChange={(event) => setVisitor({ tripEnd: dayStart(event.target.value) })} className="h-11 rounded-lg border border-border bg-card px-3" /></label>
         </div>
 
         <div className={GROUP}>

@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/lib/api";
-import { money } from "@/lib/format";
+import { fromZonedInput, money, toZonedInput } from "@/lib/format";
 import { thumbFor } from "@/lib/photos";
 import type { Condition, Item, PriceSuggestion } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -94,13 +94,9 @@ function UseButton({ onClick }: { onClick: () => void }) {
 
 const plainInput = "h-11 rounded-xl border-transparent bg-muted/60 px-3 text-[15px]";
 
-function localDateTime(value: string | undefined): string {
-  if (!value) return "";
-  const date = new Date(value);
-  if (!Number.isFinite(date.getTime())) return "";
-  const shifted = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
-  return shifted.toISOString().slice(0, 16);
-}
+// Availability inputs hold Salt Lake wall-clock times, the zone the app shows dates in.
+const localDateTime = toZonedInput;
+const fromLocal = (value: string) => new Date(Date.parse(fromZonedInput(value) ?? ""));
 
 /** Edits one item inside the phone. Cancel goes back with nothing saved. */
 export function ItemEditor({ item, onClose }: { item: Item; onClose: () => void }) {
@@ -115,6 +111,8 @@ export function ItemEditor({ item, onClose }: { item: Item; onClose: () => void 
   const [daily, setDaily] = useState(toDollars(rental?.dailyFeeCents));
   const [deposit, setDeposit] = useState(toDollars(rental?.depositCents));
   const [minimum, setMinimum] = useState(toDollars(rental?.minDailyFeeCents));
+  // Whether the private minimum was known when the editor opened. A later refresh must not change that.
+  const [minimumLoaded] = useState(() => rental?.minDailyFeeCents !== undefined);
   const [maxDays, setMaxDays] = useState(rental ? String(rental.maxDays) : "");
   const [available, setAvailable] = useState(item.available);
   const [availableFrom, setAvailableFrom] = useState(localDateTime(item.availableFrom));
@@ -185,8 +183,8 @@ export function ItemEditor({ item, onClose }: { item: Item; onClose: () => void 
   const save = async () => {
     setError("");
     if (!name.trim()) return setError("Give the item a name.");
-    const from = availableFrom ? new Date(availableFrom) : undefined;
-    const until = availableUntil ? new Date(availableUntil) : undefined;
+    const from = availableFrom ? fromLocal(availableFrom) : undefined;
+    const until = availableUntil ? fromLocal(availableUntil) : undefined;
     if ((from && !Number.isFinite(from.getTime())) || (until && !Number.isFinite(until.getTime()))) {
       return setError("Choose valid availability dates.");
     }
@@ -210,7 +208,7 @@ export function ItemEditor({ item, onClose }: { item: Item; onClose: () => void 
       const dailyFeeCents = toCents(daily);
       const depositCents = toCents(deposit);
       // Blank before the private minimum has loaded: leave it out and the server keeps the saved one.
-      const minDailyFeeCents = !minimum.trim() && rental?.minDailyFeeCents === undefined ? undefined : toCents(minimum);
+      const minDailyFeeCents = !minimum.trim() && !minimumLoaded ? undefined : toCents(minimum);
       const days = Number.parseInt(maxDays, 10);
       if (dailyFeeCents === null || depositCents === null || minDailyFeeCents === null) return setError("Enter every amount.");
       if (!Number.isFinite(days) || days < 1) return setError("Max days must be at least 1.");
@@ -324,7 +322,7 @@ export function ItemEditor({ item, onClose }: { item: Item; onClose: () => void 
                   value={minimum}
                   onChange={setMinimum}
                   label="Private minimum"
-                  placeholder={rental?.minDailyFeeCents === undefined ? "Unchanged" : undefined}
+                  placeholder={minimumLoaded ? undefined : "Unchanged"}
                 />
               </Field>
               <Field label="Max days">

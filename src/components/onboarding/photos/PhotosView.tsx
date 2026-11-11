@@ -45,11 +45,11 @@ export function PhotosView() {
   const run = useRef(0);
   const last = useRef<{ list: Source[]; previews: string[]; kind: SellerKind } | null>(null);
 
-  // The clock starts with the first screen, unless an earlier step already started it.
+  // The clock starts with the first screen, unless an earlier step started it in the last hour.
   useEffect(() => {
     if (!hydrated) return;
     const t = useStore.getState().timers.onboarding;
-    if (!t || t.stoppedAt !== undefined) startTimer("onboarding");
+    if (!t || t.stoppedAt !== undefined || Date.now() - t.startedAt > 60 * 60_000) startTimer("onboarding");
   }, [hydrated, startTimer]);
 
   useEffect(() => () => {

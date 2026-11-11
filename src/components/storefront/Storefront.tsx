@@ -8,6 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, BadgeCheck, Bot, LayoutGrid, Search, ShieldCheck, Sparkles, Store, Tag, X } from "lucide-react";
 import { money } from "@/lib/format";
+import { thumbFor } from "@/lib/photos";
 import { useShop, useStore } from "@/lib/store";
 import type { Item, Lang, StorefrontConfig } from "@/lib/types";
 import { storefrontFontClass } from "./fonts";
@@ -261,7 +262,7 @@ export function Storefront({ config, items, mode, device }: StorefrontProps) {
 
                   {featured && (
                     <Link href={featuredHref} className="sf-panel sf-panel-featured" onClick={hold}>
-                      <Image src={featured.photoUrl} alt="" width={800} height={600} unoptimized className="sf-panel-art" />
+                      <Image src={thumbFor(featured)} alt="" width={800} height={600} unoptimized className="sf-panel-art" />
                       <span className="sf-panel-copy">
                         <span className="sf-panel-eyebrow">{t.featured}</span>
                         <span className="sf-panel-title">{featured.name}</span>

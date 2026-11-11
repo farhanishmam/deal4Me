@@ -117,7 +117,7 @@ export function DashboardView() {
             />
           </div>
           <Link
-            href="/sell/start"
+            href="/seller/scan"
             className={cn(buttonVariants(), "h-11 sm:h-10")}
           >
             <Plus data-icon="inline-start" />

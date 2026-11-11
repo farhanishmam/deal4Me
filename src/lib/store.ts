@@ -47,7 +47,8 @@ export interface StoreState extends AppState {
   /** Stops a running timer. Does nothing when it is not running. */
   stopTimer: (name: TimerName) => void;
   /** Marks a shop live now and records how long onboarding took (stops the onboarding timer). */
-  publishShop: (shopId: string) => Promise<void>;
+  /** Publishes a draft. `timed: false` (studio) leaves the onboarding timer alone and records no time to go live. */
+  publishShop: (shopId: string, opts?: { timed?: boolean }) => Promise<void>;
   /** Clears local preferences and reloads the server records. */
   resetDemo: () => void;
 }
@@ -113,13 +114,15 @@ export const useStore = create<StoreState>()(
           return { timers: { ...s.timers, [name]: { ...timer, stoppedAt: Date.now() } } };
         }),
 
-      publishShop: async (shopId) => {
+      publishShop: async (shopId, opts) => {
         const { shops, timers } = get();
         const shop = shops.find((x) => x.id === shopId);
         if (!shop) return;
-        const timer = timers.onboarding;
+        const timer = opts?.timed === false ? undefined : timers.onboarding;
         const stoppedAt = timer ? (timer.stoppedAt ?? Date.now()) : undefined;
-        const seconds = timer && stoppedAt !== undefined ? Math.max(1, Math.round((stoppedAt - timer.startedAt) / 1000)) : undefined;
+        const elapsed = timer && stoppedAt !== undefined ? Math.max(1, Math.round((stoppedAt - timer.startedAt) / 1000)) : undefined;
+        // A stale clock must never block publishing; the server rejects anything over a day.
+        const seconds = elapsed !== undefined && elapsed <= 86400 ? elapsed : undefined;
         try {
           await flushPendingShopSave(shopId);
           const saved = await runShopMutation(shopId, async () => {
@@ -142,7 +145,7 @@ export const useStore = create<StoreState>()(
         } catch (error) {
           const message = error instanceof Error ? error.message : "Could not publish this shop";
           set({ syncError: message });
-          toast.error(message, { action: { label: "Retry", onClick: () => { void get().publishShop(shopId); } } });
+          toast.error(message, { action: { label: "Retry", onClick: () => { void get().publishShop(shopId, opts); } } });
           get().logStep({ actor: "System", action: "Publishing failed", detail: message });
         }
       },

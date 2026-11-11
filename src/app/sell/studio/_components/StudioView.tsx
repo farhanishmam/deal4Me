@@ -2,14 +2,14 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { ArrowUpRight, Monitor, Share2, Smartphone, Store } from "lucide-react";
+import { ArrowUpRight, Loader2, Monitor, Share2, Smartphone, Store } from "lucide-react";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { StatusPill } from "@/components/shared/StatusPill";
 import { Storefront } from "@/components/storefront/Storefront";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { duration } from "@/lib/format";
-import { useShop, useStore } from "@/lib/store";
+import { useHydrated, useShop, useStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { AskPanel } from "./AskPanel";
 import { DesignPanel } from "./DesignPanel";
@@ -56,6 +56,7 @@ const subscribeWide = (cb: () => void) => {
 
 export function StudioView({ shopId }: { shopId: string }) {
   const shop = useShop(shopId);
+  const hydrated = useHydrated();
   const allItems = useStore((s) => s.items);
   const items = useMemo(() => allItems.filter((i) => i.shopId === shopId), [allItems, shopId]);
 
@@ -66,6 +67,7 @@ export function StudioView({ shopId }: { shopId: string }) {
   const [shareOpen, setShareOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [zoom, setZoom] = useState(0.75);
+  const [publishing, setPublishing] = useState(false);
 
   const scroller = useRef<HTMLDivElement>(null);
   const flashTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -101,6 +103,9 @@ export function StudioView({ shopId }: { shopId: string }) {
     return () => ro.disconnect();
   }, [device, shop]);
 
+  // Shops load after mount, so wait before saying this one is missing.
+  if (!shop && !hydrated) return <div className="flex-1" aria-busy />;
+
   if (!shop) {
     return (
       <EmptyState
@@ -119,6 +124,16 @@ export function StudioView({ shopId }: { shopId: string }) {
   const editing = editingId ? items.find((i) => i.id === editingId) : undefined;
   const live = Boolean(shop.liveAt);
   const publicPath = `/s/${shop.slug}`;
+
+  // publishShop reports its own errors with a toast and a retry action.
+  const publish = async () => {
+    setPublishing(true);
+    try {
+      await useStore.getState().publishShop(shop.id, { timed: false });
+    } finally {
+      setPublishing(false);
+    }
+  };
 
   const frame =
     device === "phone" ? (
@@ -160,6 +175,12 @@ export function StudioView({ shopId }: { shopId: string }) {
           <h1 className="mt-1.5 truncate text-title">{shop.name}</h1>
         </div>
         <div className="flex items-center gap-2">
+          {!live && (
+            <Button onClick={publish} disabled={publishing}>
+              {publishing && <Loader2 className="animate-spin" />}
+              {publishing ? "Publishing..." : "Publish"}
+            </Button>
+          )}
           <Link href={publicPath} target="_blank" className={buttonVariants({ variant: "outline" })}>
             View public page
             <ArrowUpRight />

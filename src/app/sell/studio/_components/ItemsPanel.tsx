@@ -5,6 +5,7 @@ import Image from "next/image";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { StatusPill } from "@/components/shared/StatusPill";
 import { money, perDay } from "@/lib/format";
+import { thumbFor } from "@/lib/photos";
 import { getShop, useShop, useStore } from "@/lib/store";
 import type { Item, StorefrontSection } from "@/lib/types";
 
@@ -73,7 +74,7 @@ export function ItemsPanel({
   const loose = items.filter((i) => !placed.has(i.id));
 
   if (items.length === 0) {
-    return <EmptyState compact icon={<PackageOpen />} title="No items yet" description="Add items from the dashboard." />;
+    return <EmptyState compact icon={<PackageOpen />} title="No items yet" description="Scan an item to add it." />;
   }
 
   const row = (item: Item, controls?: React.ReactNode) => (
@@ -84,7 +85,7 @@ export function ItemsPanel({
         className="group flex min-h-14 min-w-0 flex-1 items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors duration-150 outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-primary/15"
       >
         <Image
-          src={item.photoUrl}
+          src={thumbFor(item)}
           alt=""
           width={80}
           height={80}
