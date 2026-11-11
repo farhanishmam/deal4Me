@@ -50,7 +50,8 @@ function negotiationLine(n: Negotiation, s: AgentStrings): string {
   if (n.status === "running") return s.inProgress;
   const lastOwner = [...n.rounds].reverse().find((r) => r.by === "owner");
   const price = n.agreedDailyCents ?? lastOwner?.offerCents;
-  return price === undefined ? s.inProgress : s.dealAt(money(price));
+  if (price === undefined) return s.inProgress;
+  return n.kind === "sale" ? s.dealSale(money(price)) : s.dealAt(money(price));
 }
 
 export function SavedChats() {

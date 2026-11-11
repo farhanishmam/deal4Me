@@ -7,7 +7,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { ScreenHeader } from "@/components/shared/ScreenHeader";
 import { clockTime } from "@/lib/format";
-import { useMessages, useThreads, type MessageRole } from "@/lib/messages";
+import { MAX_MESSAGE_LENGTH, useMessages, useThreads, type MessageRole } from "@/lib/messages";
 import { thumbFor } from "@/lib/photos";
 import { selectSellerShop, useSellerShop } from "@/lib/seller";
 import { useHydrated, useStore } from "@/lib/store";
@@ -125,7 +125,7 @@ export function ThreadView({ threadId, role }: { threadId: string; role: Message
         {messages.map((m) => {
           const own = m.from === role;
           return (
-            <div key={m.id} className={cn("flex", own ? "justify-end" : "justify-start")}>
+            <div key={m.id} className={cn("flex flex-col", own ? "items-end" : "items-start")}>
               <p
                 title={clockTime(m.at)}
                 className={cn(
@@ -135,6 +135,11 @@ export function ThreadView({ threadId, role }: { threadId: string; role: Message
               >
                 {m.text}
               </p>
+              {own && m.failed && (
+                <p className={cn("px-1 pt-0.5 text-[12px]", m.rejected ? "text-destructive" : "text-muted-foreground")}>
+                  {m.rejected ? t.notSent : t.retrying}
+                </p>
+              )}
             </div>
           );
         })}
@@ -151,6 +156,7 @@ export function ThreadView({ threadId, role }: { threadId: string; role: Message
               submit();
             }
           }}
+          maxLength={MAX_MESSAGE_LENGTH}
           enterKeyHint="send"
           autoComplete="off"
           aria-label={t.placeholder}

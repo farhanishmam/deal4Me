@@ -19,6 +19,8 @@ export interface ThreadMessage {
   at: string;
   /** Set while the server has not accepted this message yet. It keeps retrying. */
   failed?: boolean;
+  /** Set with failed when the server refused the message itself (for example too long). It is never sent again. */
+  rejected?: boolean;
 }
 
 export interface ThreadSummary {
@@ -31,6 +33,9 @@ export interface ThreadSummary {
 }
 
 export const MESSAGES_KEY = "deal4me-messages";
+
+/** The server's limit (MAX_TEXT in src/server/data/conversations.ts). */
+export const MAX_MESSAGE_LENGTH = 4000;
 
 interface MessagesState {
   threads: Record<string, ThreadMessage[]>;
@@ -57,7 +62,11 @@ async function post(threadId: string, message: ThreadMessage): Promise<ThreadMes
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ threadId, from: message.from, text: message.text, clientId: message.id }),
   });
-  if (!res.ok) throw new Error(`Message not saved (${res.status})`);
+  if (!res.ok) {
+    // A 4xx other than a timeout or rate limit means this message will never be accepted.
+    const permanent = res.status >= 400 && res.status < 500 && res.status !== 408 && res.status !== 429;
+    throw Object.assign(new Error(`Message not saved (${res.status})`), { permanent });
+  }
   return (await res.json()) as ThreadMessage;
 }
 
@@ -66,7 +75,7 @@ export const useMessages = create<MessagesState>()(
     (set, get) => {
       /** Send one message to the server. On failure mark it failed, then try again later. */
       const deliver = async (threadId: string, message: ThreadMessage, attempt = 0): Promise<void> => {
-        if (inFlight.has(message.id)) return;
+        if (inFlight.has(message.id) || message.rejected) return;
         inFlight.add(message.id);
         try {
           const saved = await post(threadId, message);
@@ -78,14 +87,17 @@ export const useMessages = create<MessagesState>()(
                 .sort(byTime),
             },
           }));
-        } catch {
+        } catch (error) {
+          const rejected = (error as { permanent?: boolean }).permanent === true;
           set((s) => ({
             threads: {
               ...s.threads,
-              [threadId]: (s.threads[threadId] ?? []).map((m) => (m.id === message.id ? { ...m, failed: true } : m)),
+              [threadId]: (s.threads[threadId] ?? []).map((m) =>
+                m.id === message.id ? { ...m, failed: true, ...(rejected ? { rejected: true } : {}) } : m,
+              ),
             },
           }));
-          if (attempt < RETRY_MS.length) {
+          if (!rejected && attempt < RETRY_MS.length) {
             setTimeout(() => {
               const current = get().threads[threadId]?.find((m) => m.id === message.id);
               if (current?.failed) void deliver(threadId, current, attempt + 1);
@@ -100,7 +112,7 @@ export const useMessages = create<MessagesState>()(
         threads: {},
         lastRead: {},
         send: (threadId, from, raw) => {
-          const text = raw.trim();
+          const text = raw.trim().slice(0, MAX_MESSAGE_LENGTH);
           if (!text) return;
           const message: ThreadMessage = { id: newId(), from, text, at: new Date().toISOString() };
           set((s) => ({
@@ -144,12 +156,12 @@ export const useMessages = create<MessagesState>()(
           // Anything we hold that the server lacks never arrived (for example the tab closed mid-send).
           for (const [id, local] of Object.entries(get().threads)) {
             const have = new Set((server[id] ?? []).map((m) => m.id));
-            for (const m of local) if (!have.has(m.id) && !inFlight.has(m.id)) void deliver(id, m);
+            for (const m of local) if (!have.has(m.id) && !m.rejected && !inFlight.has(m.id)) void deliver(id, m);
           }
         },
         flush: () => {
           for (const [id, local] of Object.entries(get().threads)) {
-            for (const m of local) if (m.failed && !inFlight.has(m.id)) void deliver(id, m);
+            for (const m of local) if (m.failed && !m.rejected && !inFlight.has(m.id)) void deliver(id, m);
           }
         },
       };

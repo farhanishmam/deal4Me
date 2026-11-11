@@ -9,7 +9,7 @@ import { ItemPhotoGallery } from "@/components/shared/ItemPhotoGallery";
 import { ScreenHeader } from "@/components/shared/ScreenHeader";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { APP_TIME_ZONE, conditionLabel, money, zonedIso } from "@/lib/format";
-import { useItem, useShop } from "@/lib/store";
+import { useHydrated, useItem, useShop } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { LOCALES, useC } from "./copy";
 import { AvailabilitySummary } from "./AvailabilitySummary";
@@ -20,6 +20,7 @@ const MAIN = "h-12 w-full rounded-xl text-[17px] font-semibold";
 
 export function ItemDetail({ id, initialDays = 3, initialRequest, negotiationId, openRequest = false }: { id: string; initialDays?: number; initialRequest?: { startsAt?: string; endsAt?: string; size?: string }; negotiationId?: string; openRequest?: boolean }) {
   const { lang, c } = useC();
+  const hydrated = useHydrated();
   const item = useItem(id);
   const shop = useShop(item?.shopId);
   const [days, setDays] = useState(initialDays);
@@ -34,6 +35,15 @@ export function ItemDetail({ id, initialDays = 3, initialRequest, negotiationId,
       return { weekday: fmt.format(d), day: num.format(d) };
     });
   }, [lang]);
+
+  // The catalog arrives after the first render, so wait for it before saying the item is gone.
+  if (!hydrated) {
+    return (
+      <div className="flex min-h-full flex-col bg-card">
+        <ScreenHeader title="" backHref="/visit/home" />
+      </div>
+    );
+  }
 
   if (!item || !shop) {
     return (

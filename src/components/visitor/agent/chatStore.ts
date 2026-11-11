@@ -95,7 +95,12 @@ export const useChat = create<ChatState>()(
 
         set((s) => {
           const base = s.conversations.some((c) => c.id === convId)
-            ? withMessages(s.conversations, convId, (ms) => [...ms.filter((m) => m.role !== "error"), userMessage])
+            ? withMessages(s.conversations, convId, (ms) => {
+                // A retry asks the same question again, so it reuses the user line that is already there.
+                const kept = ms.filter((m) => m.role !== "error");
+                const last = kept.at(-1);
+                return last?.role === "user" && last.text === text ? kept : [...kept, userMessage];
+              })
             : [
                 { id: convId, title: titleFrom(text), messages: [userMessage], updatedAt: Date.now() },
                 ...s.conversations,

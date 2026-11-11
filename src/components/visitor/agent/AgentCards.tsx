@@ -22,7 +22,9 @@ export function AgentResultCard({ card, first }: { card: AgentCard; first: boole
   const primary = card.actions[0];
   const secondary = card.actions[1];
   const detailAction = card.actions.find((action) => action.href.startsWith("/visit/item/"));
-  const primaryHref = rental && card.itemId ? detailAction?.href ?? `/visit/item/${card.itemId}` : primary?.href ?? (card.itemId ? `/visit/item/${card.itemId}` : "#");
+  const detailHref = detailAction?.href ?? `/visit/item/${card.itemId}`;
+  // "Dates & size" opens the request sheet straight away; "View" stays the plain item page.
+  const primaryHref = rental && card.itemId ? `${detailHref}${detailHref.includes("?") ? "&" : "?"}request=1` : primary?.href ?? (card.itemId ? `/visit/item/${card.itemId}` : "#");
   const primaryLabel = rental ? lang === "ja" ? "日時とサイズを選ぶ" : "Dates & size" : card.kind === "food" ? s.order : s.details;
 
   return (
