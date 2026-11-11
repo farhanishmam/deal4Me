@@ -15,6 +15,7 @@ export interface PublicRentalTerms { dailyFeeCents: Cents; depositCents: Cents; 
  * leaves it out keeps the stored one.
  */
 export interface RentalTerms extends PublicRentalTerms { minDailyFeeCents?: Cents }
+/** `rental.minDailyFeeCents` and `suggestion` are seller-only: buyer screens load the catalog without them. */
 export interface Item { id: string; shopId: string; kind: ItemKind; name: string; description: string; category: string; photoUrl: string; photoUrls?: string[]; condition?: Condition; priceCents?: Cents; rental?: RentalTerms; suggestion?: PriceSuggestion; tags?: string[]; available: boolean; availableFrom?: string; availableUntil?: string; sizes?: string[] }
 /** An inquiry for the owner to review; it neither reserves stock nor takes payment. */
 export interface ItemRequest { id: string; itemId: string; shopId: string; kind: "rental" | "sale"; startsAt?: string; endsAt?: string; size?: string; negotiationId?: string; agreedPriceCents?: Cents; status: "requested" | "confirmed"; createdAt: string }
