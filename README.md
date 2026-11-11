@@ -13,7 +13,6 @@
   <b>🏆 Winner, Best Use of AI · Crimson Hack 2026</b><br>
   A local marketplace for Salt Lake City, built on the Claude Agent SDK<br><br>
   <a href="#-see-it-run">See it run</a> ·
-  <a href="#-the-two-minute-demo">Two-minute demo</a> ·
   <a href="#-the-loop">The loop</a> ·
   <a href="#-two-agents-one-deal">Two agents, one deal</a> ·
   <a href="#-ask-in-any-language">Search</a> ·
@@ -61,26 +60,6 @@ The ski shop by campus has great gear and no website. The taco truck has a menu 
 </p>
 
 <p align="center"><sub>Every screen above was captured headless from this repository, running on a new workspace with an empty catalog (the AI cache from rehearsals carried over). The workspace was then filled through the real flows: two descriptions and one website import (replayed from that cache), live searches in English and Japanese, three live negotiations, two holds, one live Claude damage check and one settlement.</sub></p>
-
-## 🗣 The two-minute demo
-
-Two phones (or one phone frame and a laptop): the **seller** on the left, the **buyer** on the right. Every step below is something the room can watch happen.
-
-**Before you start.** Run `npm run dev`, and `npm run stt` in a second terminal if you want voice. Run `npm run demo:prepare -- http://localhost:3000` once to warm and verify the sample website imports, the two demo scripts and the sample photo appraisals (see [Run it](#-run-it)).
-
-| # | Who | Taps | What the room sees |
-|---|---|---|---|
-| 1 | Seller | `/sell/start` → **Just tell us** → 🎙, say the shop (or **Or type it**) | The transcript updates every 1.5 s as you speak. Tap the mic again to stop, then review or edit. Voice never submits on its own |
-| 2 | Seller | **Build my storefront** | *Listening to your description · Finding your items · Pricing with the deals agent · Building your storefront*, then **Check your shop** with names, daily prices and photos, all editable |
-| 3 | Seller | **Go live** | *Live in 0:09*, a QR code for `/s/<your-shop>` (on screens 640 px and wider), and **Open my listings** · **Edit storefront** · **View public page** |
-| 4 | Seller (optional) | **Edit storefront** → Ask: *"Make it feel like a cozy ski lodge and translate it to Japanese"* | The preview restyles and gains an EN / 日本語 switch, with *Theme → Ski lodge · Languages → Add Japanese* and **Undo** |
-| 5 | Buyer | `/visit/home` → *"Adult skis for 3 days under $150"* → **Find it for me** | *Reading your request · Searching nearby listings · Checking your budget*, then cards with $/day, *deposit · held, not charged* and availability |
-| 6 | Buyer | a card → **View** → **Let my agent negotiate** → slide **Your price** → **Start negotiating** | Rounds stream in one by one (*Round n of 6*, a **Haiku** badge). The bubbles carry no numbers; each price is a separate chip. The round ends in **Deal agreed** or *No deal at this price* |
-| 7 | Buyer | **Review booking** → **Authorize $182 hold** | *Your card hold · Held, not charged · Simulated payment*, then a 6-digit pickup code and QR |
-| 8 | Both | **Message the seller** | A thread exists only once a deal is agreed, and its id is the negotiation's. Messages reach the other phone within about 3 s, and a new deal's thread can take up to 15 s (or a refocus) to appear on the seller's phone |
-| 9 | Buyer, then seller | Buyer on `/visit/rentals/<id>`: **Confirm pickup** photos → **Send return** photos. Seller opens `/sell/rentals/<id>` | **AI check:** *No new damage found* · *A person makes the final call.* → **Settle: charge $42, release $140** |
-
-To show the floor holding, run step 6 again with **Your price** below the owner's private minimum. The owner's agent never goes below its floor (it may stop above it), and the run ends with *No deal at this price*. Rehearsal scripts, website samples and photo samples are in [DEMO-ONBOARDING.md](DEMO-ONBOARDING.md). The full seller-to-buyer walkthrough, with availability windows, sizes and date requests, is in [DEMO-WORKFLOW.md](DEMO-WORKFLOW.md).
 
 ## 🔁 The loop
 
