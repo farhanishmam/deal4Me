@@ -1,3 +1,4 @@
+import { availabilityIssue, DAY_MS } from "@/server/availability";
 import { readDataState } from "@/server/data/store";
 
 export class DealInputError extends Error {
@@ -16,6 +17,11 @@ export function rentalForDeal(itemId: string, days: number) {
   if (item.kind !== "rental" || !item.rental) throw new DealInputError("This item cannot be rented.");
   if (item.rental.dailyFeeCents <= 0) throw new DealInputError("Set a positive rental price before negotiating.");
   if (days > item.rental.maxDays) throw new DealInputError(`This rental is available for at most ${item.rental.maxDays} days.`);
+  // The hold applies the item's availability window, so a deal it would refuse is refused here first.
+  // Checkout starts an undated rental when the window opens, or now if it is already open.
+  const start = Math.max(Date.now(), item.availableFrom ? Date.parse(item.availableFrom) : 0);
+  const issue = availabilityIssue(item, { startsAt: new Date(start).toISOString(), endsAt: new Date(start + days * DAY_MS).toISOString() });
+  if (issue) throw new DealInputError(issue, 409);
   return item as typeof item & { rental: NonNullable<typeof item.rental> };
 }
 
@@ -49,6 +55,12 @@ export function itemForDeal(itemId: string, days: number): DealItem {
   const low = stored.suggestion?.rangeCents[0];
   const floorCents = Math.round(low === undefined ? 0.8 * price : Math.min(Math.max(low, 0.7 * price), 0.9 * price));
   return { kind: "sale", name: stored.name, listCents: price, floorCents, days: 1 };
+}
+
+/** The item's saved price in cents (per day for a rental), or undefined when the item is gone. */
+export function storedListCents(itemId: string): number | undefined {
+  const item = readDataState().items.find((candidate) => candidate.id === itemId);
+  return item?.kind === "sale" ? item.priceCents : item?.rental?.dailyFeeCents;
 }
 
 export interface DealBackground {

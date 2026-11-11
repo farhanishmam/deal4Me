@@ -23,7 +23,9 @@ export function DealsCard({
         const item = items.find((i) => i.id === deal.itemId);
         const agreed = deal.agreedDailyCents ?? deal.askingCents;
         const sale = deal.kind === "sale";
-        const saved = Math.max(0, deal.askingCents - agreed) * (sale ? 1 : deal.days);
+        // The opening ask is the list price rounded to whole dollars, so a deal at the list price saves nothing.
+        const list = (sale ? item?.priceCents : item?.rental?.dailyFeeCents) ?? deal.askingCents;
+        const saved = agreed < Math.min(list, deal.askingCents) ? (deal.askingCents - agreed) * (sale ? 1 : deal.days) : 0;
         return (
           <li key={deal.id} className="flex items-center gap-3">
             {item ? (

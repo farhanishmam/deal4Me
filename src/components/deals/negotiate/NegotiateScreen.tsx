@@ -272,15 +272,23 @@ export function NegotiateScreen() {
   );
 
   const lastOwner = [...rounds].reverse().find((r) => r.by === "owner");
+  const lastVisitor = [...rounds].reverse().find((r) => r.by === "visitor");
+  // The server ignores an offer below the buyer's last one, so the composer never goes under it.
+  const minOffer = lastVisitor ? Math.round(lastVisitor.offerCents / 100) : 1;
   // The agent offers exactly the picked price, so a manual offer starts from it and steps down only
   // below the owner's last counter.
   const suggested = Math.max(
-    1,
+    minOffer,
     Math.min(maxDollars, lastOwner ? Math.round(lastOwner.offerCents / 100) - 1 : maxDollars),
   );
 
   const agreed =
     negotiation?.status === "deal" ? negotiation.agreedDailyCents : undefined;
+  // The opening ask is the list price rounded to whole dollars, so a deal at the list price saves nothing.
+  const saving =
+    negotiation && agreed !== undefined && agreed < Math.min(askingCents, negotiation.askingCents)
+      ? (negotiation.askingCents - agreed) * (sale ? 1 : days)
+      : 0;
   const settled = phase === "done" && negotiation;
   const slidersLocked = phase === "running" || !!view;
   const segmentsLocked =
@@ -447,9 +455,9 @@ export function NegotiateScreen() {
                   <p className="mt-1.5 text-[26px] leading-8 font-bold tracking-[-0.02em] tabular-nums">
                     {t("saleFee", { fee: money(agreed) })}
                   </p>
-                  {negotiation.askingCents > agreed && (
+                  {saving > 0 && (
                     <p className="text-[15px] leading-5 font-bold text-success tabular-nums">
-                      {t("save", { amount: money(negotiation.askingCents - agreed) })}
+                      {t("save", { amount: money(saving) })}
                     </p>
                   )}
                 </>
@@ -459,12 +467,13 @@ export function NegotiateScreen() {
                     {t("fee", { fee: money(agreed * days) })}
                   </p>
                   <p className="text-[15px] leading-5 text-foreground tabular-nums">
-                    {t(days === 1 ? "breakdownOne" : "breakdown", { days, price: money(agreed) })} ·{" "}
-                    <span className="font-bold text-success">
-                      {t("save", {
-                        amount: money((negotiation.askingCents - agreed) * days),
-                      })}
-                    </span>
+                    {t(days === 1 ? "breakdownOne" : "breakdown", { days, price: money(agreed) })}
+                    {saving > 0 && (
+                      <>
+                        {" · "}
+                        <span className="font-bold text-success">{t("save", { amount: money(saving) })}</span>
+                      </>
+                    )}
                   </p>
                   <p className="mt-0.5 text-[15px] leading-5 text-foreground/80 tabular-nums">
                     {t("deposit", { deposit: money(item.rental?.depositCents ?? 0) })}
@@ -518,6 +527,7 @@ export function NegotiateScreen() {
             <Composer
               key={`${lastOwner?.n ?? 0}-${rounds.length}`}
               suggested={draft ?? suggested}
+              min={minOffer}
               busy={busy || !lastOwner}
               onSend={sendOffer}
               label={t(sale ? "offerSale" : "offer")}
@@ -539,11 +549,13 @@ export function NegotiateScreen() {
 
 function Composer({
   suggested,
+  min,
   busy,
   onSend,
   label,
 }: {
   suggested: number;
+  min: number;
   busy: boolean;
   onSend: (dollars: number) => void;
   label: string;
@@ -551,37 +563,45 @@ function Composer({
   const { t } = useT();
   const [offer, setOffer] = useState(String(suggested));
   const dollars = Number(offer);
-  const valid = Number.isInteger(dollars) && dollars > 0;
+  const low = offer !== "" && dollars < min;
+  const valid = Number.isInteger(dollars) && dollars > 0 && !low;
   return (
-    <form
-      className="flex gap-2"
-      onSubmit={(e) => {
-        e.preventDefault();
-        if (valid && !busy) onSend(dollars);
-      }}
-    >
-      <label className="relative min-w-0 flex-1">
-        <span className="sr-only">{label}</span>
-        <span className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-[17px] font-semibold text-muted-foreground">
-          $
-        </span>
-        <input
-          inputMode="numeric"
-          value={offer}
-          onChange={(e) =>
-            setOffer(e.target.value.replace(/\D/g, "").slice(0, 3))
-          }
-          disabled={busy}
-          className="h-12 w-full rounded-xl border border-input bg-background pr-4 pl-8 text-[17px] font-semibold tabular-nums outline-none focus-visible:border-primary/50 focus-visible:ring-3 focus-visible:ring-primary/15 disabled:opacity-60"
-        />
-      </label>
-      <Button
-        type="submit"
-        disabled={busy || !valid}
-        className="h-12 w-28 rounded-xl text-[17px] font-semibold"
+    <>
+      {low && (
+        <p className="mb-2 text-center text-sm text-muted-foreground">
+          {t("offerMin", { price: money(min * 100) })}
+        </p>
+      )}
+      <form
+        className="flex gap-2"
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (valid && !busy) onSend(dollars);
+        }}
       >
-        {t("send")}
-      </Button>
-    </form>
+        <label className="relative min-w-0 flex-1">
+          <span className="sr-only">{label}</span>
+          <span className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-[17px] font-semibold text-muted-foreground">
+            $
+          </span>
+          <input
+            inputMode="numeric"
+            value={offer}
+            onChange={(e) =>
+              setOffer(e.target.value.replace(/\D/g, "").slice(0, 7))
+            }
+            disabled={busy}
+            className="h-12 w-full rounded-xl border border-input bg-background pr-4 pl-8 text-[17px] font-semibold tabular-nums outline-none focus-visible:border-primary/50 focus-visible:ring-3 focus-visible:ring-primary/15 disabled:opacity-60"
+          />
+        </label>
+        <Button
+          type="submit"
+          disabled={busy || !valid}
+          className="h-12 w-28 rounded-xl text-[17px] font-semibold"
+        >
+          {t("send")}
+        </Button>
+      </form>
+    </>
   );
 }

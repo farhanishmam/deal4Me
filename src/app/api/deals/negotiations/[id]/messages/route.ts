@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { askClaude } from "@/server/ai/claude";
 import { ownerTurn, type ChatLine } from "@/server/deals/agents";
-import { dealBackground } from "@/server/deals/catalog";
+import { dealBackground, storedListCents } from "@/server/deals/catalog";
 import { JPY_PER_USD, parseOffer } from "@/server/deals/parse-offer";
 import { deals } from "@/server/deals/store";
 import { ownerOptions, wholeDollars, type OwnerInput } from "@/server/deals/rules";
@@ -57,7 +57,8 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
   if (!parsed.success) return Response.json({ error: "Send a message or an offer" }, { status: 400 });
   const { message = "", offerCents: explicit, lang = rec.lang } = parsed.data;
   const neg = rec.negotiation;
-  if (neg.status !== "running") return Response.json({ negotiation: neg });
+  // The buyer's private maximum stays on their device, as in the negotiation list.
+  if (neg.status !== "running") return Response.json({ negotiation: { ...neg, visitorMaxCents: 0 } });
 
   let intent: Intent = "other";
   let offerCents = 0;
@@ -130,8 +131,15 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
   }
   neg.rounds.push({ n, by: "owner", offerCents: turn.priceCents, message: turn.message, at: now });
   if (turn.move === "accept") {
+    // The rules round the list to whole dollars, so a deal at the ask could land a few cents above the real price.
+    let listCents: number | undefined;
+    try {
+      listCents = storedListCents(neg.itemId);
+    } catch (error) {
+      return dataError(error);
+    }
     neg.status = "deal";
-    neg.agreedDailyCents = turn.priceCents;
+    neg.agreedDailyCents = Math.min(turn.priceCents, listCents || turn.priceCents);
   } else if (turn.move === "walk") {
     neg.status = "no_deal";
   }
@@ -148,7 +156,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
   }
 
   return Response.json({
-    negotiation: neg,
+    negotiation: { ...neg, visitorMaxCents: 0 },
     move: turn.move,
     voice: "claude",
     timing: { parseMs, voiceMs: turn.ms, totalMs: Date.now() - t0 },

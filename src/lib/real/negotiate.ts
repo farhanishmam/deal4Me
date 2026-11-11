@@ -168,7 +168,7 @@ async function offer(negotiationId: string, offerCents: number, message: string)
   logStep("Visitor agent", `Offered ${price(offerCents, sale)}`);
   if (next.status === "deal") logStep("Deals agent", "Deal reached", price(next.agreedDailyCents ?? offerCents, sale), ms);
   else if (next.status === "no_deal") logStep("Deals agent", "No deal", undefined, ms);
-  else if (last) logStep("Owner agent", `Countered ${price(last.offerCents, sale)}`, undefined, ms);
+  else if (last) logStep("Owner agent", describeMove("owner", res.move, price(last.offerCents, sale)), undefined, ms);
   return next;
 }
 

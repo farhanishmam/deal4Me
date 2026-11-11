@@ -104,7 +104,8 @@ export async function POST(req: Request) {
         }
         if (closed) return;
 
-        negotiation = { ...negotiation, status, ...(agreed !== undefined ? { agreedDailyCents: agreed } : {}) };
+        // The rules round the list to whole dollars, so a deal at the ask could land a few cents above the real price.
+        negotiation = { ...negotiation, status, ...(agreed !== undefined ? { agreedDailyCents: Math.min(agreed, item.listCents) } : {}) };
         deals.set(id, { negotiation, state, itemName, lang });
         send({ type: "done", negotiation });
       } catch (error) {
